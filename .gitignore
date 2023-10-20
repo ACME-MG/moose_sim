@@ -1,8 +1,8 @@
 .vscode
 
-sim_deer/__pycache__
-sim_deer/simulator/__pycache__
-sim_deer/simulations/__pycache__
-sim_deer/materials/__pycache__
+deer_sim/__pycache__
+deer_sim/simulate/__pycache__
+deer_sim/simulations/__pycache__
+deer_sim/materials/__pycache__
 scripts/results
 scripts/nohup.out

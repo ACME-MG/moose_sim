@@ -7,7 +7,7 @@
 
 # Libraries
 import os, re, time
-from sim_deer.simulate.controller import Controller
+from deer_sim.simulate.controller import Controller
 
 # API Class
 class API:
@@ -26,7 +26,6 @@ class API:
         """
         
         # Initialise internal variables
-        self.__controller__  = Controller()
         self.__print_index__ = 0
         self.__verbose__     = verbose
         
@@ -46,6 +45,7 @@ class API:
         # Define input / output functions
         self.__get_input__  = lambda x : f"{self.__input_path__}/{x}"
         self.__get_output__ = lambda x : f"{self.__output_path__}/{x}"
+        self.__controller__ = Controller(self.__get_input__, self.__get_output__)
         
         # Create directories
         if not output_here:
@@ -61,16 +61,41 @@ class API:
         * `orientation_file`: The name of the orientation file
         """
         self.__print__(f"Defining the mesh at '{mesh_file}' with orientations at '{orientation_file}'")
-        mesh_path        = self.__get_input__(mesh_file)
-        orientation_path = self.__get_input__(orientation_file)
-        self.__controller__.define_mesh(mesh_path, orientation_path)
+        self.__controller__.define_mesh(mesh_file, orientation_file)
         
-    # Defines the material
-    def define_material(self, material_name:str, material_params:list):
-        self.add(f"Defining the material ({material_name})")
-        self.material_name = material_name
-        self.material_params = material_params
-        
+    def define_material(self, material_name:str, material_params:dict) -> None:
+        """
+        Defines the material
+
+        Parameters:
+        * `material_name`:   The name of the material
+        * `material_params`: Dictionary of parameter values
+        """
+        self.__print__(f"Defining the material ({material_name})")
+        self.__controller__.define_material(material_name, material_params)
+    
+    def define_simulation(self, simulation_name:str, simulation_params:dict={}) -> None:
+        """
+        Defines the simulation
+
+        Parameters:
+        * `simulation_name`:   The name of the simulation
+        * `simulation_params`: Dictionary of parameter values
+        """
+        self.__print__(f"Defining the simulation ({simulation_name})")
+        self.__controller__.define_simulation(simulation_name, simulation_params)
+
+    def simulate(self, deer_path:str, num_processors:int) -> None:
+        """
+        Runs the simulation
+
+        Parameters:
+        * `deer_path`:      Path to the deer executable
+        * `num_processors`: The number of processors
+        """
+        self.__print__("Running the simulation")
+        self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__)
+
     def __print__(self, message:str, add_index:bool=True) -> None:
         """
         Displays a message before running the command (for internal use only)

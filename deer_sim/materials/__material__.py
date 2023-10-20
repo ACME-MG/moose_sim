@@ -11,7 +11,7 @@ import importlib, os, pathlib, sys
 # Material Class
 class __Material__:
 
-    def __init__(self, name:str, params:dict, **kwargs):
+    def __init__(self, name:str, params:dict):
         """
         Template class for material objects
         
@@ -21,7 +21,6 @@ class __Material__:
         """
         self.name   = name
         self.params = params
-        self.kwargs = kwargs
 
     def get_name(self) -> str:
         """
@@ -36,6 +35,13 @@ class __Material__:
         if not param_name in self.params.keys():
             raise ValueError(f"The '{param_name}' parameter has not been initialised!")
         return self.params[param_name]
+    
+    def get_material(self, **kwargs) -> str:
+        """
+        Gets the content for the material file;
+        must be overridden
+        """
+        raise NotImplementedError
 
 def get_material(material_name:str, params:dict, **kwargs) -> str:
     """
@@ -65,5 +71,6 @@ def get_material(material_name:str, params:dict, **kwargs) -> str:
     
     # Initialise and return the material
     from material_file import Material
-    material = Material(material_name, params, **kwargs)
-    # return material
+    material = Material(material_name, params)
+    material_content = material.get_material(**kwargs)
+    return material_content
