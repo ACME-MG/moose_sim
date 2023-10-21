@@ -9,6 +9,7 @@
 import csv, os, subprocess, shutil
 from deer_sim.materials.__material__ import get_material
 from deer_sim.simulations.__simulation__ import get_simulation
+from deer_sim.simulate.analyser import plot_creep
 
 # The Controller class
 class Controller():
@@ -23,14 +24,24 @@ class Controller():
         """
 
         # Initialise internal variables
-        self.get_input = get_input
-        self.get_output = get_output
+        self.get_input         = get_input
+        self.get_output        = get_output
+        self.material_name     = ""
+        self.simulation_name   = ""
+        self.material_params   = {}
+        self.simulation_params = {}
 
-        # Define fixed paths
+        # Initialise file names
         self.material_file   = "material.xml"
         self.simulation_file = "simulation.i"
+        self.csv_file        = "results"
+        self.analysis_file   = "analysis_plot"
+
+        # Initialise file paths
         self.material_path   = get_output(self.material_file)
         self.simulation_path = get_output(self.simulation_file)
+        self.csv_path        = get_output(f"{self.csv_file}.csv")
+        self.analysis_path   = get_output(self.analysis_file)
 
     def define_mesh(self, mesh_file:str, orientation_file:str):
         """
@@ -69,8 +80,13 @@ class Controller():
         * `material_name`:   The name of the material
         * `material_params`: Dictionary of parameter values
         """
-        material_content = get_material(material_name, material_params, **kwargs)
+
+        # Save material information
         self.material_name = material_name
+        self.material_params = material_params
+
+        # Write the material file
+        material_content = get_material(material_name, material_params, **kwargs)
         with open(self.material_path, "w+") as fh:
             fh.write(material_content)
 
@@ -82,9 +98,15 @@ class Controller():
         * `simulation_name`:   The name of the simulation
         * `simulation_params`: Dictionary of parameter values
         """
+
+        # Save simulation information
+        self.simulation_name = simulation_name
+        self.simulation_params = simulation_params
+
+        # Write the simulation file
         simulation_content = get_simulation(simulation_name, simulation_params, self.mesh_file,
                                             self.num_grains, self.orientation_file, self.material_file,
-                                            self.material_name, **kwargs)
+                                            self.material_name, self.csv_file, **kwargs)
         with open(self.simulation_path, "w+") as fh:
             fh.write(simulation_content)
 
@@ -97,6 +119,62 @@ class Controller():
         * `num_processors`: The number of processors
         * `output_path`:    Path to the output directory
         """
+
+        # Check that the material and simulation are both defined
+        if self.material_name == "":
+            raise NotImplementedError("The material name has not been defined!")
+        if self.simulation_name == "":
+            raise NotImplementedError("The simulation name has not been defined!")
+
+        # Run the simulation
+        current_dir = os.getcwd()
         os.chdir("{}/{}".format(os.getcwd(), output_path))
         command = f"mpiexec -np {num_processors} {deer_path} -i {self.simulation_file}"
         subprocess.run([command], shell = True, check = True)
+        os.chdir(current_dir)
+
+    def remove_artifacts(self) -> None:
+        """
+        Removes auxiliary files after the simulation ends
+        """
+        os.remove(self.get_output(self.mesh_file))
+        os.remove(self.get_output(self.orientation_file))
+
+    def analyse_results(self, csv_file:str="", direction:str="x") -> None:
+        """
+        Analyses the results of the simulation
+
+        Parameters:
+        * `csv_file`:  The results file; if unspecified, gets the results from a
+                       simulation that was just run
+        * `direction`: The direction the plot uses to plot the results
+        """
+        
+        # If filename specified, then check if it exists
+        if csv_file != "" and not os.path.exists(self.get_input(csv_file)):
+            raise FileNotFoundError(f"The '{csv_file}' file could not be found!")
+
+        # If filename not specified, check if there was a simulation that just ran
+        if csv_file == "" and not os.path.exists(self.csv_path):
+            raise FileNotFoundError("The file has not been specified and no simulation has been run!")
+
+        # Get path to CSV and conduct analysis
+        csv_path = self.csv_path if csv_file == "" else self.get_input(csv_file)
+        plot_creep(csv_path, self.analysis_path, direction)
+
+    def export_params(self, params_file:str) -> None:
+        """
+        Exports the parameters
+
+        Parameters:
+        * `params_file`: The name of the parameter file
+        """
+        
+        # Prepare path and content
+        params_path = self.get_output(params_file)
+        params_dict = {**self.material_params, **self.simulation_params}
+
+        # Write parameters to file
+        with open(params_path, "w+") as fh:
+            for param_name in params_dict.keys():
+                fh.write(f"{param_name}: {params_dict[param_name]}\n")

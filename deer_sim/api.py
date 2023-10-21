@@ -96,6 +96,35 @@ class API:
         self.__print__("Running the simulation")
         self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__)
 
+    def analyse_results(self, csv_file:str="", direction:str="x") -> None:
+        """
+        Analyses the results of the simulation
+
+        Parameters:
+        * `csv_file`:  The results file; if unspecified, gets the results from a
+                       simulation that was just run
+        * `direction`: The direction the plot uses to plot the results
+        """
+        self.__print__("Analysing the results")
+        self.__controller__.analyse_results(csv_file, direction)
+
+    def export_params(self, params_file:str="params.txt") -> None:
+        """
+        Exports the parameters
+
+        Parameters:
+        * `params_file`: The name of the parameter file
+        """
+        self.__print__("Exporting the parameters")
+        self.__controller__.export_params(params_file)
+
+    def remove_artifacts(self) -> None:
+        """
+        Removes auxiliary files after the simulation ends
+        """
+        self.__print__("Removing auxiliary files")
+        self.__controller__.remove_artifacts()
+
     def __print__(self, message:str, add_index:bool=True) -> None:
         """
         Displays a message before running the command (for internal use only)

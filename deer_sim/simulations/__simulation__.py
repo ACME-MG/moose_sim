@@ -111,6 +111,21 @@ class __Simulation__:
         """
         return self.material_name
 
+    def set_csv_file(self, csv_file) -> None:
+        """
+        Sets the name of the CSV file
+
+        Parameters:
+        * `csv_file`: The name of the CSV file
+        """
+        self.csv_file = csv_file
+
+    def get_csv_file(self) -> str:
+        """
+        Gets the name of the CSV file
+        """
+        return self.csv_file
+
     def get_simulation(self, **kwargs) -> str:
         """
         Gets the content for the simulation file;
@@ -118,8 +133,9 @@ class __Simulation__:
         """
         raise NotImplementedError
 
-def get_simulation(simulation_name:str, params:dict, mesh_file:str, num_grains:int,
-                   orientation_file:str, material_file:str, material_name:str, **kwargs) -> str:
+def get_simulation(simulation_name:str, params:dict, mesh_file:str,
+                   num_grains:int, orientation_file:str, material_file:str,
+                   material_name:str, csv_file:str, **kwargs) -> str:
     """
     Gets the simulation file's content
     
@@ -131,6 +147,7 @@ def get_simulation(simulation_name:str, params:dict, mesh_file:str, num_grains:i
     * `orientation_file`: The name of the orientation file
     * `material_file`:    The name of the material file
     * `material_name`:    The name of the material
+    * `csv_file`:         The name of the CSV file
     """
 
     # Get available simulations in current folder
@@ -158,5 +175,6 @@ def get_simulation(simulation_name:str, params:dict, mesh_file:str, num_grains:i
     simulation.set_orientation_file(orientation_file)
     simulation.set_material_file(material_file)
     simulation.set_material_name(material_name)
+    simulation.set_csv_file(csv_file)
     simulation_content = simulation.get_simulation(**kwargs)
     return simulation_content

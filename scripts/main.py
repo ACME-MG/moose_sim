@@ -12,6 +12,10 @@ api.define_material("vshai", {
     "n":       12
 })
 
-api.define_simulation("cp")
+api.define_simulation("cp_simple")
+
+api.export_params()
 
 api.simulate("~/moose/deer/deer-opt", 8)
+api.remove_artifacts()
+api.analyse_results()
