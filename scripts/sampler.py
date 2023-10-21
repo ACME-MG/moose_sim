@@ -24,6 +24,6 @@ for i in range(len(combinations)):
     api = API(f"s1_p{i}", input_path="./data/500/16_s1")
     api.define_mesh("mesh.e", "input_orientations.csv")
     api.define_material("vshai", param_dict)
-    api.define_simulation("no_czm", [])
-    api.simulate("~/moose/deer/deer-opt", 8)
+    api.define_simulation("no_czm", {})
+    api.simulate("~/moose/deer/deer-opt", 16)
     
