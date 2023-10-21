@@ -25,5 +25,5 @@ for i in range(len(combinations)):
     api.define_mesh("mesh.e", "input_orientations.csv")
     api.define_material("vshai", param_dict)
     api.define_simulation("no_czm", {})
-    api.simulate("~/moose/deer/deer-opt", 16)
+    api.simulate("~/moose/deer/deer-opt", 32)
     
