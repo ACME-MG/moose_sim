@@ -130,7 +130,10 @@ class Controller():
         current_dir = os.getcwd()
         os.chdir("{}/{}".format(os.getcwd(), output_path))
         command = f"mpiexec -np {num_processors} {deer_path} -i {self.simulation_file}"
-        subprocess.run([command], shell = True, check = True)
+        try:
+            subprocess.run([command], shell=True, check=False)
+        except:
+            pass
         os.chdir(current_dir)
 
     def remove_artifacts(self) -> None:

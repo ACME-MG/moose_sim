@@ -10,8 +10,7 @@ from deer_sim.simulations.__simulation__ import __Simulation__
 
 # Timestepper Parameters
 START_TIME      = 0
-# END_TIME        = 36e6
-END_TIME        = 1e1
+END_TIME        = 36e6
 TIME_DIFF_START = 1e-4
 TIME_DIFF_MIN   = 1e-4
 TIME_DIFF_MAX   = 1e7
