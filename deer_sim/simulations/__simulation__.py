@@ -126,6 +126,21 @@ class __Simulation__:
         """
         return self.csv_file
 
+    def set_stress(self, stress) -> None:
+        """
+        Sets the stress applied in the simulation
+
+        Parameters:
+        * `stress`: The stress applied in the simulation
+        """
+        self.stress = stress
+
+    def get_stress(self) -> str:
+        """
+        Gets the stress applied in the simulation
+        """
+        return self.stress
+
     def get_simulation(self, **kwargs) -> str:
         """
         Gets the content for the simulation file;
@@ -135,7 +150,7 @@ class __Simulation__:
 
 def get_simulation(simulation_name:str, params:dict, mesh_file:str,
                    num_grains:int, orientation_file:str, material_file:str,
-                   material_name:str, csv_file:str, **kwargs) -> str:
+                   material_name:str, csv_file:str, stress:float, **kwargs) -> str:
     """
     Gets the simulation file's content
     
@@ -148,6 +163,7 @@ def get_simulation(simulation_name:str, params:dict, mesh_file:str,
     * `material_file`:    The name of the material file
     * `material_name`:    The name of the material
     * `csv_file`:         The name of the CSV file
+    * `stress`:           The stress to apply in the simulation
     """
 
     # Get available simulations in current folder
@@ -176,5 +192,6 @@ def get_simulation(simulation_name:str, params:dict, mesh_file:str,
     simulation.set_material_file(material_file)
     simulation.set_material_name(material_name)
     simulation.set_csv_file(csv_file)
+    simulation.set_stress(stress)
     simulation_content = simulation.get_simulation(**kwargs)
     return simulation_content

@@ -164,7 +164,7 @@ SIMULATION_FORMAT = """
   [./applied_load_x]
     type = PiecewiseLinear
     x = '0 0.1 {end_time}'
-    y = '0 80 80'
+    y = '0 {stress} {stress}'
   [../]
   [./applied_load_y]
     type = PiecewiseLinear
@@ -460,6 +460,7 @@ class Simulation(__Simulation__):
             num_cells        = self.get_num_grains(),
             material_file    = self.get_material_file(),
             material_name    = self.get_material_name(),
+            stress           = self.get_stress(),
 
             # Non-optimising parameters
             start_time  = START_TIME,

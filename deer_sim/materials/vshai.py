@@ -15,19 +15,33 @@ MATERIAL_FORMAT = """
     <kinematics type="StandardKinematicModel">
       <emodel type="IsotropicLinearElasticModel">
         <m1_type>youngs</m1_type>
-        <m1>{youngs}</m1>
+        <m1 type="ConstantInterpolate">
+          <v>{youngs}</v>
+        </m1>
         <m2_type>poissons</m2_type>
-        <m2>{poissons}</m2>
+        <m2 type="ConstantInterpolate">
+          <v>{poissons}</v>
+        </m2>
       </emodel>
       <imodel type="AsaroInelasticity">
         <rule type="PowerLawSlipRule">
           <resistance type="VoceSlipHardening">
-            <tau_sat>{tau_s}</tau_sat>
-            <b>{b}</b>
-            <tau_0>{tau_0}</tau_0>
+            <tau_sat type="ConstantInterpolate">
+              <v>{tau_s}</v>
+            </tau_sat>
+            <b type="ConstantInterpolate">
+              <v>{b}</v>
+            </b>
+            <tau_0 type="ConstantInterpolate">
+              <v>{tau_0}</v>
+            </tau_0>
           </resistance>
-          <gamma0>{gamma_0}</gamma0>
-          <n>{n}</n>
+          <gamma0 type="ConstantInterpolate">
+            <v>{gamma_0}</v>
+          </gamma0>
+          <n type="ConstantInterpolate">
+            <v>{n}</v>
+          </n>
         </rule>
       </imodel>
     </kinematics>
@@ -37,6 +51,21 @@ MATERIAL_FORMAT = """
         {slip_dir} ; {slip_plane}
       </slip_systems>
     </lattice>
+    <update_rotation>true</update_rotation>
+    <alpha type="ConstantInterpolate">
+      <v>0</v>
+    </alpha>
+    <rtol>1e-08</rtol>
+    <atol>1e-06</atol>
+    <miter>16</miter>
+    <verbose>false</verbose>
+    <linesearch>false</linesearch>
+    <max_divide>2</max_divide>
+    <postprocessors/>
+    <elastic_predictor>false</elastic_predictor>
+    <fallback_elastic_predictor>true</fallback_elastic_predictor>
+    <force_divide>0</force_divide>
+    <elastic_predictor_first_step>false</elastic_predictor_first_step>
   </{material}>
 </materials>
 """

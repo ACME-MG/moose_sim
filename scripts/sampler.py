@@ -21,11 +21,11 @@ combinations = [list(c) for c in combinations]
 param_names = list(param_dict.keys())
 for i in range(len(combinations)):
     param_dict = dict(zip(param_names, combinations[i]))
-    api = API(f"s1_p{i}", input_path="./data/500/32_s1")
+    api = API(f"s1_p{i}", input_path="./data/500/16_s1")
     api.define_mesh("mesh.e", "input_orientations.csv")
     api.define_material("vshai", param_dict)
     api.define_simulation("cp_simple", {})
     api.export_params()
-    api.simulate("~/moose/deer/deer-opt", 32)
+    api.simulate("~/moose/deer/deer-opt", 8)
     api.remove_artifacts()
     api.analyse_results()

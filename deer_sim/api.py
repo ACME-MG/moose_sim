@@ -74,16 +74,17 @@ class API:
         self.__print__(f"Defining the material ({material_name})")
         self.__controller__.define_material(material_name, material_params)
     
-    def define_simulation(self, simulation_name:str, simulation_params:dict={}) -> None:
+    def define_simulation(self, simulation_name:str, simulation_params:dict={}, stress:float=80) -> None:
         """
         Defines the simulation
 
         Parameters:
         * `simulation_name`:   The name of the simulation
         * `simulation_params`: Dictionary of parameter values
+        * `stress`:            The stress to apply in the simulation
         """
         self.__print__(f"Defining the simulation ({simulation_name})")
-        self.__controller__.define_simulation(simulation_name, simulation_params)
+        self.__controller__.define_simulation(simulation_name, simulation_params, stress)
 
     def simulate(self, deer_path:str, num_processors:int) -> None:
         """
