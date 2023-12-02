@@ -2,11 +2,11 @@ import sys; sys.path += [".."]
 from deer_sim.api import API
 
 param_dict = {
-    "tau_s":   500,
-    "b":       200,
-    "tau_0":   100,
+    "tau_s":   100,
+    "b":       100,
+    "tau_0":   300,
     "gamma_0": round(1e-4/3, 7),
-    "n":       15,
+    "n":       5,
 }
 
 api = API(f"test_1", input_path="./data/500/16_s1")
