@@ -9,7 +9,7 @@ param_dict = {
     "n":       20,
 }
 
-api = API(f"test_1", input_path="./data/500/16_s1")
+api = API(f"test_5", input_path="./data/500/16_s1")
 api.define_mesh("mesh.e", "input_orientations.csv")
 api.define_material("vshai", param_dict)
 api.define_simulation("cp_simple", {})

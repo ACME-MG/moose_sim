@@ -11,40 +11,38 @@ from deer_sim.materials.__material__ import __Material__
 # Format for defining materials
 MATERIAL_FORMAT = """
 <materials>
-  <{material} type="SingleCrystalModel">
-    <kinematics type="StandardKinematicModel">
-      <emodel type="IsotropicLinearElasticModel">
-        <m1_type>youngs</m1_type>
-        <m1 type="ConstantInterpolate">
-          <v>{youngs}</v>
-        </m1>
-        <m2_type>poissons</m2_type>
-        <m2 type="ConstantInterpolate">
-          <v>{poissons}</v>
-        </m2>
-      </emodel>
-      <imodel type="AsaroInelasticity">
-        <rule type="PowerLawSlipRule">
-          <resistance type="VoceSlipHardening">
-            <tau_sat type="ConstantInterpolate">
-              <v>{tau_s}</v>
-            </tau_sat>
-            <b type="ConstantInterpolate">
-              <v>{b}</v>
-            </b>
-            <tau_0 type="ConstantInterpolate">
-              <v>{tau_0}</v>
-            </tau_0>
-          </resistance>
-          <gamma0 type="ConstantInterpolate">
-            <v>{gamma_0}</v>
-          </gamma0>
-          <n type="ConstantInterpolate">
-            <v>{n}</v>
-          </n>
-        </rule>
-      </imodel>
-    </kinematics>
+  <{material} type="GeneralIntegrator">
+    <elastic type="IsotropicLinearElasticModel">
+      <m1 type="ConstantInterpolate">
+        <v>{youngs}</v>
+      </m1>
+      <m1_type>youngs</m1_type>
+      <m2 type="ConstantInterpolate">
+        <v>{poissons}</v>
+      </m2>
+      <m2_type>poissons</m2_type>
+    </elastic>
+    <imodel type="AsaroInelasticity">
+      <rule type="PowerLawSlipRule">
+        <resistance type="VoceSlipHardening">
+          <tau_sat type="ConstantInterpolate">
+            <v>{tau_s}</v>
+          </tau_sat>
+          <b type="ConstantInterpolate">
+            <v>{b}</v>
+          </b>
+          <tau_0 type="ConstantInterpolate">
+            <v>{tau_0}</v>
+          </tau_0>
+        </resistance>
+        <gamma0 type="ConstantInterpolate">
+          <v>{gamma_0}</v>
+        </gamma0>
+        <n type="ConstantInterpolate">
+          <v>{n}</v>
+        </n>
+      </rule>
+    </imodel>
     <lattice type="CubicLattice">
       <a>1.0</a>
       <slip_systems>
