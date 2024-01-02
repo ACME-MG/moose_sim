@@ -1,6 +1,6 @@
 """
- Title:         Simulation API
- Description:   API for running deer simulations
+ Title:         Simulation Interface
+ Description:   Interface for running deer simulations
  Author:        Janzen Choi
 
 """
@@ -9,8 +9,8 @@
 import os, re, time
 from deer_sim.simulate.controller import Controller
 
-# API Class
-class API:
+# Interface Class
+class Interface:
 
     def __init__(self, title:str="", input_path:str="./data", output_path:str="./results",
                  verbose:bool=True, output_here:bool=False):

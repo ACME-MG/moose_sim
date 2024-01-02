@@ -1,5 +1,5 @@
 import sys; sys.path += [".."]
-from deer_sim.api import API
+from deer_sim.interface import Interface
 import itertools
 
 # Define parameter domains
@@ -21,11 +21,11 @@ combinations = [list(c) for c in combinations]
 param_names = list(param_dict.keys())
 for i in range(len(combinations)):
     param_dict = dict(zip(param_names, combinations[i]))
-    api = API(f"s1_p{i}", input_path="./data/500/16_s1")
-    api.define_mesh("mesh.e", "input_orientations.csv")
-    api.define_material("vshai", param_dict)
-    api.define_simulation("cp_simple", {})
-    api.export_params()
-    api.simulate("~/moose/deer/deer-opt", 8)
-    api.remove_artifacts()
-    api.analyse_results()
+    itf = Interface(f"s1_p{i}", input_path="./data/500/16_s1")
+    itf.define_mesh("mesh.e", "input_orientations.csv")
+    itf.define_material("vshai", param_dict)
+    itf.define_simulation("cp_simple", {})
+    itf.export_params()
+    itf.simulate("~/moose/deer/deer-opt", 8)
+    itf.remove_artifacts()
+    itf.analyse_results()

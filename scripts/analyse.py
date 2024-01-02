@@ -1,5 +1,5 @@
 import sys; sys.path += [".."]
-from deer_sim.api import API
+from deer_sim.interface import Interface
 
-api = API("temp", input_path="./data/analysis", output_here=True)
-api.analyse_results("results.csv", "x")
+itf = Interface("temp", input_path="./data/analysis", output_here=True)
+itf.analyse_results("results.csv", "x")

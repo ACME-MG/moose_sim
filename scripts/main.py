@@ -1,10 +1,10 @@
 import sys; sys.path += [".."]
-from deer_sim.api import API
+from deer_sim.interface import Interface
 
-api = API("temp", input_path="./data/500/16_s1")
-api.define_mesh("mesh.e", "input_orientations.csv")
+itf = Interface("temp", input_path="./data/500/16_s1")
+itf.define_mesh("mesh.e", "input_orientations.csv")
 
-api.define_material("vshai", {
+itf.define_material("vshai", {
     "tau_s":   12,
     "b":       66.67,
     "tau_0":   40,
@@ -12,10 +12,10 @@ api.define_material("vshai", {
     "n":       12
 })
 
-api.define_simulation("cp_simple")
+itf.define_simulation("cp_simple")
 
-api.export_params()
+itf.export_params()
 
-api.simulate("~/moose/deer/deer-opt", 8)
-api.remove_artifacts()
-api.analyse_results()
+itf.simulate("~/moose/deer/deer-opt", 8)
+itf.remove_artifacts()
+itf.analyse_results()
