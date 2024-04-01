@@ -1,7 +1,7 @@
 import sys; sys.path += ["../.."]
 from deer_sim.interface import Interface
 import itertools
-from constants import MESH_PATH, NUM_CORES
+from constants import MESH_PATH, NUM_CORES, TIMEOUT
 
 # Define parameter domains
 param_dict = {
@@ -26,6 +26,6 @@ for i in range(len(combinations)):
     itf.define_material("vshai", param_dict)
     itf.define_simulation("cp_simple", {})
     itf.export_params()
-    itf.simulate("~/moose/deer/deer-opt", NUM_CORES)
+    itf.simulate("~/moose/deer/deer-opt", NUM_CORES, TIMEOUT)
     itf.remove_artifacts()
     itf.analyse_results()

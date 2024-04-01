@@ -86,16 +86,17 @@ class Interface:
         self.__print__(f"Defining the simulation ({simulation_name})")
         self.__controller__.define_simulation(simulation_name, simulation_params, stress)
 
-    def simulate(self, deer_path:str, num_processors:int) -> None:
+    def simulate(self, deer_path:str, num_processors:int, timeout:float=1e10) -> None:
         """
         Runs the simulation
 
         Parameters:
         * `deer_path`:      Path to the deer executable
         * `num_processors`: The number of processors
+        * `timeout`:        The maximum amount of time (in seconds) to run the simulation
         """
         self.__print__("Running the simulation")
-        self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__)
+        self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__, timeout)
 
     def analyse_results(self, csv_file:str="", direction:str="x") -> None:
         """
@@ -147,7 +148,16 @@ class Interface:
         """
         time_str = time.strftime("%A, %D, %H:%M:%S", time.localtime())
         duration = round(time.time() - self.__start_time__)
-        self.__print__(f"\n  Finished on {time_str} in {duration}s\n", add_index=False)
+        duration_h = duration // 3600
+        duration_m = (duration - duration_h * 3600) // 60
+        duration_s = duration - duration_h * 3600 - duration_m * 60
+        duration_str_list = [
+            f"{duration_h} hours" if duration_h > 0 else "",
+            f"{duration_m} mins" if duration_m > 0 else "",
+            f"{duration_s} seconds" if duration_s > 0 else ""
+        ]
+        duration_str = ", ".join([d for d in duration_str_list if d != ""])
+        self.__print__(f"\n  Finished on {time_str} in {duration_str}\n", add_index=False)
 
 def safe_mkdir(dir_path:str) -> None:
     """

@@ -111,7 +111,7 @@ class Controller():
         with open(self.simulation_path, "w+") as fh:
             fh.write(simulation_content)
 
-    def run_simulation(self, deer_path:str, num_processors:int, output_path:str) -> None:
+    def run_simulation(self, deer_path:str, num_processors:int, output_path:str, timeout:float) -> None:
         """
         Runs the simulation
 
@@ -119,6 +119,7 @@ class Controller():
         * `deer_path`:      Path to the deer executable
         * `num_processors`: The number of processors
         * `output_path`:    Path to the output directory
+        * `timeout`:        The maximum amount of time (in seconds) to run the simulation
         """
 
         # Check that the material and simulation are both defined
@@ -130,7 +131,7 @@ class Controller():
         # Run the simulation
         current_dir = os.getcwd()
         os.chdir("{}/{}".format(os.getcwd(), output_path))
-        command = f"mpiexec -np {num_processors} {deer_path} -i {self.simulation_file}"
+        command = f"timeout {timeout}s mpiexec -np {num_processors} {deer_path} -i {self.simulation_file}"
         try:
             subprocess.run([command], shell=True, check=False)
         except:
