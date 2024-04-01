@@ -1,4 +1,4 @@
-import sys; sys.path += [".."]
+import sys; sys.path += ["../.."]
 from deer_sim.interface import Interface
 
 param_dict = {
@@ -9,7 +9,7 @@ param_dict = {
     "n":       5,
 }
 
-itf = Interface(f"test_4", input_path="./data/500/16_s1")
+itf = Interface(f"test_1", input_path="../data/500/16_s1", output_path="../results")
 itf.define_mesh("mesh.e", "input_orientations.csv")
 itf.define_material("vshai", param_dict)
 itf.define_simulation("cp_simple", {})

@@ -1,0 +1,2 @@
+MESH_PATH = "4_s1"
+NUM_CORES = 32
