@@ -1,6 +1,6 @@
-MESH_PATH = "4_s1"
+MESH_PATH = "16_s1"
 NUM_CORES = 32
-TIMEOUT = 1800
+TIMEOUT = 3600
 PARAM_DICT = {
     "tau_s":   [1, 500, 1000, 1500, 2000],
     "b":       [0.1, 1, 10, 100],
