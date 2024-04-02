@@ -1,15 +1,15 @@
 import sys; sys.path += ["../.."]
 from deer_sim.interface import Interface
 import itertools
-from constants import MESH_PATH, NUM_CORES, TIMEOUT
+from constants import *
 
 # Define parameter domains
 param_dict = {
-    "tau_s":   [1],
-    "b":       [0.1, 1, 10, 100],
-    "tau_0":   [100, 200, 300, 400, 500],
-    "gamma_0": [round(1e-4/3, 7)],
-    "n":       [1, 5, 10, 15, 20],
+    "tau_s":   [PARAM_DICT["tau_s"][2]],
+    "b":       PARAM_DICT["b"],
+    "tau_0":   PARAM_DICT["tau_0"],
+    "gamma_0": PARAM_DICT["gamma_0"],
+    "n":       PARAM_DICT["n"],
 }
 
 # Get combinations of domains
@@ -21,7 +21,7 @@ combinations = [list(c) for c in combinations]
 param_names = list(param_dict.keys())
 for i in range(len(combinations)):
     param_dict = dict(zip(param_names, combinations[i]))
-    itf = Interface(f"s1_p{i}", input_path=f"../data/500/{MESH_PATH}", output_path="../results")
+    itf = Interface(f"s3_p{i}", input_path=f"../data/500/{MESH_PATH}", output_path="../results")
     itf.define_mesh("mesh.e", "input_orientations.csv")
     itf.define_material("vshai", param_dict)
     itf.define_simulation("cp_simple", {})

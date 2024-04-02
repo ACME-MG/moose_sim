@@ -1,15 +1,15 @@
 import sys; sys.path += ["../.."]
 from deer_sim.interface import Interface
 import itertools
-from constants import MESH_PATH, NUM_CORES, TIMEOUT
+from constants import *
 
 # Define parameter domains
 param_dict = {
-    "tau_s":   [1500],
-    "b":       [0.1, 1, 10, 100],
-    "tau_0":   [100, 200, 300, 400, 500],
-    "gamma_0": [round(1e-4/3, 7)],
-    "n":       [1, 5, 10, 15, 20],
+    "tau_s":   [PARAM_DICT["tau_s"][3]],
+    "b":       PARAM_DICT["b"],
+    "tau_0":   PARAM_DICT["tau_0"],
+    "gamma_0": PARAM_DICT["gamma_0"],
+    "n":       PARAM_DICT["n"],
 }
 
 # Get combinations of domains
