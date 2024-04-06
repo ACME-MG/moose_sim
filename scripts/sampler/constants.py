@@ -1,5 +1,5 @@
 MESH_PATH = "48_s1"
-NUM_CORES = 39
+NUM_CORES = 38
 TIMEOUT = 3600*24
 PARAM_DICT = {
     "tau_s":   [1, 500, 1000, 1500, 2000],
