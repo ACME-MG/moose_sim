@@ -83,7 +83,7 @@ class Material(__Material__):
         """
         material_content = MATERIAL_FORMAT.format(
             material   = self.get_name(),
-            youngs     = 157000.0,
+            youngs     = 211000.0,
             poissons   = 0.30,
             tau_s      = self.get_param("tau_s"),
             b          = self.get_param("b"),

@@ -146,28 +146,6 @@ class Controller():
         os.remove(self.get_output(self.mesh_file))
         os.remove(self.get_output(self.orientation_file))
 
-    def analyse_results(self, csv_file:str="", direction:str="x") -> None:
-        """
-        Analyses the results of the simulation
-
-        Parameters:
-        * `csv_file`:  The results file; if unspecified, gets the results from a
-                       simulation that was just run
-        * `direction`: The direction the plot uses to plot the results
-        """
-        
-        # If filename specified, then check if it exists
-        if csv_file != "" and not os.path.exists(self.get_input(csv_file)):
-            raise FileNotFoundError(f"The '{csv_file}' file could not be found!")
-
-        # If filename not specified, check if there was a simulation that just ran
-        if csv_file == "" and not os.path.exists(self.csv_path):
-            raise FileNotFoundError("The file has not been specified and no simulation has been run!")
-
-        # Get path to CSV and conduct analysis
-        csv_path = self.csv_path if csv_file == "" else self.get_input(csv_file)
-        plot_creep(csv_path, self.analysis_path, direction)
-
     def export_params(self, params_file:str) -> None:
         """
         Exports the parameters

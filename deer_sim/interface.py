@@ -6,7 +6,7 @@
 """
 
 # Libraries
-import os, re, time
+import inspect, os, re, time
 from deer_sim.simulate.controller import Controller
 
 # Interface Class
@@ -37,7 +37,9 @@ class Interface:
         
         # Define input and output
         self.__input_path__ = input_path
-        title = "" if title == "" else f"_{title}"
+        file_path = inspect.currentframe().f_back.f_code.co_filename
+        file_name = file_path.split("/")[-1].replace(".py","")
+        title = f"_{file_name}" if title == "" else f"_{title}"
         title = re.sub(r"[^a-zA-Z0-9_]", "", title.replace(" ", "_"))
         self.__output_dir__ = "." if output_here else time_stamp
         self.__output_path__ = "." if output_here else f"{output_path}/{self.__output_dir__}{title}"
@@ -97,18 +99,6 @@ class Interface:
         """
         self.__print__("Running the simulation")
         self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__, timeout)
-
-    def analyse_results(self, csv_file:str="", direction:str="x") -> None:
-        """
-        Analyses the results of the simulation
-
-        Parameters:
-        * `csv_file`:  The results file; if unspecified, gets the results from a
-                       simulation that was just run
-        * `direction`: The direction the plot uses to plot the results
-        """
-        self.__print__("Analysing the results")
-        self.__controller__.analyse_results(csv_file, direction)
 
     def export_params(self, params_file:str="params.txt") -> None:
         """
