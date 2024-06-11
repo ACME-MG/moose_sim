@@ -1,8 +1,8 @@
 import sys; sys.path += [".."]
 from deer_sim.interface import Interface
 
-itf = Interface(input_path="./data/ebsd/617_s1_llr")
-itf.define_mesh("mesh.e", "orientations.csv")
+itf = Interface(input_path="./data/ebsd/617_s1_gs")
+itf.define_mesh("mesh.e", "grain_stats.csv")
 
 itf.define_material("gripped", {
     "cp_tau_s":   200,
