@@ -2,9 +2,7 @@ import sys; sys.path += [".."]
 from deer_sim.interface import Interface
 from deer_sim.helper.general import round_sf
 
-# DATA_FOLDER = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/ebsd_mesher/240612151644_617_s1_lr"
-DATA_FOLDER = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/ebsd_mesher/240612152121_617_s1_unfixed"
-itf = Interface(input_path=DATA_FOLDER)
+itf = Interface(input_path="data/ebsd/617_s1_lr_raw")
 itf.define_mesh("mesh.e", "element_stats.csv")
 
 itf.define_material(
