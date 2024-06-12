@@ -11,16 +11,18 @@ import importlib, os, pathlib, sys
 # Simulation Class
 class __Simulation__:
 
-    def __init__(self, name:str, params:dict):
+    def __init__(self, name:str, params:dict, input_function):
         """
         Template class for simulation objects
         
         Parameters:
-        * `name`:   The name of the simulation
-        * `params`: The parameter values
+        * `name`:           The name of the simulation
+        * `params`:         The parameter values
+        * `input_function`: The input function
         """
-        self.name   = name
-        self.params = params
+        self.name           = name
+        self.input_function = input_function
+        self.params         = params
 
     def get_name(self) -> str:
         """
@@ -36,12 +38,12 @@ class __Simulation__:
             raise ValueError(f"The '{param_name}' parameter has not been initialised!")
         return self.params[param_name]
     
-    def set_mesh_file(self, mesh_file) -> None:
+    def set_mesh_file(self, mesh_file:str) -> None:
         """
         Sets the name of the mesh file
 
         Parameters:
-        * `mesh_file`: The path to the mesh file
+        * `mesh_file`: The path to the orientation file
         """
         self.mesh_file = mesh_file
 
@@ -51,22 +53,7 @@ class __Simulation__:
         """
         return self.mesh_file
     
-    def set_num_grains(self, num_grains) -> None:
-        """
-        Sets the number of grains
-
-        Parameters:
-        * `num_grains`: The number of grains
-        """
-        self.num_grains = num_grains
-
-    def get_num_grains(self) -> int:
-        """
-        Gets the path to the mesh file
-        """
-        return self.num_grains
-    
-    def set_orientation_file(self, orientation_file) -> None:
+    def set_orientation_file(self, orientation_file:str) -> None:
         """
         Sets the name of the orientation file
 
@@ -81,7 +68,7 @@ class __Simulation__:
         """
         return self.orientation_file
 
-    def set_material_file(self, material_file) -> None:
+    def set_material_file(self, material_file:str) -> None:
         """
         Sets the material file
 
@@ -96,7 +83,7 @@ class __Simulation__:
         """
         return self.material_file
 
-    def set_material_name(self, material_name) -> None:
+    def set_material_name(self, material_name:str) -> None:
         """
         Sets the material name
 
@@ -111,7 +98,7 @@ class __Simulation__:
         """
         return self.material_name
 
-    def set_csv_file(self, csv_file) -> None:
+    def set_csv_file(self, csv_file:str) -> None:
         """
         Sets the name of the CSV file
 
@@ -126,20 +113,14 @@ class __Simulation__:
         """
         return self.csv_file
 
-    def set_stress(self, stress) -> None:
+    def get_input(self, path:str) -> None:
         """
-        Sets the stress applied in the simulation
+        Gets the input from a certain file
 
         Parameters:
-        * `stress`: The stress applied in the simulation
+        * `path`: The path to the file
         """
-        self.stress = stress
-
-    def get_stress(self) -> str:
-        """
-        Gets the stress applied in the simulation
-        """
-        return self.stress
+        return self.input_function(path)
 
     def get_simulation(self, **kwargs) -> str:
         """
@@ -148,22 +129,20 @@ class __Simulation__:
         """
         raise NotImplementedError
 
-def get_simulation(simulation_name:str, params:dict, mesh_file:str,
-                   num_grains:int, orientation_file:str, material_file:str,
-                   material_name:str, csv_file:str, stress:float, **kwargs) -> str:
+def get_simulation(simulation_name:str, params:dict, get_input_function, mesh_file:str, orientation_file:str,
+                   material_file:str, material_name:str, csv_file:str, **kwargs) -> str:
     """
     Gets the simulation file's content
     
     Parameters:
-    * `simulation_name`:  The name of the simulation
-    * `params`:           The parameter values
-    * `mesh_file`:        The name of the mesh file
-    * `num_grains`:       The nummber of grains in the mesh
-    * `orientation_file`: The name of the orientation file
-    * `material_file`:    The name of the material file
-    * `material_name`:    The name of the material
-    * `csv_file`:         The name of the CSV file
-    * `stress`:           The stress to apply in the simulation
+    * `simulation_name`:    The name of the simulation
+    * `params`:             The parameter values
+    * `get_input_function`: The input function
+    * `mesh_file`:          The name of the mesh file
+    * `orientation_file`:   The name of the orientation file
+    * `material_file`:      The name of the material file
+    * `material_name`:      The name of the material
+    * `csv_file`:           The name of the CSV file
     """
 
     # Get available simulations in current folder
@@ -185,13 +164,11 @@ def get_simulation(simulation_name:str, params:dict, mesh_file:str,
     
     # Initialise and return the simulation
     from simulation_file import Simulation
-    simulation = Simulation(simulation_name, params)
+    simulation = Simulation(simulation_name, params, get_input_function)
     simulation.set_mesh_file(mesh_file)
-    simulation.set_num_grains(num_grains)
     simulation.set_orientation_file(orientation_file)
     simulation.set_material_file(material_file)
     simulation.set_material_name(material_name)
     simulation.set_csv_file(csv_file)
-    simulation.set_stress(stress)
     simulation_content = simulation.get_simulation(**kwargs)
     return simulation_content

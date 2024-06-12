@@ -90,14 +90,13 @@ class Controller():
         with open(self.material_path, "w+") as fh:
             fh.write(material_content)
 
-    def define_simulation(self, simulation_name:str, simulation_params:dict, stress:float, **kwargs) -> None:
+    def define_simulation(self, simulation_name:str, simulation_params:dict, **kwargs) -> None:
         """
         Defines the simulation
 
         Parameters:
         * `simulation_name`:   The name of the simulation
         * `simulation_params`: Dictionary of parameter values
-        * `stress`:            The stress to apply in the simulation
         """
 
         # Save simulation information
@@ -105,9 +104,9 @@ class Controller():
         self.simulation_params = simulation_params
 
         # Write the simulation file
-        simulation_content = get_simulation(simulation_name, simulation_params, self.mesh_file,
-                                            self.num_grains, self.orientation_file, self.material_file,
-                                            self.material_name, self.csv_file, stress, **kwargs)
+        simulation_content = get_simulation(simulation_name, simulation_params, self.get_input,
+                                            self.mesh_file, self.orientation_file, self.material_file,
+                                            self.material_name, self.csv_file, **kwargs)
         with open(self.simulation_path, "w+") as fh:
             fh.write(simulation_content)
 

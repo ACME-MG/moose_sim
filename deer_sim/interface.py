@@ -65,7 +65,7 @@ class Interface:
         self.__print__(f"Defining the mesh at '{mesh_file}' with orientations at '{orientation_file}'")
         self.__controller__.define_mesh(mesh_file, orientation_file)
         
-    def define_material(self, material_name:str, material_params:dict) -> None:
+    def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
         """
         Defines the material
 
@@ -74,9 +74,9 @@ class Interface:
         * `material_params`: Dictionary of parameter values
         """
         self.__print__(f"Defining the material ({material_name})")
-        self.__controller__.define_material(material_name, material_params)
+        self.__controller__.define_material(material_name, material_params, **kwargs)
     
-    def define_simulation(self, simulation_name:str, simulation_params:dict={}, stress:float=80) -> None:
+    def define_simulation(self, simulation_name:str, simulation_params:dict={}, **kwargs) -> None:
         """
         Defines the simulation
 
@@ -86,7 +86,7 @@ class Interface:
         * `stress`:            The stress to apply in the simulation
         """
         self.__print__(f"Defining the simulation ({simulation_name})")
-        self.__controller__.define_simulation(simulation_name, simulation_params, stress)
+        self.__controller__.define_simulation(simulation_name, simulation_params, **kwargs)
 
     def simulate(self, deer_path:str, num_processors:int, timeout:float=1e10) -> None:
         """
@@ -147,7 +147,8 @@ class Interface:
             f"{duration_s} seconds" if duration_s > 0 else ""
         ]
         duration_str = ", ".join([d for d in duration_str_list if d != ""])
-        self.__print__(f"\n  Finished on {time_str} in {duration_str}\n", add_index=False)
+        duration_str = f"in {duration_str}" if duration_str != "" else ""
+        self.__print__(f"\n  Finished on {time_str} {duration_str}\n", add_index=False)
 
 def safe_mkdir(dir_path:str) -> None:
     """
