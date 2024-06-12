@@ -49,5 +49,5 @@ itf.define_simulation(
 )
 
 itf.export_params()
-itf.simulate("~/moose/deer/deer-opt", 8, 10000)
+itf.simulate("~/moose/deer/deer-opt", int(sys.argv[1]), 10000)
 itf.remove_artifacts()
