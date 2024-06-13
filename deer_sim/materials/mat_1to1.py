@@ -14,10 +14,10 @@ MATERIAL_FORMAT = """
   <{material}_cp type="SingleCrystalModel">
     <kinematics type="StandardKinematicModel">
       <emodel type="IsotropicLinearElasticModel">
-        <m1>{youngs}</m1>
         <m1_type>youngs</m1_type>
-        <m2>{poissons}</m2>
+        <m1>{youngs}</m1>
         <m2_type>poissons</m2_type>
+        <m2>{poissons}</m2>
       </emodel>
       <imodel type="AsaroInelasticity">
         <rule type="PowerLawSlipRule">
@@ -25,7 +25,6 @@ MATERIAL_FORMAT = """
             <tau_sat>{cp_tau_s}</tau_sat>
             <b>{cp_b}</b>
             <tau_0>{cp_tau_0}</tau_0>
-            <var_name>strength</var_name>
           </resistance>
           <gamma0>{cp_gamma_0}</gamma0>
           <n>{cp_n}</n>
@@ -54,17 +53,17 @@ MATERIAL_FORMAT = """
   </{material}_cp>
   <{material}_vp type="GeneralIntegrator">
 		<elastic type="IsotropicLinearElasticModel">
-      <m1>{youngs}</m1>
       <m1_type>youngs</m1_type>
-      <m2>{poissons}</m2>
+      <m1>{youngs}</m1>
       <m2_type>poissons</m2_type>
+      <m2>{poissons}</m2>
 		</elastic>
 		<rule type="TVPFlowRule">
 			<elastic type="IsotropicLinearElasticModel">
-        <m1>{youngs}</m1>
         <m1_type>youngs</m1_type>
-        <m2>{poissons}</m2>
+        <m1>{youngs}</m1>
         <m2_type>poissons</m2_type>
+        <m2>{poissons}</m2>
 			</elastic>
 			<flow type="PerzynaFlowRule">
 				<surface type="IsoJ2"/>

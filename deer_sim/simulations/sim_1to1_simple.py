@@ -124,18 +124,6 @@ SIMULATION_FORMAT = """
     order  = CONSTANT
     family = MONOMIAL
   [../]
-  [./RGB_x]
-    order  = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./RGB_y]
-    order  = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./RGB_z]
-    order  = CONSTANT
-    family = MONOMIAL
-  [../]
 []
 
 # ==================================================
@@ -177,45 +165,6 @@ SIMULATION_FORMAT = """
     property   = orientation
     index      = 3
     variable   = orientation_q4
-    execute_on = 'initial timestep_end'
-    block      = '{grain_ids}'
-  [../]
-  [RBG_x]
-    type       = IPFColoring
-    variable   = RGB_x
-    q1         = orientation_q1
-    q2         = orientation_q2
-    q3         = orientation_q3
-    q4         = orientation_q4
-    sample_direction = '0.0 0.0 1.0'
-    crystal_symmetry = '432'
-    component  = 0
-    execute_on = 'initial timestep_end'
-    block      = '{grain_ids}'
-  [../]
-  [RBG_y]
-    type       = IPFColoring
-    variable   = RGB_y
-    q1         = orientation_q1
-    q2         = orientation_q2
-    q3         = orientation_q3
-    q4         = orientation_q4
-    sample_direction = '0.0 0.0 1.0'
-    crystal_symmetry = '432'
-    component  = 1
-    execute_on = 'initial timestep_end'
-    block      = '{grain_ids}'
-  [../]
-  [RBG_z]
-    type       = IPFColoring
-    variable   = RGB_z
-    q1         = orientation_q1
-    q2         = orientation_q2
-    q3         = orientation_q3
-    q4         = orientation_q4
-    sample_direction = '0.0 0.0 1.0'
-    crystal_symmetry = '432'
-    component  = 2
     execute_on = 'initial timestep_end'
     block      = '{grain_ids}'
   [../]
@@ -332,222 +281,6 @@ SIMULATION_FORMAT = """
 []
 
 # ==================================================
-# Define Postprocessing (Model Average)
-# ==================================================
-
-[Postprocessors]
-
-  # General
-  [./nelem]
-    type = NumElems
-  [../]
-  [./ndof]
-    type = NumDOFs
-  [../]
-  [./dt]
-    type = TimestepSize
-  [../]
-  [./num_lin_it]
-    type = NumLinearIterations
-  [../]
-  [./num_nonlin_it]
-    type = NumNonlinearIterations
-  [../]
- 
-  # Average stress of blocks
-  [./mCS_cpvp_xx]
-    type     = ElementAverageValue
-    variable = cauchy_stress_xx
-  [../]
-  [./mCS_cpvp_yy]
-    type     = ElementAverageValue
-    variable = cauchy_stress_yy
-  [../]
-  [./mCS_cpvp_zz]
-    type     = ElementAverageValue
-    variable = cauchy_stress_zz
-  [../]
-
-  # Average stress of grains
-  [./mCS_cp_xx]
-    type     = ElementAverageValue
-    variable = cauchy_stress_xx
-    block    = '{grain_ids}'
-  [../]
-  [./mCS_cp_yy]
-    type     = ElementAverageValue
-    variable = cauchy_stress_yy
-    block    = '{grain_ids}'
-  [../]
-  [./mCS_cp_zz]
-    type     = ElementAverageValue
-    variable = cauchy_stress_zz
-    block    = '{grain_ids}'
-  [../]
-
-  # Average stress of grips
-  [./mCS_vp_xx]
-    type     = ElementAverageValue
-    variable = cauchy_stress_xx
-    block    = '{grip_ids}'
-  [../]
-  [./mCS_vp_yy]
-    type     = ElementAverageValue
-    variable = cauchy_stress_yy
-    block    = '{grip_ids}'
-  [../]
-  [./mCS_vp_zz]
-    type     = ElementAverageValue
-    variable = cauchy_stress_zz
-    block    = '{grip_ids}'
-  [../]
-
-  # Average strain of blocks
-  [./mTE_cpvp_xx]
-    type     = ElementAverageValue
-    variable = strain_xx
-  [../]
-  [./mTE_cpvp_yy]
-    type     = ElementAverageValue
-    variable = strain_yy
-  [../]
-  [./mTE_cpvp_zz]
-    type     = ElementAverageValue
-    variable = strain_zz
-  [../]
-
-  # Average strain of grains
-  [./mTE_cp_xx]
-    type     = ElementAverageValue
-    variable = strain_xx
-    block = '{grain_ids}'
-  [../]
-  [./mTE_cp_yy]
-    type     = ElementAverageValue
-    variable = strain_yy
-    block = '{grain_ids}'
-  [../]
-  [./mTE_cp_zz]
-    type     = ElementAverageValue
-    variable = strain_zz
-    block = '{grain_ids}'
-  [../]
-
-  # Average strain of grips
-  [./mTE_vp_xx]
-    type     = ElementAverageValue
-    variable = strain_xx
-    block    = '{grip_ids}'
-  [../]
-  [./mTE_vp_yy]
-    type     = ElementAverageValue
-    variable = strain_yy
-    block    = '{grip_ids}'
-  [../]
-  [./mTE_vp_zz]
-    type     = ElementAverageValue
-    variable = strain_zz
-    block    = '{grip_ids}'
-  [../]
-
-  # Average mechanical strain of blocks
-  [./mME_cpvp_xx]
-    type     = ElementAverageValue
-    variable = mechanical_strain_xx
-  [../]
-  [./mME_cpvp_yy]
-    type     = ElementAverageValue
-    variable = mechanical_strain_yy
-  [../]
-  [./mME_cpvp_zz]
-    type     = ElementAverageValue
-    variable = mechanical_strain_zz
-  [../]
-
-  # Average mechanical strain of grains
-  [./mME_cp_xx]
-    type     = ElementAverageValue
-    variable = mechanical_strain_xx
-    block    = '{grain_ids}'
-  [../]
-  [./mME_cp_yy]
-    type     = ElementAverageValue
-    variable = mechanical_strain_yy
-    block    = '{grain_ids}'
-  [../]
-  [./mME_cp_zz]
-    type     = ElementAverageValue
-    variable = mechanical_strain_zz
-    block    = '{grain_ids}'
-  [../]
-
-  # Average mechanical strain of grips
-  [./mME_vp_xx]
-    type     = ElementAverageValue
-    variable = mechanical_strain_xx
-    block    = '{grip_ids}'
-  [../]
-  [./mME_vp_yy]
-    type     = ElementAverageValue
-    variable = mechanical_strain_yy
-    block    = '{grip_ids}'
-  [../]
-  [./mME_vp_zz]
-    type     = ElementAverageValue
-    variable = mechanical_strain_zz
-    block    = '{grip_ids}'
-  [../]
-
-  # Average elastic strain of blocks
-  [./mEE_cpvp_xx]
-    type     = ElementAverageValue
-    variable = elastic_strain_xx
-  [../]
-  [./mEE_cpvp_yy]
-    type     = ElementAverageValue
-    variable = elastic_strain_yy
-  [../]
-  [./mEE_cpvp_zz]
-    type     = ElementAverageValue
-    variable = elastic_strain_zz
-  [../]
-
-  # Average elastic strain of grains
-  [./mEE_cp_xx]
-    type     = ElementAverageValue
-    variable = elastic_strain_xx
-    block    = '{grain_ids}'
-  [../]
-  [./mEE_cp_yy]
-    type     = ElementAverageValue
-    variable = elastic_strain_yy
-    block    = '{grain_ids}'
-  [../]
-  [./mEE_cp_zz]
-    type     = ElementAverageValue
-    variable = elastic_strain_zz
-    block    = '{grain_ids}'
-  [../]
-
-  # Average elastic strain of grips
-  [./mEE_vp_xx]
-    type     = ElementAverageValue
-    variable = elastic_strain_xx
-    block    = '{grip_ids}'
-  [../]
-  [./mEE_vp_yy]
-    type     = ElementAverageValue
-    variable = elastic_strain_yy
-    block    = '{grip_ids}'
-  [../]
-  [./mEE_vp_zz]
-    type     = ElementAverageValue
-    variable = elastic_strain_zz
-    block    = '{grip_ids}'
-  [../]
-[]
-
-# ==================================================
 # Define Simulation
 # ==================================================
 
@@ -607,25 +340,11 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 [Outputs]
-  # perf_graph = true
-  # checkpoint = true
   print_linear_residuals = false
-  [./exodus]
-    type        = Exodus
-    file_base   = '{csv_file}'
-    interval    = 1
-    execute_on  = 'initial timestep_end'
-    sync_only   = true
-    sync_times  = '{times}'
-    elemental_as_nodal = true
-  [../]
   [./console]
     type        = Console
-    show        = 'dt mME_cp_xx mME_vp_xx mME_cpvp_xx mCS_cp_xx mCS_vp_xx mCS_cpvp_xx'
-    max_rows    = 5
-    # output_linear = true
     output_linear = false
-    print_mesh_changed_info = true
+    print_mesh_changed_info = false
   [../]
   [./outfile]
     type        = CSV
