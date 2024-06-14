@@ -9,7 +9,8 @@
 import os, subprocess, shutil, numpy as np
 from deer_sim.helper.io import dict_to_csv
 from deer_sim.helper.general import transpose, round_sf
-from deer_sim.maths.orientation import rad_to_deg
+from deer_sim.maths.orientation import rad_to_deg, deg_to_rad
+from deer_sim.maths.neml import reorient_euler
 from deer_sim.materials.__material__ import get_material
 from deer_sim.simulations.__simulation__ import get_simulation
 
@@ -45,7 +46,7 @@ class Controller():
         self.csv_path        = get_output(f"{self.csv_file}.csv")
         self.analysis_path   = get_output(self.analysis_file)
 
-    def define_mesh(self, mesh_file:str, orientation_file:str, degrees:bool=True) -> None:
+    def define_mesh(self, mesh_file:str, orientation_file:str, degrees:bool=True, active:bool=True) -> None:
         """
         Defining the mesh
         
@@ -53,6 +54,7 @@ class Controller():
         * `mesh_file`:        The name of the mesh file
         * `orientation_file`: The name of the orientation file
         * `degrees`:          Whether the orientation data is in degrees
+        * `active`:           Whether the orientation data is active (or passive)
         """
 
         # Get paths to input files
@@ -67,12 +69,23 @@ class Controller():
         if not os.path.exists(orientation_path):
             raise FileNotFoundError(f"No orientation file exists at '{mesh_path}'!")
         
-        # Write new orientation file to results folder
+        # Read orientation file
         ori_list = np.loadtxt(orientation_path, delimiter=",")
         euler_list = [list(ori[:3]) for ori in ori_list]
-        if not degrees:
+        
+        # Enforce degrees and active rotations, then round
+        if not degrees and not active:
+            euler_list = [reorient_euler(euler) for euler in euler_list]
             euler_list = rad_to_deg(euler_list)
-            euler_list = [[round_sf(e, 5) for e in euler] for euler in euler_list]
+        elif degrees and not active:
+            euler_list = deg_to_rad(euler_list)
+            euler_list = [reorient_euler(euler) for euler in euler_list]
+            euler_list = rad_to_deg(euler_list)
+        elif not degrees and active:
+            euler_list = rad_to_deg(euler_list)
+        euler_list = [[round_sf(e, 5) for e in euler] for euler in euler_list]
+        
+        # Store and save orientation information to results folder
         euler_list = transpose(euler_list)
         ori_dict = {"phi_1": euler_list[0], "Phi": euler_list[1], "phi_2": euler_list[2]}
         other_list = transpose([list(ori[3:]) for ori in ori_list])

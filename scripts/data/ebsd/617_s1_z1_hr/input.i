@@ -24,7 +24,7 @@ BEGIN SCULPT
     max_opt_iters = 50
     
     # Output
-    input_spn = ./results/240614173301_simple/voxels.spn
-    exodus_file = ./results/240614173301_simple/mesh.e
+    input_spn = ./results/240614175847_simple/voxels.spn
+    exodus_file = ./results/240614175847_simple/mesh.e
 
 END SCULPT

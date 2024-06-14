@@ -9,7 +9,7 @@
 
 # Libraries
 import numpy as np
-from ebsd_mesher.maths.orientation import random_euler, deg_to_rad, euler_to_matrix, matrix_to_euler, get_matrix_product
+from deer_sim.maths.orientation import random_euler, deg_to_rad, euler_to_matrix, matrix_to_euler, get_matrix_product
 
 # Dictionary of CSLs
 CSL_DICT = {
