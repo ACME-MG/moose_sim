@@ -3,7 +3,7 @@ from deer_sim.interface import Interface
 from deer_sim.helper.general import round_sf
 
 itf = Interface(input_path="data/ebsd/617_s1_hr")
-itf.define_mesh("mesh.e", "element_stats.csv")
+itf.define_mesh("mesh.e", "element_stats.csv", degrees=True)
 
 itf.define_material(
     material_name   = "mat_1to1",

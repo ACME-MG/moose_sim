@@ -6,10 +6,12 @@
 """
 
 # Libraries
-import csv, os, subprocess, shutil
+import os, subprocess, shutil, numpy as np
+from deer_sim.helper.io import dict_to_csv
+from deer_sim.helper.general import transpose, round_sf
+from deer_sim.maths.orientation import rad_to_deg
 from deer_sim.materials.__material__ import get_material
 from deer_sim.simulations.__simulation__ import get_simulation
-from deer_sim.simulate.analyser import plot_creep
 
 # The Controller class
 class Controller():
@@ -43,13 +45,14 @@ class Controller():
         self.csv_path        = get_output(f"{self.csv_file}.csv")
         self.analysis_path   = get_output(self.analysis_file)
 
-    def define_mesh(self, mesh_file:str, orientation_file:str):
+    def define_mesh(self, mesh_file:str, orientation_file:str, degrees:bool=True) -> None:
         """
         Defining the mesh
         
         Parameters:
         * `mesh_file`:        The name of the mesh file
         * `orientation_file`: The name of the orientation file
+        * `degrees`:          Whether the orientation data is in degrees
         """
 
         # Get paths to input files
@@ -64,13 +67,20 @@ class Controller():
         if not os.path.exists(orientation_path):
             raise FileNotFoundError(f"No orientation file exists at '{mesh_path}'!")
         
-        # Calculate number of grains
-        with open(orientation_path, "r", newline="") as file:
-             self.num_grains = len([row for row in csv.reader(file, delimiter=" ")])
-        
-        # Copy the mesh and orientation files to the results folder
+        # Write new orientation file to results folder
+        ori_list = np.loadtxt(orientation_path, delimiter=",")
+        euler_list = [list(ori[:3]) for ori in ori_list]
+        if not degrees:
+            euler_list = rad_to_deg(euler_list)
+            euler_list = [[round_sf(e, 5) for e in euler] for euler in euler_list]
+        euler_list = transpose(euler_list)
+        ori_dict = {"phi_1": euler_list[0], "Phi": euler_list[1], "phi_2": euler_list[2]}
+        other_list = transpose([list(ori[3:]) for ori in ori_list])
+        other_dict = dict(zip([str(i) for i in range(len(other_list))], other_list))
+        dict_to_csv({**ori_dict, **other_dict}, self.get_output(orientation_file), add_header=False)
+
+        # Copy the mesh to the results folder
         shutil.copy(mesh_path, self.get_output(mesh_file))
-        shutil.copy(orientation_path, self.get_output(orientation_file))
 
     def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
         """

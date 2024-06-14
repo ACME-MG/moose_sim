@@ -54,16 +54,18 @@ class Interface:
             safe_mkdir(output_path)
             safe_mkdir(self.__output_path__)
     
-    def define_mesh(self, mesh_file:str, orientation_file:str):
+    def define_mesh(self, mesh_file:str, orientation_file:str, degrees:bool=True) -> None:
         """
         Defining the mesh
         
         Parameters:
         * `mesh_file`:        The name of the mesh file
         * `orientation_file`: The name of the orientation file
+        * `degrees`:          Whether the orientation data is in degrees
         """
-        self.__print__(f"Defining the mesh at '{mesh_file}' with orientations at '{orientation_file}'")
-        self.__controller__.define_mesh(mesh_file, orientation_file)
+        type_str = "deg" if degrees else "rad"
+        self.__print__(f"Defining the mesh at '{mesh_file}' with orientations ({type_str}) at '{orientation_file}'")
+        self.__controller__.define_mesh(mesh_file, orientation_file, degrees)
         
     def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
         """
