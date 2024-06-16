@@ -47,5 +47,5 @@ itf.define_simulation(
 # Runs the model and saves results
 num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
-itf.simulate("~/moose/deer/deer-opt", num_processors, 10000)
+itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 # itf.remove_artifacts()

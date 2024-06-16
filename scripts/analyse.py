@@ -7,97 +7,73 @@
 
 # Libraries
 import sys; sys.path += [".."]
-import os
+from deer_sim.helper.io import csv_to_dict
 from deer_sim.helper.general import transpose, round_sf
-from deer_sim.helper.io import csv_to_dict, dict_to_csv
-from deer_sim.maths.orientation import get_average_quat
-from deer_sim.maths.neml import deer_quat_to_euler
+from deer_sim.maths.orientation import rad_to_deg
+from deer_sim.simulate.analyser import get_data_dict_list, get_grain_map, get_average_orientations
+from deer_sim.simulate.pole_figure import IPF, get_lattice
+from deer_sim.simulate.plotter import save_plot
 
 # Constants
-GRAIN_FIELD   = "block_id"
-ELEMENT_FIELD = "id"
-QUAT_FIELDS   = ["orientation_q1", "orientation_q2", "orientation_q3", "orientation_q4"]
-RESULTS_PATH  = "results/240614222935_617_s1"
+EXP_PATH = "data/ebsd/617_s1_exp.csv"
+SIM_PATH = "results/240615154703_617_s1"
+EXP_TO_MESH_PATH = "data/ebsd/617_s1_z1_lr/grain_map.csv"
 
-def get_data_dict_list(results_path:str) -> list:
-    """
-    Gets the list of data dictionaries
+# Get all grain ID maps
+ebsd_to_mesh = csv_to_dict(EXP_TO_MESH_PATH) # exp -> mesh
+exp_dict     = csv_to_dict(EXP_PATH)         # exp (mappable)
 
-    Parameters:
-    * `results_path`: Path to the results
+# Getting ID mapping (exp -> mesh)
+exp_to_mesh = {}
+exp_ids = [int(key.replace("_phi_1","").replace("g","")) for key in exp_dict.keys() if "_phi_1" in key]
+for exp_id in exp_ids:
+    if exp_id in ebsd_to_mesh["ebsd_id"]:
+        index = ebsd_to_mesh["ebsd_id"].index(exp_id)
+        mesh_id = ebsd_to_mesh["mesh_id"][index]
+        exp_to_mesh[exp_id] = int(mesh_id)
 
-    Returns the data dictionary list
-    """
-    csv_file_list = [csv_file for csv_file in os.listdir(results_path) if csv_file.endswith(".csv")]
-    data_dict_list = [csv_to_dict(f"{results_path}/{csv_file}") for csv_file in csv_file_list]
-    data_dict_list = [data_dict for data_dict in data_dict_list if GRAIN_FIELD in data_dict.keys()]
-    return data_dict_list
+# Define grain IDs
+exp_grain_ids = list(exp_to_mesh.keys())
+# exp_grain_ids = [45, 56, 135, 213, 346, 768]
+sim_grain_ids = [exp_to_mesh[id] for id in exp_grain_ids]
 
-def get_grain_map(data_dict:dict) -> dict:
-    """
-    Gets the mapping from grain ID to element IDs
+# Get experimental trajectories
+exp_trajectories = []
+for grain_id in exp_grain_ids:
+    exp_trajectory = [exp_dict[f"g{grain_id}_{phi}"] for phi in ["phi_1", "Phi", "phi_2"]]
+    exp_trajectory = transpose(exp_trajectory)
+    exp_trajectories.append(exp_trajectory)
 
-    Parameters:
-    * `data_dict`: The dictionary containing the element information
-
-    Returns the mapping as a dictionary
-    """
-    grain_ids = list(set(data_dict[GRAIN_FIELD]))
-    grain_map = dict(zip(grain_ids, [[] for _ in range(len(grain_ids))]))
-    for i, grain_id in enumerate(data_dict[GRAIN_FIELD]):
-        grain_map[grain_id].append(data_dict[ELEMENT_FIELD][i])
-    return grain_map
-
-def get_average_orientations(data_dict_list:list, grain_map:dict) -> dict:
-    """
-    Gets the changes in the average orientations
-
-    Parameters:
-    * `data_dict_list`: The list of data dictionaries
-    * `grain_map`:      The mapping from grain ID to element IDs
-
-    Returns a dictionary that maps the grain IDs to the list of
-    average orientations
-    """
-
-    # Initialise mapping from grain id to average orientation
-    grain_ids = list(grain_map.keys())
-    average_dict = dict(zip(grain_ids, [[] for _ in range(len(grain_ids))]))
-
-    # Extract orientation data from each result file
-    for i, data_dict in enumerate(data_dict_list):
-        
-        # Get all quaternions
-        all_quat_list = [data_dict[field] for field in QUAT_FIELDS]
-        all_quat_list = transpose(all_quat_list)
-
-        # Calculate average quaternion
-        for grain_id in grain_ids:
-            quat_list = [all_quat_list[j] for j in range(len(all_quat_list)) if j in grain_map[grain_id]]
-            average_quat = get_average_quat(quat_list)
-            average_euler = deer_quat_to_euler(average_quat, reorient=True, offset=(i==0))
-            average_dict[grain_id].append(average_euler)
-    
-    # Return
-    return average_dict
-
-def save_average_orientations(average_dict:dict, file_path:str) -> None:
-    """
-    Saves the average orientations
-
-    Parameters:
-    * `average_dict`: The dictionary of average orientations
-    * `file_path`:    The path to save the file
-    """
-    trajectories = {}
-    for grain_id in average_dict.keys():
-        for i, phi in enumerate(["phi_1", "Phi", "phi_2"]):
-            trajectory = [round_sf(average_euler[i], 5) for average_euler in average_dict[grain_id]]
-            trajectories[f"g{int(grain_id)}_{phi}"] = trajectory
-    dict_to_csv(trajectories, file_path)
-
-# Save orientation trajectories
-data_dict_list = get_data_dict_list(RESULTS_PATH)
+# Get simulated trajectories
+data_dict_list = get_data_dict_list(SIM_PATH)
 grain_map = get_grain_map(data_dict_list[-1])
 average_dict = get_average_orientations(data_dict_list, grain_map)
-save_average_orientations(average_dict, "trajectories.csv")
+sim_trajectories = [average_dict[grain_id] for grain_id in sim_grain_ids]
+
+# Print out initial comparison
+for i in range(len(exp_trajectories)):
+    exp_ori = rad_to_deg(exp_trajectories[i][0])
+    sim_ori = rad_to_deg(sim_trajectories[i][0])
+    exp_ori = [round_sf(e, 5) for e in exp_ori]
+    sim_ori = [round_sf(s, 5) for s in sim_ori]
+    print(f"{sim_grain_ids[i]},{exp_grain_ids[i]}:\t{exp_ori}, {sim_ori}")
+
+# Initialise IPF plot
+lattice = get_lattice("fcc")
+direction=[1,0,0]
+ipf = IPF(lattice)
+
+# Plot experimental trajectories
+ipf.plot_ipf_trajectory(exp_trajectories, direction, "plot", {"color": "darkgray", "linewidth": 2})
+ipf.plot_ipf_trajectory(exp_trajectories, direction, "arrow", {"color": "darkgray", "head_width": 0.01, "head_length": 0.015})
+ipf.plot_ipf_trajectory([[et[0]] for et in exp_trajectories], direction, "scatter", {"color": "darkgray", "s": 8**2})
+for i, et in enumerate(exp_trajectories):
+    ipf.plot_ipf_trajectory([[et[0]]], direction, "text", {"color": "black", "fontsize": 8, "s": exp_grain_ids[i]})
+
+# Plot simulated trajectories
+ipf.plot_ipf_trajectory(sim_trajectories, direction, "plot", {"color": "green", "linewidth": 1, "zorder": 3})
+ipf.plot_ipf_trajectory(sim_trajectories, direction, "arrow", {"color": "green", "head_width": 0.0075, "head_length": 0.0075*1.5, "zorder": 3})
+ipf.plot_ipf_trajectory([[st[0]] for st in sim_trajectories], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+
+# Save the plot
+save_plot("plot.png")

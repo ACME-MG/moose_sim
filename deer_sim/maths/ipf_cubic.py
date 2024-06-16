@@ -9,7 +9,7 @@
 
 # Libraries
 import math
-from ebsd_mesher.maths.orientation import deg_to_rad, euler_to_matrix
+from deer_sim.maths.orientation import deg_to_rad, euler_to_matrix
 from scipy.optimize import minimize
 
 def get_cubic_symmetry_matrices():
