@@ -1,6 +1,6 @@
 """
- Title:         Analyser
- Description:   Analyses the results of the simulation
+ Title:         Analyse Phi
+ Description:   Analyses the orientation results of the simulation
  Author:        Janzen Choi
 
 """
@@ -45,9 +45,9 @@ for grain_id in exp_grain_ids:
     exp_trajectories.append(exp_trajectory)
 
 # Get simulated trajectories
-data_dict_list = get_data_dict_list(SIM_PATH)
-grain_map = get_grain_map(data_dict_list[-1])
-average_dict = get_average_orientations(data_dict_list, grain_map)
+sim_dict_list = get_data_dict_list(SIM_PATH)
+grain_map = get_grain_map(sim_dict_list[-1])
+average_dict = get_average_orientations(sim_dict_list, grain_map)
 sim_trajectories = [average_dict[grain_id] for grain_id in sim_grain_ids]
 
 # Print out initial comparison

@@ -679,7 +679,7 @@ class Simulation(__Simulation__):
             start_time = time_intervals[0],
             end_time   = time_intervals[-1],
             dt_start   = 1e0,
-            dt_min     = 1e-8,
+            dt_min     = 1e-2,
             dt_max     = time_intervals[-1]//10,
             times      = " ".join([str(ti) for ti in time_intervals]),
 
