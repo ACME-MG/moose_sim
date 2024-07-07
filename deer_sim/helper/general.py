@@ -10,6 +10,18 @@
 import math, os, sys
 import numpy as np
 
+def remove_consecutive_duplicates(value_list:list) -> list:
+    """
+    Removes duplicates from a list of values with the
+    assumption that the duplicates are consecutive;
+    maintains order
+    """
+    new_value_list = []
+    for value in value_list:
+        if not value in new_value_list:
+            new_value_list.append(value)
+    return new_value_list
+
 def flatten(list_of_lists:list) -> list:
     """
     Flattens a 2D list into a 1D list
