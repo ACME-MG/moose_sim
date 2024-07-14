@@ -7,7 +7,7 @@
 
 # Libraries
 import inspect, os, re, time
-from deer_sim.simulate.controller import Controller
+from deer_sim.controller import Controller
 
 # Interface Class
 class Interface:
