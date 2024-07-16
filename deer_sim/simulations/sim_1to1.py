@@ -265,18 +265,15 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 [VectorPostprocessors]
-  [./VPEVS]
+  [./element]
     type     = ElementValueSampler
     variable = 'block_id
                 orientation_q1 orientation_q2 orientation_q3 orientation_q4
-                cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz
-                strain_xx strain_yy strain_zz
-                elastic_strain_xx elastic_strain_yy elastic_strain_zz
-                mechanical_strain_xx mechanical_strain_yy mechanical_strain_zz'
+                cauchy_stress_xx strain_xx elastic_strain_xx mechanical_strain_xx'
     contains_complete_history = false
     execute_on = 'INITIAL TIMESTEP_END'
     sort_by    = id
-    block      = '{grain_ids}'
+    block      = '{block_ids}'
   [../]
 []
 
@@ -399,7 +396,7 @@ class Simulation(__Simulation__):
             end_time   = time_intervals[-1],
             dt_start   = 1e0,
             dt_min     = 1e-2,
-            dt_max     = time_intervals[-1]//10,
+            dt_max     = time_intervals[-1],
             times      = " ".join([str(ti) for ti in time_intervals]),
 
             # Other parameters

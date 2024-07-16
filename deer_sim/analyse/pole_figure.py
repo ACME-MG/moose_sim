@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from neml.math import rotations, tensors
 from neml.cp import crystallography
 from deer_sim.helper.general import flatten
-from deer_sim.simulate.plotter import save_plot
+from deer_sim.analyse.plotter import save_plot
 
 # Pole figure class
 class PF:

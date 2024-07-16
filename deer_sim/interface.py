@@ -113,6 +113,17 @@ class Interface:
         self.__print__("Exporting the parameters")
         self.__controller__.export_params(params_file)
 
+    def compress_results(self, sf:int=5, exclude:list=None) -> None:
+        """
+        Rounds the values in the outputted CSV files
+
+        Parameters:
+        * `sf`:      The significant figures to round the values
+        * `exclude`: The fields to exclude in the compressed results
+        """
+        self.__print__(f"Compressing the results")
+        self.__controller__.compress_results(sf, exclude)
+
     def remove_artifacts(self) -> None:
         """
         Removes auxiliary files after the simulation ends

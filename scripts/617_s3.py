@@ -13,8 +13,7 @@ from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
 itf = Interface(input_path="data/617_s3/mesh")
-itf.define_mesh("mesh.e", "grain_stats.csv", degrees=False, active=False)
-# itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
+itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
 itf.define_material(
@@ -42,8 +41,7 @@ itf.define_material(
 # Defines the simulation parameters
 exp_dict = csv_to_dict("data/617_s3/exp.csv")
 itf.define_simulation(
-    # simulation_name = "sim_1to1_element",
-    simulation_name = "sim_1to1_grain",
+    simulation_name = "sim_1to1",
     time_intervals  = exp_dict["time_intervals"],
     end_strain      = exp_dict["strain_intervals"][-1] * 2200 * 5/3
 )
@@ -53,3 +51,4 @@ num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
 itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 itf.remove_artifacts()
+itf.compress_results(sf=5, exclude=["x", "y", "z"])

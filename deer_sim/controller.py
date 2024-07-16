@@ -7,7 +7,7 @@
 
 # Libraries
 import os, subprocess, shutil, numpy as np
-from deer_sim.helper.io import dict_to_csv
+from deer_sim.helper.io import csv_to_dict, dict_to_csv
 from deer_sim.helper.general import transpose, round_sf
 from deer_sim.maths.orientation import rad_to_deg, deg_to_rad
 from deer_sim.maths.neml import reorient_euler
@@ -164,9 +164,26 @@ class Controller():
         """
         Removes auxiliary files after the simulation ends
         """
-        print(os.getcwd())
         os.remove(self.get_output(self.mesh_file))
         os.remove(self.get_output(self.orientation_file))
+
+    def compress_results(self, sf:int=5, exclude:list=None) -> None:
+        """
+        Rounds the values in the outputted CSV files
+
+        Parameters:
+        * `sf`:      The significant figures to round the values
+        * `exclude`: The fields to exclude in the compressed results
+        """
+        results_dir = self.get_output("")
+        csv_paths = [f"{results_dir}/{csv_file}" for csv_file in os.listdir(results_dir) if csv_file.endswith(".csv")]
+        for csv_path in csv_paths:
+            data_dict = csv_to_dict(csv_path)
+            new_dict = {}
+            for key in data_dict.keys():
+                if exclude == None or not key in exclude:
+                    new_dict[key] = [round_sf(d, sf) for d in data_dict[key]]
+            dict_to_csv(new_dict, csv_path)
 
     def export_params(self, params_file:str) -> None:
         """

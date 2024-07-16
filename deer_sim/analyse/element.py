@@ -1,12 +1,12 @@
 """
- Title:         Analyser
- Description:   Analyses the results of the simulation
+ Title:         Element
+ Description:   Analysis functions for element tracked simulation results
  Author:        Janzen Choi
 
 """
 
 # Libraries
-import os
+import os, numpy as np
 from deer_sim.helper.general import transpose, round_sf, remove_consecutive_duplicates
 from deer_sim.helper.io import csv_to_dict
 from deer_sim.maths.orientation import get_average_quat
@@ -15,6 +15,7 @@ from deer_sim.maths.neml import deer_quat_to_euler
 # Constants
 GRAIN_FIELD   = "block_id"
 ELEMENT_FIELD = "id"
+STRESS_FIELD  = "cauchy_stress_xx"
 QUAT_FIELDS   = ["orientation_q1", "orientation_q2", "orientation_q3", "orientation_q4"]
 
 def get_data_dict_list(results_path:str) -> list:
@@ -26,7 +27,7 @@ def get_data_dict_list(results_path:str) -> list:
 
     Returns the data dictionary list
     """
-    csv_file_list = [csv_file for csv_file in os.listdir(results_path) if csv_file.endswith(".csv")]
+    csv_file_list  = [csv_file for csv_file in os.listdir(results_path) if csv_file.endswith(".csv")]
     data_dict_list = [csv_to_dict(f"{results_path}/{csv_file}") for csv_file in csv_file_list]
     data_dict_list = [data_dict for data_dict in data_dict_list if GRAIN_FIELD in data_dict.keys()]
     return data_dict_list
@@ -136,7 +137,7 @@ def get_sim_trajectories(sim_dict_list:list, grain_ids:list=None) -> list:
     # Return simulated trajectories
     return sim_trajectories
 
-def get_sim_stress(sim_dict_list:list, stress_field:str="cauchy_stress_xx") -> list:
+def get_sim_stress(sim_dict_list:list, stress_field:str=STRESS_FIELD) -> list:
     """
     Gets the simulated stress values
 
@@ -146,8 +147,11 @@ def get_sim_stress(sim_dict_list:list, stress_field:str="cauchy_stress_xx") -> l
     
     Return a list of stress values
     """
-    
-
+    stress_list = []
+    for sim_dict in sim_dict_list:
+        average_stress = np.average(sim_dict[stress_field])
+        stress_list.append(average_stress)
+    return stress_list
 
 def get_trajectory_dict(trajectories:list, grain_ids:list) -> dict:
     """
@@ -166,6 +170,32 @@ def get_trajectory_dict(trajectories:list, grain_ids:list) -> dict:
             trajectory_dict[f"g{int(grain_id)}_{phi}"] = phi_list
     return trajectory_dict
 
+def get_grain_ids(exp_path:str, mesh_path:str) -> dict:
+    """
+    Gets the mappable grain IDs
+    
+    Parameters:
+    * `exp_path`:  Path to the experimental data
+    * `mesh_path`: Path to the mesh CSV map
+
+    Returns a dictionary mapping the experimental grain IDs to the mesh grain IDs
+    """
+
+    # Read files
+    exp_dict  = csv_to_dict(exp_path)  # exp
+    mesh_dict = csv_to_dict(mesh_path) # exp : mesh
+    exp_grain_ids = [int(key.replace("_phi_1","").replace("g","")) for key in exp_dict.keys() if "_phi_1" in key]
+    
+    # Map experimental grain IDs to mesh grain IDs
+    exp_to_mesh = {}
+    for exp_grain_id in exp_grain_ids:
+        if exp_grain_id in mesh_dict["ebsd_id"]:
+            ebsd_index = mesh_dict["ebsd_id"].index(exp_grain_id)
+            exp_to_mesh[exp_grain_id] = int(mesh_dict["mesh_id"][ebsd_index])
+
+    # Return mapping
+    return exp_to_mesh
+
 def get_mappable_grain_ids(exp_path:str, ebsd_path:str, mesh_path:str) -> dict:
     """
     Gets the mappable grain IDs
@@ -175,7 +205,8 @@ def get_mappable_grain_ids(exp_path:str, ebsd_path:str, mesh_path:str) -> dict:
     * `ebsd_path`: Path to the EBSD CSV map ("ebsd_1": exp, "ebsd_2": ebsd)
     * `mesh_path`: Path to the mesh CSV map ("ebsd_id": ebsd, "mesh_id": mesh)
 
-    Returns a dictionary mapping experimental grain IDs to simulated grain IDs
+    Returns a dictionary with a list of experimental, EBSD, and simulated grain IDs;
+    {"exp": [...], "ebsd": [...], "mesh": [...]}
     """
 
     # Read all files
@@ -199,6 +230,10 @@ def get_mappable_grain_ids(exp_path:str, ebsd_path:str, mesh_path:str) -> dict:
             ebsd_index = mesh_dict["ebsd_id"].index(ebsd_grain_id)
             exp_to_mesh[exp_grain_id] = int(mesh_dict["mesh_id"][ebsd_index])
 
-    # Return the mapping
-    return exp_to_mesh
-
+    # Return a dictionary of grain IDs
+    grain_id_dict = {
+        "exp":  list(exp_to_mesh.keys()),
+        "ebsd": [exp_to_ebsd[key] for key in exp_to_mesh.keys()],
+        "mesh": list(exp_to_mesh.values())
+    }
+    return grain_id_dict
