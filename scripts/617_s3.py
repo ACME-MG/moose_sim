@@ -12,7 +12,7 @@ from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
-itf = Interface(input_path="data/617_s3/mesh")
+itf = Interface(input_path="data/617_s3")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
@@ -39,7 +39,7 @@ itf.define_material(
 )
 
 # Defines the simulation parameters
-exp_dict = csv_to_dict("data/617_s3/exp.csv")
+exp_dict = csv_to_dict("data/617_s3/617_s3_exp.csv")
 itf.define_simulation(
     simulation_name = "sim_1to1",
     time_intervals  = exp_dict["time_intervals"],
