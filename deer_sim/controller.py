@@ -206,7 +206,14 @@ class Controller():
         for keyword in keyword_list:
             for file_name in file_list:
                 if keyword in file_name:
-                    os.remove(self.get_output(file_name))
+                    file_path = self.get_output(file_name)
+                    try:
+                        if os.path.isfile(file_path):
+                            os.remove(file_path)
+                        elif os.path.isdir(file_path):
+                            shutil.rmtree(file_path)
+                    except:
+                        pass
 
     def export_params(self, params_file:str) -> None:
         """
