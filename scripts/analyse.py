@@ -7,6 +7,7 @@
 
 # Libraries
 import sys; sys.path += [".."]
+from deer_sim.analyse.pole_figure import IPF
 from deer_sim.helper.general import transpose, remove_consecutive_duplicates
 from deer_sim.helper.io import csv_to_dict
 
@@ -73,20 +74,23 @@ def get_trajectories(data_dict:dict, include:list=None) -> list:
 # Define grain IDs
 # GOOD: 16, 21, 37, 46, 76, 82, 87, 99, 101, 110, 137, 141, 147, 152, 154, 159, 166, 167, 173, 180
 # OKAY: 23, 27, 36, 38, 40, 49, 56, 64, 66, 97, 108, 109, 112, 114, 120, 128, 130, 139, 148, 176, 178
-grain_id_dict = get_grain_ids(EXP_PATH, MAP_PATH)
-exp_grain_ids  = [16, 21, 37, 46, 76]
-sim_grain_ids  = [grain_id_dict[exp_grain_id] for exp_grain_id in exp_grain_ids]
-for exp, sim in zip(exp_grain_ids, sim_grain_ids):
-    print(f" exp: {exp}\t sim: {sim}")
+# grain_id_dict = get_grain_ids(EXP_PATH, MAP_PATH)
+# exp_grain_ids  = [16, 21, 37, 46, 76]
+# sim_grain_ids  = [grain_id_dict[exp_grain_id] for exp_grain_id in exp_grain_ids]
+# for exp, sim in zip(exp_grain_ids, sim_grain_ids):
+#     print(f" exp: {exp}\t sim: {sim}")
 
 # Get experimental data
 exp_dict = csv_to_dict(EXP_PATH)
-exp_ss   = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
-exp_traj = get_trajectories(exp_dict, exp_grain_ids)
+# exp_ss   = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
+# exp_traj = get_trajectories(exp_dict, exp_grain_ids)
 
 # Get simulated data
 sim_dict     = csv_to_dict(SIM_PATH)
 sim_grain_ss = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
+
+
+IPF
 
 # # Plot stress-strain curves
 # exp_ss = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
@@ -98,16 +102,29 @@ sim_grain_ss = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
 # plotter_ss.define_legend(["darkgray", "red"], ["Experimental", "CPFEM"], [7, 2], ["scatter", "line"])
 # save_plot("plot_ss.png")
 
-# # Plot trajectories on IPF
-# exp_trajectories = get_exp_trajectories(exp_dict, exp_grain_ids)
-# sim_trajectories = get_sim_trajectories(sim_dict_list, sim_grain_ids)
-# quick_ipf(
-#     exp_trajectories = exp_trajectories,
-#     sim_trajectories = sim_trajectories,
-#     file_path        = "plot_phi.png",
-#     structure        = "fcc",
-#     direction        = [1,0,0],
-#     # initial_only     = True,
-#     grain_ids        = exp_grain_ids,
-# )
+# def quick_ipf(exp_trajectories:list, sim_trajectories:list, file_path:str,
+#               structure:str="fcc", direction:list=[1,0,0], initial_only:bool=False,
+#               grain_ids:list=None) -> None:
+
+#     # Initialise IPF plot
+#     lattice = get_lattice(structure)
+#     ipf = IPF(lattice)
+
+#     # Plot experimental trajectories
+#     if not initial_only:
+#         ipf.plot_ipf_trajectory(exp_trajectories, direction, "plot", {"color": "darkgray", "linewidth": 2})
+#         ipf.plot_ipf_trajectory(exp_trajectories, direction, "arrow", {"color": "darkgray", "head_width": 0.01, "head_length": 0.015})
+#     ipf.plot_ipf_trajectory([[et[0]] for et in exp_trajectories], direction, "scatter", {"color": "darkgray", "s": 8**2})
+#     if grain_ids != None and len(grain_ids) == len(exp_trajectories):
+#         for exp_trajectory, grain_id in zip(exp_trajectories, grain_ids):
+#             ipf.plot_ipf_trajectory([[exp_trajectory[0]]], direction, "text", {"color": "black", "fontsize": 8, "s": grain_id})
+
+#     # Plot average orientations of each grain
+#     if not initial_only:
+#         ipf.plot_ipf_trajectory(sim_trajectories, direction, "plot", {"color": "green", "linewidth": 1, "zorder": 3})
+#         ipf.plot_ipf_trajectory(sim_trajectories, direction, "arrow", {"color": "green", "head_width": 0.0075, "head_length": 0.0075*1.5, "zorder": 3})
+#     ipf.plot_ipf_trajectory([[st[0]] for st in sim_trajectories], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+
+#     # Save the plot
+#     save_plot(file_path)
 

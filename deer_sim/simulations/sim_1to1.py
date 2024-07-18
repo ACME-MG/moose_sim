@@ -428,11 +428,10 @@ class Simulation(__Simulation__):
         grip_map  = map_field(sim_dict_list[-1], "block_id", "id", block_ids[-2:])
 
         # Calculate average stresses
-        ss_dict = {
-            "grain_stress": get_average_field(sim_dict_list, "cauchy_stress_xx",  grain_map),
-            "grip_stress":  get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map)
-        }
-
+        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_map)
+        as_dict = {f"g{k}_as": v for k, v in as_dict.items()}
+        as_dict["grip_as"] = get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map)
+        
         # Calculate elastic strains
         es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map)
         es_dict = {f"g{k}_es": v for k, v in es_dict.items()}
@@ -449,5 +448,5 @@ class Simulation(__Simulation__):
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
         # Combine all summaries and save
-        summary_dict = {**ss_dict, **es_dict, **phi_dict}
+        summary_dict = {**as_dict, **es_dict, **phi_dict}
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")
