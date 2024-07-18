@@ -50,5 +50,10 @@ itf.define_simulation(
 num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
 itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
-itf.remove_artifacts()
-itf.compress_results(sf=5, exclude=["x", "y", "z"])
+itf.compress_csv(sf=5, exclude=["x", "y", "z"])
+
+# Define grain IDs
+# BEST: 16, 21, 37, 46, 76, 82, 87, 99, 101, 110, 137,
+#       141, 147, 152, 154, 159, 166, 167, 173, 180
+# GOOD: 23, 27, 36, 38, 40, 49, 56, 64, 66, 97, 108,
+#       109, 112, 114, 120, 128, 130, 139, 148, 176, 178

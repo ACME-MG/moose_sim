@@ -1,6 +1,6 @@
 """
- Title:         617_s3
- Description:   Runs the CPFEM model once
+ Title:         Analyse
+ Description:   Analyses the simulation results
  Author:        Janzen Choi
 
 """
@@ -8,9 +8,11 @@
 # Libraries
 import sys; sys.path += [".."]
 from deer_sim.interface import Interface
-from deer_sim.helper.general import round_sf
 
-# Define the mesh and orientations
+# Constants
+SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-16 (mini)"
+# SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-16 (617_s3)"
+
 itf = Interface(input_path="data/mini")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
@@ -23,7 +25,7 @@ itf.define_material(
         "cp_tau_s":   1250,
         "cp_b":       0.25,
         "cp_tau_0":   107,
-        "cp_gamma_0": round_sf(1e-4/3, 5),
+        "cp_gamma_0": 1e-4/3,
         "cp_n":       4.5,
 
         # Viscoplastic Parameters
@@ -43,13 +45,4 @@ itf.define_simulation(
     time_intervals  = [0.0, 1, 2, 4],
     end_strain      = 4,
 )
-
-# Runs the model and saves results
-num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
-itf.export_params()
-itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
-
-# Conduct post processing
-itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-itf.post_process()
-itf.remove_files(["mesh.e", "results_element"])
+itf.post_process(SIM_PATH)

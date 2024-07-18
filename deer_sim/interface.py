@@ -101,6 +101,7 @@ class Interface:
         * `timeout`:        The maximum amount of time (in seconds) to run the simulation
         """
         self.__print__("Running the simulation")
+        self.__check_files__()
         self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__, timeout)
 
     def export_params(self, params_file:str="params.txt") -> None:
@@ -113,7 +114,7 @@ class Interface:
         self.__print__("Exporting the parameters")
         self.__controller__.export_params(params_file)
 
-    def compress_results(self, sf:int=5, exclude:list=None) -> None:
+    def compress_csv(self, sf:int=5, exclude:list=None) -> None:
         """
         Rounds the values in the outputted CSV files
 
@@ -122,14 +123,52 @@ class Interface:
         * `exclude`: The fields to exclude in the compressed results
         """
         self.__print__(f"Compressing the results")
-        self.__controller__.compress_results(sf, exclude)
+        self.__check_simulation_run__()
+        self.__controller__.compress_csv(sf, exclude)
 
-    def remove_artifacts(self) -> None:
+    def post_process(self, sim_path:str=None, **kwargs) -> None:
         """
-        Removes auxiliary files after the simulation ends
+        Conducts post processing after the simulation has completed
+
+        Parameters:
+        * `sim_path`: The path to conduct the post processing;
+                      uses current result path if undefined
         """
-        self.__print__("Removing auxiliary files")
-        self.__controller__.remove_artifacts()
+        if sim_path == None:
+            self.__print__("Conducting post processing on simulation results")
+            self.__check_simulation_run__()
+        else:
+            self.__print__(f"Conducting post processing on '{sim_path}")
+        self.__check_files__()
+        self.__controller__.post_process(sim_path, **kwargs)
+
+    def remove_files(self, keyword_list:list) -> None:
+        """
+        Removes files after the simulation ends
+
+        Parameters:
+        * `keyword_list`: List of keywords to remove files
+        """
+        self.__print__("Removing files")
+        self.__controller__.remove_files(keyword_list)
+
+    def __check_files__(self) -> None:
+        """
+        Checks that the mesh, material, and simulation have been defined
+        """
+        if self.__controller__.mesh_file == "":
+            raise ValueError("The mesh has not been defined!")
+        if self.__controller__.material_name == "":
+            raise ValueError("The material has not been defined!")
+        if self.__controller__.simulation_name == "":
+            raise ValueError("The simulation has not been defined!")
+
+    def __check_simulation_run__(self) -> None:
+        """
+        Checks that the simulation has been run
+        """
+        if not self.__controller__.simulation_run:
+            raise ValueError("The simulation has not been run!")
 
     def __print__(self, message:str, add_index:bool=True) -> None:
         """

@@ -29,10 +29,14 @@ class Controller():
         # Initialise internal variables
         self.get_input         = get_input
         self.get_output        = get_output
+        self.mesh_file         = ""
+        self.orientation_file  = ""
         self.material_name     = ""
         self.simulation_name   = ""
         self.material_params   = {}
         self.simulation_params = {}
+        self.simulation        = None
+        self.simulation_run    = False
 
         # Initialise file names
         self.material_file   = "material.xml"
@@ -127,9 +131,10 @@ class Controller():
         self.simulation_params = simulation_params
 
         # Write the simulation file
-        simulation_content = get_simulation(simulation_name, simulation_params, self.get_input,
-                                            self.mesh_file, self.orientation_file, self.material_file,
-                                            self.material_name, self.csv_file, **kwargs)
+        self.simulation = get_simulation(simulation_name, simulation_params, self.get_input,
+                                         self.mesh_file, self.orientation_file, self.material_file,
+                                         self.material_name, self.csv_file)
+        simulation_content = self.simulation.get_simulation(**kwargs)
         with open(self.simulation_path, "w+") as fh:
             fh.write(simulation_content)
 
@@ -159,15 +164,9 @@ class Controller():
         except:
             pass
         os.chdir(current_dir)
+        self.simulation_run = True
 
-    def remove_artifacts(self) -> None:
-        """
-        Removes auxiliary files after the simulation ends
-        """
-        os.remove(self.get_output(self.mesh_file))
-        os.remove(self.get_output(self.orientation_file))
-
-    def compress_results(self, sf:int=5, exclude:list=None) -> None:
+    def compress_csv(self, sf:int=5, exclude:list=None) -> None:
         """
         Rounds the values in the outputted CSV files
 
@@ -184,6 +183,30 @@ class Controller():
                 if exclude == None or not key in exclude:
                     new_dict[key] = [round_sf(d, sf) for d in data_dict[key]]
             dict_to_csv(new_dict, csv_path)
+
+    def post_process(self, sim_path:str, **kwargs) -> None:
+        """
+        Conducts post processing after the simulation has completed
+
+        Parameters:
+        * `sim_path`: The path to conduct the post processing;
+                      uses current result path if undefined
+        """
+        sim_path = self.get_output("") if sim_path == None else sim_path
+        self.simulation.post_process(sim_path, self.get_output(""), **kwargs)
+
+    def remove_files(self, keyword_list:list) -> None:
+        """
+        Removes files after the simulation ends
+
+        Parameters:
+        * `keyword_list`: List of keywords to remove files
+        """
+        file_list = os.listdir(self.get_output(""))
+        for keyword in keyword_list:
+            for file_name in file_list:
+                if keyword in file_name:
+                    os.remove(self.get_output(file_name))
 
     def export_params(self, params_file:str) -> None:
         """

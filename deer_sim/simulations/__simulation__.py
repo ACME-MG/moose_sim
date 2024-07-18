@@ -129,8 +129,19 @@ class __Simulation__:
         """
         raise NotImplementedError
 
+    def post_process(self, sim_path:str, results_path:str, **kwargs) -> None:
+        """
+        Conducts post processing after the simulation has completed
+
+        Parameters:
+        * `sim_path`:     The path to conduct the post processing;
+                          uses current result path if undefined
+        * `results_path`: The path to current results
+        """
+        pass
+
 def get_simulation(simulation_name:str, params:dict, get_input_function, mesh_file:str, orientation_file:str,
-                   material_file:str, material_name:str, csv_file:str, **kwargs) -> str:
+                   material_file:str, material_name:str, csv_file:str) -> __Simulation__:
     """
     Gets the simulation file's content
     
@@ -170,5 +181,4 @@ def get_simulation(simulation_name:str, params:dict, get_input_function, mesh_fi
     simulation.set_material_file(material_file)
     simulation.set_material_name(material_name)
     simulation.set_csv_file(csv_file)
-    simulation_content = simulation.get_simulation(**kwargs)
-    return simulation_content
+    return simulation

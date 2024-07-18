@@ -7,7 +7,9 @@
 
 # Libraries
 import numpy as np
+from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field, get_average_field, get_average_euler
 from deer_sim.helper.general import transpose
+from deer_sim.helper.io import dict_to_csv
 from deer_sim.simulations.__simulation__ import __Simulation__
 
 # Format for defining simulations
@@ -403,3 +405,45 @@ class Simulation(__Simulation__):
             end_strain = end_strain,
         )
         return simulation_content
+
+    def post_process(self, sim_path:str, results_path:str) -> None:
+        """
+        Conducts post processing after the simulation has completed
+
+        Parameters:
+        * `sim_path`:     The path to conduct the post processing;
+                          uses current result path if undefined
+        * `results_path`: The path to current results
+        """
+
+        # Initialise summary
+        sim_dict_list = get_csv_results(sim_path, "results_element", "time")
+        block_ids = get_block_ids(sim_dict_list[-1], "block_id")
+
+        # Map block IDs to element IDs
+        grain_map = map_field(sim_dict_list[-1], "block_id", "id", block_ids[:-2])
+        grip_map  = map_field(sim_dict_list[-1], "block_id", "id", block_ids[-2:])
+
+        # Calculate average stresses and elastic strains
+        ss_dict = {
+            "grain_strain": get_average_field(sim_dict_list, "elastic_strain_xx", grain_map),
+            "grain_stress": get_average_field(sim_dict_list, "cauchy_stress_xx",  grain_map),
+            "grip_strain":  get_average_field(sim_dict_list, "elastic_strain_xx", grip_map),
+            "grip_stress":  get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map),
+        }
+
+        # Calculate average orientations for the grains
+        orientation_fields = [f"orientation_q{i}" for i in [1,2,3,4]]
+        grain_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map)
+        
+        # Reformat average orientations
+        phi_dict = {}
+        for grain_id in grain_euler_dict.keys():
+            euler_list = grain_euler_dict[grain_id]
+            for i, phi in enumerate(["phi_1", "Phi", "phi_2"]):
+                field = f"g{grain_id}_{phi}"
+                phi_dict[field] = [euler[i] for euler in euler_list]
+
+        # Combine all summaries and save
+        summary_dict = {**ss_dict, **phi_dict}
+        dict_to_csv(summary_dict, f"{results_path}/summary.csv")

@@ -7,6 +7,7 @@
 
 # Libraries
 import math
+from deer_sim.maths.orientation import fix_angle
 from neml.math import rotations
 
 def deer_quat_to_euler(quat:list, reorient:bool=False, offset:bool=False) -> list:
@@ -25,7 +26,7 @@ def deer_quat_to_euler(quat:list, reorient:bool=False, offset:bool=False) -> lis
         euler = reorient_euler(euler)
     if offset:
         euler[0] += math.pi
-    euler = [e + 2*math.pi if e < 0 else e for e in euler]
+    euler = [fix_angle(e) for e in euler]
     return euler
 
 def reorient_euler(euler:list) -> list:

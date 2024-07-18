@@ -178,3 +178,20 @@ def get_average_euler(euler_list:list, degrees:bool=True) -> list:
     if degrees:
         average_euler = rad_to_deg(average_euler)
     return average_euler
+
+def fix_angle(angle:float, l_bound:float=0.0, u_bound:float=2*math.pi) -> float:
+    """
+    Fixes an angle between two bounds
+    
+    Parameters:
+    * `angle`: The angle (rads)
+
+    Returns the fixed angle
+    """
+    range = u_bound - l_bound
+    if l_bound < angle and angle < u_bound:
+        return angle
+    elif angle < l_bound:
+        return fix_angle(angle+range, l_bound, u_bound)
+    else:
+        return fix_angle(angle-range, l_bound, u_bound)
