@@ -28,11 +28,11 @@ itf.define_material(
         "cp_n":       4.5,
 
         # Viscoplastic Parameters
-        "vp_s0":      95.121,
-        "vp_R":       559.17,
-        "vp_d":       1.3763,
-        "vp_n":       4.2967,
-        "vp_eta":     2385.9,
+        "vp_s0":      93.627,
+        "vp_R":       3957.3,
+        "vp_d":       0.56507,
+        "vp_n":       7.3622,
+        "vp_eta":     721.87,
     },
     youngs          = 211000.0,
     poissons        = 0.30,
@@ -50,7 +50,11 @@ itf.define_simulation(
 num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
 itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
+
+# Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
+itf.post_process()
+itf.remove_files(["mesh.e", "results_element"])
 
 # Define grain IDs
 # BEST: 16, 21, 37, 46, 76, 82, 87, 99, 101, 110, 137,
