@@ -427,17 +427,21 @@ class Simulation(__Simulation__):
         grain_map = map_field(sim_dict_list[-1], "block_id", "id", block_ids[:-2])
         grip_map  = map_field(sim_dict_list[-1], "block_id", "id", block_ids[-2:])
 
-        # Calculate average stresses
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_map)
-        as_dict = {f"g{k}_as": v for k, v in as_dict.items()}
-        as_dict["grip_as"] = get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map)
-        
-        # Calculate elastic strains
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map)
-        es_dict = {f"g{k}_es": v for k, v in es_dict.items()}
-        es_dict["grip_es"] = get_average_field(sim_dict_list, "elastic_strain_xx",  grip_map)
+        # Calculate average stresses and elastic strains
+        average_dict = {
+            "average_grain_stress":  get_average_field(sim_dict_list, "cauchy_stress_xx",  grain_map),
+            "average_grip_stress":   get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map),
+            "average_grain_elastic": get_average_field(sim_dict_list, "elastic_strain_xx", grain_map),
+            "average_grip_elastic":  get_average_field(sim_dict_list, "elastic_strain_xx", grip_map)
+        }
 
-        # Calculate average orientations for the grains
+        # Calculate stress and elastic strain in each grain
+        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_map)
+        as_dict = {f"g{k}_stress": v for k, v in as_dict.items()}
+        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map)
+        es_dict = {f"g{k}_elastic": v for k, v in es_dict.items()}
+
+        # Calculate average orientations in each grain
         orientation_fields = [f"orientation_q{i}" for i in [1,2,3,4]]
         average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map)
         phi_dict = {}
@@ -448,5 +452,5 @@ class Simulation(__Simulation__):
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
         # Combine all summaries and save
-        summary_dict = {**as_dict, **es_dict, **phi_dict}
+        summary_dict = {**average_dict, **as_dict, **es_dict, **phi_dict}
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")
