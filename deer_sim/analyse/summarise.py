@@ -97,19 +97,46 @@ def get_fields(data_dict:dict, source_field:str, target_fields:list, source_incl
     * `source_include`: The values to include in the mapping;
                         includes all values if undefined
 
-    Returns the list of values
+    Returns the list of lists of values
     """
 
     # Initialise source values
     source_values = source_include if source_include != None else data_dict[source_field] 
     source_values = set(source_values)
 
+    # Get target values and return
     target_values_list = []
     for i, source_value in enumerate(data_dict[source_field]):
         if source_value in source_values:
             target_values = [data_dict[target_field][i] for target_field in target_fields]
             target_values_list.append(target_values)
     return target_values_list
+
+def map_average_field(data_dict_list:list, target_field:str, block_map:dict) -> dict:
+    """
+    Maps the block IDs to the average values of a field
+
+    Parameters:
+    * `data_dict_list`: The list of dictionaries of data
+    * `target_field`:   The field to conduct the mapping to
+    * `block_map`:      The dictionary mapping the block IDs to element IDs
+
+    Returns a dictionary mapping the block IDs to the averaged values
+    """
+    
+    # Initialise
+    block_ids = list(block_map.keys())
+    average_dict = dict(zip(block_ids, [[] for _ in range(len(block_ids))]))
+
+    # Iterate through data dictionaries
+    for data_dict in data_dict_list:
+        for block_id in block_ids:
+            target_value_list = get_fields(data_dict, "id", [target_field], block_map[block_id])
+            average_value = np.average(flatten(target_value_list))
+            average_dict[block_id].append(average_value)
+    
+    # Return
+    return average_dict
 
 def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:dict) -> dict:
     """

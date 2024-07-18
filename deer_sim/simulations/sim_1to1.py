@@ -7,7 +7,8 @@
 
 # Libraries
 import numpy as np
-from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field, get_average_field, get_average_euler
+from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
+from deer_sim.analyse.summarise import get_average_field, get_average_euler, map_average_field
 from deer_sim.helper.general import transpose
 from deer_sim.helper.io import dict_to_csv
 from deer_sim.simulations.__simulation__ import __Simulation__
@@ -374,9 +375,11 @@ class Simulation(__Simulation__):
         orientation_file = self.get_orientation_file()
         orientation_info = np.loadtxt(self.get_input(orientation_file), delimiter=",")
         orientation_info = transpose(orientation_info)
+
+        # Get IDs
         block_ids = list(set([int(block_id) for block_id in orientation_info[4]]))
         grain_ids = block_ids[:-2]
-        grip_ids = block_ids[-2:]
+        grip_ids  = block_ids[-2:]
         
         # Define simulation file
         simulation_content = SIMULATION_FORMAT.format(
@@ -424,26 +427,27 @@ class Simulation(__Simulation__):
         grain_map = map_field(sim_dict_list[-1], "block_id", "id", block_ids[:-2])
         grip_map  = map_field(sim_dict_list[-1], "block_id", "id", block_ids[-2:])
 
-        # Calculate average stresses and elastic strains
+        # Calculate average stresses
         ss_dict = {
-            "grain_strain": get_average_field(sim_dict_list, "elastic_strain_xx", grain_map),
             "grain_stress": get_average_field(sim_dict_list, "cauchy_stress_xx",  grain_map),
-            "grip_strain":  get_average_field(sim_dict_list, "elastic_strain_xx", grip_map),
-            "grip_stress":  get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map),
+            "grip_stress":  get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map)
         }
+
+        # Calculate elastic strains
+        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map)
+        es_dict = {f"g{k}_es": v for k, v in es_dict.items()}
+        es_dict["grip_es"] = get_average_field(sim_dict_list, "elastic_strain_xx",  grip_map)
 
         # Calculate average orientations for the grains
         orientation_fields = [f"orientation_q{i}" for i in [1,2,3,4]]
-        grain_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map)
-        
-        # Reformat average orientations
+        average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map)
         phi_dict = {}
-        for grain_id in grain_euler_dict.keys():
-            euler_list = grain_euler_dict[grain_id]
+        for grain_id in average_euler_dict.keys():
+            euler_list = average_euler_dict[grain_id]
             for i, phi in enumerate(["phi_1", "Phi", "phi_2"]):
                 field = f"g{grain_id}_{phi}"
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
         # Combine all summaries and save
-        summary_dict = {**ss_dict, **phi_dict}
+        summary_dict = {**ss_dict, **es_dict, **phi_dict}
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")
