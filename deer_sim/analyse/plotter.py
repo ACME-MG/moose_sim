@@ -46,8 +46,8 @@ class Plotter:
         plt.gca().grid(which="major", axis="both", color="SlateGray", linewidth=1, linestyle=":")
 
         # Set x and y labels
-        plt.xlabel(f"{self.x_label.replace('_', ' ').capitalize()}{self.x_label}", fontsize=size)
-        plt.ylabel(f"{self.y_label.replace('_', ' ').capitalize()}{self.y_label}", fontsize=size)
+        plt.xlabel(f"{self.x_label.replace('_', ' ').capitalize()}", fontsize=size)
+        plt.ylabel(f"{self.y_label.replace('_', ' ').capitalize()}", fontsize=size)
     
     def set_limits(self, x_limits:tuple=None, y_limits:tuple=None) -> None:
         """

@@ -7,6 +7,7 @@
 
 # Libraries
 import sys; sys.path += [".."]
+from deer_sim.analyse.plotter import Plotter, save_plot
 from deer_sim.analyse.pole_figure import IPF
 from deer_sim.helper.general import transpose, remove_consecutive_duplicates
 from deer_sim.helper.io import csv_to_dict
@@ -15,7 +16,8 @@ from deer_sim.helper.io import csv_to_dict
 EXP_PATH = "data/617_s3/617_s3_exp.csv"
 MAP_PATH = "data/617_s3/grain_map.csv"
 # SIM_PATH = "results/240718160621_mini/summary.csv"
-SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-19 (617_s3_compressed)/summary.csv"
+# SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-19 (617_s3)/summary.csv"
+SIM_PATH = "results/240719132007_temp/summary.csv"
 
 def get_grain_ids(exp_path:str, mesh_path:str) -> dict:
     """
@@ -82,25 +84,26 @@ def get_trajectories(data_dict:dict, include:list=None) -> list:
 
 # Get experimental data
 exp_dict = csv_to_dict(EXP_PATH)
-# exp_ss   = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
+exp_ss   = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
 # exp_traj = get_trajectories(exp_dict, exp_grain_ids)
 
 # Get simulated data
 sim_dict     = csv_to_dict(SIM_PATH)
-sim_grain_ss = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
+sim_grain_ss = {"strain": exp_dict["strain_intervals"], "stress": sim_dict["average_grain_stress"]}
+sim_grip_ss  = {"strain": exp_dict["strain_intervals"], "stress": sim_dict["average_grip_stress"]}
 
-
-IPF
+# Plot stress-strain curves
+plotter_ss = Plotter("strain", "stress")
+plotter_ss.prep_plot()
+plotter_ss.scat_plot(exp_ss, colour="darkgray")
+plotter_ss.line_plot(sim_grain_ss, colour="red")
+plotter_ss.line_plot(sim_grip_ss, colour="blue")
+plotter_ss.define_legend(["darkgray", "red", "blue"], ["Experimental", "CPFEM", "VPFEM"], [7, 2, 2], ["scatter", "line", "line"])
+save_plot("plot_ss.png")
 
 # # Plot stress-strain curves
 # exp_ss = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
 # sim_ss = {"strain": exp_dict["strain_intervals"], "stress": get_sim_stress(sim_dict_list)}
-# plotter_ss = Plotter("strain", "stress")
-# plotter_ss.prep_plot()
-# plotter_ss.scat_plot(exp_ss, colour="darkgray")
-# plotter_ss.line_plot(sim_ss, colour="red")
-# plotter_ss.define_legend(["darkgray", "red"], ["Experimental", "CPFEM"], [7, 2], ["scatter", "line"])
-# save_plot("plot_ss.png")
 
 # def quick_ipf(exp_trajectories:list, sim_trajectories:list, file_path:str,
 #               structure:str="fcc", direction:list=[1,0,0], initial_only:bool=False,
