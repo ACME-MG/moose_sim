@@ -7,8 +7,8 @@
 
 # Libraries
 import sys; sys.path += [".."]
-from deer_sim.analyse.plotter import Plotter, save_plot
-from deer_sim.analyse.pole_figure import IPF
+from deer_sim.analyse.plotter import Plotter, save_plot, define_legend
+from deer_sim.analyse.pole_figure import PF, IPF, get_lattice
 from deer_sim.helper.general import transpose, remove_consecutive_duplicates
 from deer_sim.helper.io import csv_to_dict
 
@@ -16,8 +16,7 @@ from deer_sim.helper.io import csv_to_dict
 EXP_PATH = "data/617_s3/617_s3_exp.csv"
 MAP_PATH = "data/617_s3/grain_map.csv"
 # SIM_PATH = "results/240718160621_mini/summary.csv"
-# SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-19 (617_s3)/summary.csv"
-SIM_PATH = "results/240719132007_temp/summary.csv"
+SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-19 (617_s3)/summary.csv"
 
 def get_grain_ids(exp_path:str, mesh_path:str) -> dict:
     """
@@ -73,61 +72,93 @@ def get_trajectories(data_dict:dict, include:list=None) -> list:
     # Return trajectories
     return trajectories
 
-# Define grain IDs
+def save_plot_results(file_path:str, dir_path:str="results") -> None:
+    """
+    Saves the plots to a specific folder
+
+    Parameters:
+    * `file_path`: The path to the file
+    * `dir_path`:  The path to the directory
+    """
+    save_plot(f"{dir_path}/{file_path}")
+
+# Define specific grain IDs
 # GOOD: 16, 21, 37, 46, 76, 82, 87, 99, 101, 110, 137, 141, 147, 152, 154, 159, 166, 167, 173, 180
 # OKAY: 23, 27, 36, 38, 40, 49, 56, 64, 66, 97, 108, 109, 112, 114, 120, 128, 130, 139, 148, 176, 178
-# grain_id_dict = get_grain_ids(EXP_PATH, MAP_PATH)
-# exp_grain_ids  = [16, 21, 37, 46, 76]
-# sim_grain_ids  = [grain_id_dict[exp_grain_id] for exp_grain_id in exp_grain_ids]
-# for exp, sim in zip(exp_grain_ids, sim_grain_ids):
-#     print(f" exp: {exp}\t sim: {sim}")
+grain_id_dict = get_grain_ids(EXP_PATH, MAP_PATH)
+exp_grain_ids  = [16, 21, 37, 46, 76]
+sim_grain_ids  = [grain_id_dict[exp_grain_id] for exp_grain_id in exp_grain_ids]
+# [print(f" exp: {exp}\t sim: {sim}") for exp, sim in zip(exp_grain_ids, sim_grain_ids)]
 
 # Get experimental data
 exp_dict = csv_to_dict(EXP_PATH)
 exp_ss   = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
-# exp_traj = get_trajectories(exp_dict, exp_grain_ids)
+exp_trajectories = get_trajectories(exp_dict, exp_grain_ids)
+exp_start_orientations = [trajectory[0] for trajectory in get_trajectories(exp_dict)]
+exp_final_orientations = [trajectory[-1] for trajectory in get_trajectories(exp_dict)]
 
 # Get simulated data
 sim_dict     = csv_to_dict(SIM_PATH)
 sim_grain_ss = {"strain": exp_dict["strain_intervals"], "stress": sim_dict["average_grain_stress"]}
 sim_grip_ss  = {"strain": exp_dict["strain_intervals"], "stress": sim_dict["average_grip_stress"]}
+sim_trajectories       = get_trajectories(exp_dict, sim_grain_ids)
+sim_start_orientations = [trajectory[0] for trajectory in get_trajectories(sim_dict)]
+sim_final_stresses     = [sim_dict[key][-1] for key in sim_dict.keys() if key.startswith("g") and "_stress" in key]
+sim_final_orientations = [trajectory[-1] for trajectory in get_trajectories(sim_dict)]
+
+# Gets EVP data
+evp_dict = csv_to_dict("/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/opt_all/240718172051_617_s3_evp/data.csv")
+evp_strain = [strain for strain in evp_dict["cal_tensile_strain"] if strain < 0.45]
+evp_stress = evp_dict["cal_tensile_stress"][:len(evp_strain)]
+evp_ss = {"strain": evp_strain, "stress": evp_stress}
 
 # Plot stress-strain curves
-plotter_ss = Plotter("strain", "stress")
+plotter_ss = Plotter("strain", "stress", "mm/mm", "MPa")
 plotter_ss.prep_plot()
-plotter_ss.scat_plot(exp_ss, colour="darkgray")
-plotter_ss.line_plot(sim_grain_ss, colour="red")
-plotter_ss.line_plot(sim_grip_ss, colour="blue")
-plotter_ss.define_legend(["darkgray", "red", "blue"], ["Experimental", "CPFEM", "VPFEM"], [7, 2, 2], ["scatter", "line", "line"])
-save_plot("plot_ss.png")
+plotter_ss.scat_plot(exp_ss,       colour="darkgray", name="Experimental")
+plotter_ss.line_plot(evp_ss,       colour="green",    name="VP (Taylor)")
+plotter_ss.line_plot(sim_grain_ss, colour="red",      name="CP (FEM)")
+plotter_ss.line_plot(sim_grip_ss,  colour="blue",     name="VP (FEM)")
+plotter_ss.set_legend()
+save_plot_results("plot_ss.png")
 
-# # Plot stress-strain curves
-# exp_ss = {"strain": exp_dict["strain"], "stress": exp_dict["stress"]}
-# sim_ss = {"strain": exp_dict["strain_intervals"], "stress": get_sim_stress(sim_dict_list)}
+# Initialise PF plotter
+pf = PF(get_lattice("fcc"))
+for plane in [[1,0,0], [1,1,0], [1,1,1]]:
+    plane_str = "".join([str(p) for p in plane])
+    pf.plot_pf(exp_final_orientations, plane)
+    save_plot_results(f"plot_pf_exp_{plane_str}.png")
+    pf.plot_pf(sim_final_orientations, plane)
+    save_plot_results(f"plot_pf_sim_{plane_str}.png")
 
-# def quick_ipf(exp_trajectories:list, sim_trajectories:list, file_path:str,
-#               structure:str="fcc", direction:list=[1,0,0], initial_only:bool=False,
-#               grain_ids:list=None) -> None:
+# Initialise IPF plotter
+ipf = IPF(get_lattice("fcc"))
+direction = [1,0,0]
 
-#     # Initialise IPF plot
-#     lattice = get_lattice(structure)
-#     ipf = IPF(lattice)
+# Plot final stress distribution on IPF
+ipf.plot_ipf(sim_final_orientations, direction, sim_final_stresses)
+save_plot_results("plot_ipf_stress.png")
 
-#     # Plot experimental trajectories
-#     if not initial_only:
-#         ipf.plot_ipf_trajectory(exp_trajectories, direction, "plot", {"color": "darkgray", "linewidth": 2})
-#         ipf.plot_ipf_trajectory(exp_trajectories, direction, "arrow", {"color": "darkgray", "head_width": 0.01, "head_length": 0.015})
-#     ipf.plot_ipf_trajectory([[et[0]] for et in exp_trajectories], direction, "scatter", {"color": "darkgray", "s": 8**2})
-#     if grain_ids != None and len(grain_ids) == len(exp_trajectories):
-#         for exp_trajectory, grain_id in zip(exp_trajectories, grain_ids):
-#             ipf.plot_ipf_trajectory([[exp_trajectory[0]]], direction, "text", {"color": "black", "fontsize": 8, "s": grain_id})
+# Plot initial orientations on IPF
+ipf.plot_ipf_trajectory([[eso] for eso in exp_start_orientations], direction, "scatter", {"color": "darkgray", "s": 8**2})
+ipf.plot_ipf_trajectory([[sso] for sso in sim_start_orientations], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["scatter", "scatter"])
+save_plot_results("plot_ipf_initial.png")
 
-#     # Plot average orientations of each grain
-#     if not initial_only:
-#         ipf.plot_ipf_trajectory(sim_trajectories, direction, "plot", {"color": "green", "linewidth": 1, "zorder": 3})
-#         ipf.plot_ipf_trajectory(sim_trajectories, direction, "arrow", {"color": "green", "head_width": 0.0075, "head_length": 0.0075*1.5, "zorder": 3})
-#     ipf.plot_ipf_trajectory([[st[0]] for st in sim_trajectories], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+# Plot final orientations on IPF
+ipf.plot_ipf_trajectory([[efo] for efo in exp_final_orientations], direction, "scatter", {"color": "darkgray", "s": 8**2})
+ipf.plot_ipf_trajectory([[sfo] for sfo in sim_final_orientations], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["scatter", "scatter"])
+save_plot_results("plot_ipf_final.png")
 
-#     # Save the plot
-#     save_plot(file_path)
-
+# Plot trajectories
+# ipf.plot_ipf_trajectory(exp_trajectories, direction, "plot", {"color": "darkgray", "linewidth": 2})
+# ipf.plot_ipf_trajectory(exp_trajectories, direction, "arrow", {"color": "darkgray", "head_width": 0.01, "head_length": 0.015})
+# ipf.plot_ipf_trajectory([[et[0]] for et in exp_trajectories], direction, "scatter", {"color": "darkgray", "s": 8**2})
+# for exp_trajectory, grain_id in zip(exp_trajectories, exp_grain_ids):
+#     ipf.plot_ipf_trajectory([[exp_trajectory[0]]], direction, "text", {"color": "black", "fontsize": 8, "s": grain_id})
+# ipf.plot_ipf_trajectory(sim_trajectories, direction, "plot", {"color": "green", "linewidth": 1, "zorder": 3})
+# ipf.plot_ipf_trajectory(sim_trajectories, direction, "arrow", {"color": "green", "head_width": 0.0075, "head_length": 0.0075*1.5, "zorder": 3})
+# ipf.plot_ipf_trajectory([[st[0]] for st in sim_trajectories], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+# define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["line", "line"])
+# save_plot_results("plot_ipf_trajectories.png")

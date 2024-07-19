@@ -8,11 +8,11 @@
 
 # Libraries
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 from neml.math import rotations, tensors
 from neml.cp import crystallography
 from deer_sim.helper.general import flatten
-from deer_sim.analyse.plotter import save_plot
 
 # Pole figure class
 class PF:
@@ -33,6 +33,67 @@ class PF:
         self.x_direction = [float(x) for x in x_direction]
         self.y_direction = [float(y) for y in y_direction]
 
+    def __init__(self, lattice, sample_symmetry:list=[2,2,2], x_direction=[1.0,0,0], y_direction=[0,1.0,0]):
+        """
+        Constructor for PF class
+        
+        Parameters:
+        * `lattice`:         The lattice object
+        * `sample_symmetry`: Sample direction of the projection
+        * `x_direction`:     X crystallographic direction of the projection
+        * `y_direction`:     Y crystallographic direction of the projection
+        """
+        self.lattice = lattice
+        sample_symmetry_str = "".join([str(ss) for ss in sample_symmetry])
+        self.sample_symmetry = crystallography.symmetry_rotations(sample_symmetry_str)
+        self.x_direction = [float(x) for x in x_direction]
+        self.y_direction = [float(y) for y in y_direction]
+
+    def get_equivalent_poles(self, plane:list) -> list:
+        """
+        Gets the equivalent poles
+
+        Parameters:
+        * `plane`: Plane of the projection
+
+        Returns the list of equivalent poles
+        """
+        poles = self.lattice.miller2cart_direction(plane)
+        eq_poles = self.lattice.equivalent_vectors(poles)
+        eq_poles = [pole.normalize() for pole in eq_poles]
+        eq_poles = [op.apply(p) for p in eq_poles for op in self.sample_symmetry]
+        return eq_poles
+
+    def initialise_polar_grid(self) -> plt.Axes:
+        """
+        Initialises the polar grid;
+        returns the axis
+        """
+        _, axis = plt.subplots(figsize=(5, 5), subplot_kw={"projection": "polar"})
+        axis.grid(False)
+        axis.get_yaxis().set_visible(False)
+        plt.ylim([0, 1.0])
+        plt.xticks([0, np.pi/2], ["  RD", "TD"], fontsize=15)
+        return axis
+
+    def get_polar_points(self, euler:list, eq_poles:list) -> list:
+        """
+        Converts the euler-bunge angles into polar points
+        
+        Parameters:
+        * `euler`:    Orientation in euler-bunge angles (rads)
+        * `eq_poles`: List of equivalent poles
+
+        Returns the list of polar points
+        """
+        standard_rotation = rotations.Orientation(tensors.Vector(self.x_direction), tensors.Vector(self.y_direction))
+        orientation = rotations.CrystalOrientation(euler[0], euler[1], euler[2], angle_type="radians", convention="bunge")
+        points = [standard_rotation.apply(orientation.inverse().apply(pp)) for pp in eq_poles]
+        points = [point for point in points if point[2] >= 0.0] # rid of points in the lower hemisphere
+        cart_points = np.array([project_stereographic(v) for v in points])
+        polar_points = np.array([cart2pol(cp) for cp in cart_points])
+        return polar_points
+
     def plot_pf(self, euler_list:list, plane:list, colour_list:list=None, size_list:list=None) -> None:
         """
         Plots a standard pole figure using a stereographic projection;
@@ -43,7 +104,7 @@ class PF:
         * `plane`:       Plane of the projection
         * `colour_list`: List of values to define the colouring scheme
         * `size_list`:   List of values to define the sizing scheme
-
+        
         Plots the PF of the orientations
         """
         
@@ -51,37 +112,33 @@ class PF:
         rgb_colours = get_colours(euler_list, colour_list)
         norm_size_list = get_sizes(euler_list, size_list)
 
-        # Get the standard rotationn and equivalent poles
-        standard_rotation = rotations.Orientation(tensors.Vector(self.x_direction),
-                                                  tensors.Vector(self.y_direction))
-        poles = self.lattice.miller2cart_direction(plane)
-        eq_poles = self.lattice.equivalent_vectors(poles)
-        eq_poles = [pole.normalize() for pole in eq_poles]
-        eq_poles = [op.apply(p) for p in eq_poles for op in self.sample_symmetry] # gets points on the sphere
+        # Get the standard rotationn and equivalent poles, and creates the grid
+        eq_poles = self.get_equivalent_poles(plane)
+        axis = self.initialise_polar_grid()
 
-        # Creates the grid
-        plt.ylim([0, 1.0])
-        axis = plt.subplot(111, projection="polar")
-        axis.grid(False)
-        axis.get_yaxis().set_visible(False)
-        plt.xticks([0, np.pi/2], ["RD", "TD"])
-        
         # Iterate through the orientations
         for i, euler in enumerate(euler_list):
-        
-            # Gets the points
-            orientation = rotations.CrystalOrientation(euler[0], euler[1], euler[2], angle_type="radians", convention="bunge")
-            points = [standard_rotation.apply(orientation.inverse().apply(pp)) for pp in eq_poles]
-            points = [point for point in points if point[2] >= 0.0] # rid of points in the lower hemisphere
-
-            # Get polar coordinates
-            cart_points = np.array([project_stereographic(v) for v in points])
-            polar_points = np.array([cart2pol(cp) for cp in cart_points])
-
-            # Plots the polar coordinates
+            polar_points = self.get_polar_points(euler, eq_poles)
             size = norm_size_list[i] if size_list != None else 3
             colour = rgb_colours[i] if colour_list != None else None
             plot_points(axis, polar_points, size, colour)
+
+    def plot_pf_density(self, euler_list:list, plane:list) -> None:
+        """
+        Plots a standard pole figure with contoured colours based on point density
+        
+        Parameters:
+        * `euler_list`:  The list of orientations in euler-bunge form (rads)
+        * `plane`:       Plane of the projection
+        """
+        eq_poles = self.get_equivalent_poles(plane)
+        self.initialise_polar_grid()
+        radius_list, theta_list = [], [] 
+        for euler in euler_list:
+            polar_points = self.get_polar_points(euler, eq_poles)
+            radius_list += list(polar_points[:,0])
+            theta_list += list(polar_points[:,1])
+        sns.kdeplot(x=radius_list, y=theta_list, cmap="viridis", levels=5, thresh=0)
 
 # Inverse pole figure class
 class IPF:

@@ -30,7 +30,7 @@ itf.define_material(
         # Viscoplastic Parameters
         "vp_s0":      93.655,
         "vp_R":       3957.3,
-        "vp_d":       0.56507,
+        "vp_d":       0.5651,
         "vp_n":       7.3648,
         "vp_eta":     721.59,
     },
@@ -55,4 +55,3 @@ itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
 itf.post_process()
 itf.remove_files(["mesh.e", "element_stats.csv", "results_element", "simulation_out_cp"])
-# itf.remove_files(["mesh.e", "simulation_out_cp"])
