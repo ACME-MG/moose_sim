@@ -26,6 +26,7 @@ def get_csv_results(results_path:str, include:str=None, exclude:str=None) -> lis
     csv_file_list  = [csv_file for csv_file in os.listdir(results_path)
                       if csv_file.endswith(".csv") and (include == None or include in csv_file)
                       and (include == None or not exclude in csv_file)]
+    csv_file_list  = sorted(csv_file_list)
     data_dict_list = [csv_to_dict(f"{results_path}/{csv_file}") for csv_file in csv_file_list]
     return data_dict_list
 
