@@ -8,9 +8,9 @@
 # Libraries
 import numpy as np
 from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
-from deer_sim.analyse.summarise import get_average_field, get_average_euler, map_average_field
+from deer_sim.analyse.summarise import get_average_euler, map_average_field
 from deer_sim.helper.general import transpose
-from deer_sim.helper.io import dict_to_csv
+from deer_sim.helper.io import csv_to_dict, dict_to_csv
 from deer_sim.simulations.__simulation__ import __Simulation__
 
 # Format for defining simulations
@@ -93,10 +93,7 @@ SIMULATION_FORMAT = """
         add_variables   = true
         new_system      = true
         volumetric_locking_correction = true # linear hex elements
-        generate_output = 'elastic_strain_xx elastic_strain_yy elastic_strain_zz
-                           strain_xx strain_yy strain_zz
-                           cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz
-                           mechanical_strain_xx mechanical_strain_yy mechanical_strain_zz'
+        generate_output = 'elastic_strain_xx strain_xx cauchy_stress_xx mechanical_strain_xx'
       [../]
     [../]
   [../]
@@ -281,6 +278,61 @@ SIMULATION_FORMAT = """
 []
 
 # ==================================================
+# Define Postprocessing (Average Response)
+# ==================================================
+
+[Postprocessors]
+
+  # Total Strain
+  [./mTE_cpvp_xx]
+    type     = ElementAverageValue
+    variable = strain_xx
+  [../]
+  [./mTE_cp_xx]
+    type     = ElementAverageValue
+    variable = strain_xx
+    block    = '{grain_ids}'
+  [../]
+  [./mTE_vp_xx]
+    type     = ElementAverageValue
+    variable = strain_xx
+    block    = '{grip_ids}'
+  [../]
+
+  # Cuachy Stress
+  [./mCS_cpvp_xx]
+    type     = ElementAverageValue
+    variable = cauchy_stress_xx
+  [../]
+  [./mCS_cp_xx]
+    type     = ElementAverageValue
+    variable = cauchy_stress_xx
+    block    = '{grain_ids}'
+  [../]
+  [./mCS_vp_xx]
+    type     = ElementAverageValue
+    variable = cauchy_stress_xx
+    block    = '{grip_ids}'
+  [../]
+
+  # Elastic Strain
+  [./mEE_cpvp_xx]
+    type     = ElementAverageValue
+    variable = elastic_strain_xx
+  [../]
+  [./mEE_cp_xx]
+    type     = ElementAverageValue
+    variable = elastic_strain_xx
+    block    = '{grain_ids}'
+  [../]
+  [./mEE_vp_xx]
+    type     = ElementAverageValue
+    variable = elastic_strain_xx
+    block    = '{grip_ids}'
+  [../]
+[]
+
+# ==================================================
 # Define Simulation
 # ==================================================
 
@@ -420,19 +472,22 @@ class Simulation(__Simulation__):
         """
 
         # Initialise summary
+        results_dict  = csv_to_dict(f"{sim_path}/results.csv")
         sim_dict_list = get_csv_results(sim_path, "results_element", "time")
         block_ids = get_block_ids(sim_dict_list[-1], "block_id")
-
-        # Map block IDs to element IDs
         grain_map = map_field(sim_dict_list[-1], "block_id", "id", block_ids[:-2])
-        grip_map  = map_field(sim_dict_list[-1], "block_id", "id", block_ids[-2:])
 
         # Calculate average stresses and elastic strains
         average_dict = {
-            "average_grain_stress":  get_average_field(sim_dict_list, "cauchy_stress_xx",  grain_map),
-            "average_grip_stress":   get_average_field(sim_dict_list, "cauchy_stress_xx",  grip_map),
-            "average_grain_elastic": get_average_field(sim_dict_list, "elastic_strain_xx", grain_map),
-            "average_grip_elastic":  get_average_field(sim_dict_list, "elastic_strain_xx", grip_map)
+            "average_strain":        results_dict["mTE_cpvp_xx"],
+            "average_grain_strain":  results_dict["mTE_cp_xx"],
+            "average_grip_strain":   results_dict["mTE_vp_xx"],
+            "average_stress":        results_dict["mCS_cpvp_xx"],
+            "average_grain_stress":  results_dict["mCS_cp_xx"],
+            "average_grip_stress":   results_dict["mCS_vp_xx"],
+            "average_elastic":       results_dict["mEE_cpvp_xx"],
+            "average_grain_elastic": results_dict["mEE_cp_xx"],
+            "average_grip_elastic":  results_dict["mEE_vp_xx"]
         }
 
         # Calculate stress and elastic strain in each grain
