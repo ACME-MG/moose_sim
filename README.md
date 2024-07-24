@@ -30,7 +30,7 @@ itf = Interface()
 
 The `Interface` class contains several optional arguments. These include:
 * `title`: This optional argument appends a title in front of the directory in which the output files will be placed in. The default value for this argument is an empty string.
-* `output_path`: This optional argument defines the relative path to the input directory, which tells the script where to read the input files. The default value for this argument is `"./data"`.
+* `input_path`: This optional argument defines the relative path to the input directory, which tells the script where to read the input files. The default value for this argument is `"./data"`.
 * `output_path`: This optional argument defines the relative path to the output directory, which tells the script where to place the output files. The default value for this argument is `"./results"`.
 * `verbose`: This optional argument tells the script whether to display any information about the actions of the `Interface` class in the terminal. The default value for this argument is `True`, meaning that the information will be displayed in the terminal.
 * `output_here`: This optional argument tells the script whether to just place the output files in the same directory as the script. The default value for this is `False`. Note that when the user sets the argument to `True`, the `title` and `output_path` values will not have any effect.
