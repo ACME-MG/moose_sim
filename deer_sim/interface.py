@@ -86,7 +86,6 @@ class Interface:
         Parameters:
         * `simulation_name`:   The name of the simulation
         * `simulation_params`: Dictionary of parameter values
-        * `stress`:            The stress to apply in the simulation
         """
         self.__print__(f"Defining the simulation ({simulation_name})")
         self.__controller__.define_simulation(simulation_name, simulation_params, **kwargs)

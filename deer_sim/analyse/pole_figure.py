@@ -10,9 +10,15 @@
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+from matplotlib.patches import PathPatch
+from matplotlib.path import Path
+from matplotlib.collections import PathCollection
+from matplotlib.colors import Normalize
+from matplotlib.colorbar import ColorbarBase
 from neml.math import rotations, tensors
 from neml.cp import crystallography
-from deer_sim.helper.general import flatten
+from deer_sim.helper.general import flatten, round_sf
 
 # Pole figure class
 class PF:
@@ -209,29 +215,37 @@ class IPF:
         reduced_points = [p for p in points if np.dot(p, norm_0) >= 0 and np.dot(p, norm_1) >= 0 and np.dot(p, norm_2) >= 0]
         return reduced_points
 
-    def initialise_ipf(self) -> plt.Axes:
+    def initialise_ipf(self) -> tuple:
         """
         Initialises the format and border of the IPF plot
 
-        Returns the axis
+        Returns the axis and patch
         """
 
         # Create the plot
         axis = plt.subplot(111)
         axis.axis("off")
-        plt.text(0.10, 0.11, "[1 0 0]", transform=plt.gcf().transFigure)
-        plt.text(0.86, 0.11, "[1 1 0]", transform=plt.gcf().transFigure)
+        plt.text(0.10, 0.09, "[1 0 0]", transform=plt.gcf().transFigure)
+        plt.text(0.86, 0.09, "[1 1 0]", transform=plt.gcf().transFigure)
         plt.text(0.74, 0.88, "[1 1 1]", transform=plt.gcf().transFigure)
 
-        # Create the grid
-        for i,j in ((0,1), (1,2), (2,0)):
-            fs = np.linspace(0, 1, 100)
-            points = np.array([project_stereographic((f*self.vectors[i]+(1-f)*self.vectors[j]) / 
-                                                          np.linalg.norm(f*self.vectors[i]+(1-f)*self.vectors[j])) for f in fs])
-            plt.plot(points[:,0], points[:,1], color="k", linewidth=1)
+        # Create outline for the grid
+        all_points = []
+        for i,j in ((0,1), (2,0), (1,2)):
+            fs = np.linspace(0, 1, 5)
+            points = [project_stereographic((f*self.vectors[i]+(1-f)*self.vectors[j]) / 
+                      np.linalg.norm(f*self.vectors[i]+(1-f)*self.vectors[j])) for f in fs]
+            all_points += points
+        all_points = [tuple(point) for point in all_points]
 
-        # Returns the axis
-        return axis
+        # Plot the outline and set clip
+        path_codes = [Path.MOVETO] + [Path.LINETO]*(len(all_points)-2) + [Path.CLOSEPOLY]
+        path = Path(all_points, path_codes)
+        patch = PathPatch(path, facecolor="white", edgecolor="black")
+        axis.add_patch(patch)
+
+        # Returns the axis and patch
+        return axis, patch
 
     def get_points(self, euler:list, direction:list) -> list:
         """
@@ -267,14 +281,19 @@ class IPF:
         # Initialise
         rgb_colours = get_colours(euler_list, colour_list)
         norm_size_list = get_sizes(euler_list, size_list)
-        axis = self.initialise_ipf()
+        axis, patch = self.initialise_ipf()
 
         # Iterate and plot the orientations
         for i, euler in enumerate(euler_list):
+            
+            # Initialise the points
             points = self.get_points(euler, direction)
-            size = norm_size_list[i] if size_list != None else 3
+            size = norm_size_list[i] if size_list != None else 8 # 5
             colour = rgb_colours[i] if colour_list != None else None
-            plot_points(axis, points, size, colour)
+            
+            # Plot and clip
+            pc = plot_points(axis, points, size, colour)
+            pc.set_clip_path(patch)
 
     def plot_ipf_trajectory(self, trajectories:list, direction:list, function:str="scatter", settings:dict={}) -> None:
         """
@@ -288,16 +307,25 @@ class IPF:
         
         Plots the IPF of the reorientation trajectories
         """
-        axis = self.initialise_ipf()
+
+        # Initialise the IPF
+        axis, patch = self.initialise_ipf()
+        
+        # Iterate through trajectories and plot each
         for trajectory in trajectories:
+
+            # Plot the points
             points = np.array(flatten([self.get_points(euler, direction) for euler in trajectory]))
             if function == "arrow": # experimental
-                axis.arrow(points[-3,0], points[-3,1], points[-1,0]-points[-3,0], points[-1,1]-points[-3,1], **settings)
+                pc = axis.arrow(points[-3,0], points[-3,1], points[-1,0]-points[-3,0], points[-1,1]-points[-3,1], **settings)
             elif function == "text":
-                axis.text(points[0,0], points[0,1], **settings)
+                pc = axis.text(points[0,0], points[0,1], **settings)
             else:
                 plotter = getattr(axis, function)
-                plotter(points[:,0], points[:,1], **settings)
+                pc = plotter(points[:,0], points[:,1], **settings)
+        
+            # Clip the points
+            pc.set_clip_path(patch)
 
 def get_lattice(structure:str="fcc"):
     """
@@ -344,7 +372,7 @@ def get_colours(orientations:list, values:list) -> list:
 
     Parameters:
     * `orientations`: The list of orientations
-    * `values`:       The list of value
+    * `values`:       The list of values
 
     Returns the list of colours
     """
@@ -358,11 +386,43 @@ def get_colours(orientations:list, values:list) -> list:
     # Normalise values
     norm_values = np.array(values)
     norm_values = (norm_values - min(norm_values)) / (max(norm_values) - min(norm_values))
-    
-    # Define colours and return
-    colour_map = plt.get_cmap("coolwarm")
-    colours = [colour_map(norm_value) for norm_value in norm_values]
+
+    # Define colour map and return
+    colours = cm.jet(norm_values)
     return np.array(colours)
+
+def get_colour_map(values:list, orientation:str="horizontal") -> None:
+    """
+    Plots a colour map
+
+    Parameters:
+    * `values`:      The list of values
+    * `orientation`: The orientation of the colour bar;
+                     ("horizontal", "vertical")
+    """
+
+    # Initialise figure
+    if orientation == "horizontal":
+        figure = plt.figure(figsize=(6, 2))
+        axis = figure.add_axes([0.2, 0.4, 0.6, 0.2])
+    else:
+        figure = plt.figure(figsize=(2, 6))
+        axis = figure.add_axes([0.4, 0.2, 0.2, 0.6])
+
+    # Get normalised values
+    min_value = min(values)
+    max_value = max(values)
+    norm = Normalize(vmin=min_value, vmax=max_value)
+
+    # Create colour bar
+    sm = plt.cm.ScalarMappable(cmap="jet", norm=norm)
+    sm.set_array([])
+    colour_bar = ColorbarBase(axis, cmap=cm.jet, norm=norm, orientation=orientation)
+
+    # Define the ticks
+    ticks = [round_sf(tick, 5) for tick in np.linspace(min_value, max_value, 5)]
+    colour_bar.set_ticks(ticks)
+    colour_bar.set_ticklabels([str(tick) for tick in ticks])
 
 def get_sizes(orientations:list, values:list) -> list:
     """
@@ -423,7 +483,7 @@ def normalise(value_list:list, min_norm:float=1.0, max_norm:list=32.0) -> list:
     normalised = [min_norm+((value-min_value)/(max_value-min_value))*(max_norm-min_norm) for value in value_list]
     return normalised
 
-def plot_points(axis:plt.Axes, points:list, size:float, colour:np.ndarray) -> None:
+def plot_points(axis:plt.Axes, points:list, size:float, colour:np.ndarray) -> PathCollection:
     """
     Plots the points on a plot
 
@@ -433,8 +493,11 @@ def plot_points(axis:plt.Axes, points:list, size:float, colour:np.ndarray) -> No
     * `size`:      The size of the points
     * `colour`:    The colour of the points; None if not defined
     * `is_family`: Whether the grain is part of the family; None if not defined
+
+    Returns the scatter object
     """
     if not isinstance(colour, np.ndarray):
-        axis.scatter(points[:,0], points[:,1], c="black", s=size**2)
+        scatter = axis.scatter(points[:,0], points[:,1], c="black", s=size**2)
     else:
-        axis.scatter(points[:,0], points[:,1], color=colour, edgecolor="black", linewidth=0.25, s=size**2)
+        scatter = axis.scatter(points[:,0], points[:,1], color=colour, edgecolor="black", linewidth=0.25, s=size**2)
+    return scatter
