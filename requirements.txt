@@ -1,5 +1,6 @@
 itertools
 matplotlib
 pandas
+pyDOE2
 scipy
 seaborn

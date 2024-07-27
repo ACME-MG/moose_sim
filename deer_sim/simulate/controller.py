@@ -193,7 +193,10 @@ class Controller():
                       uses current result path if undefined
         """
         sim_path = self.get_output("") if sim_path == None else sim_path
-        self.simulation.post_process(sim_path, self.get_output(""), **kwargs)
+        try:
+            self.simulation.post_process(sim_path, self.get_output(""), **kwargs)
+        except:
+            pass
 
     def remove_files(self, keyword_list:list) -> None:
         """
