@@ -7,7 +7,7 @@
 """
 
 # Libraries
-import pyDOE2
+import pyDOE2 # type: ignore
 
 def linear_scale(value:float, in_l_bound:float, in_u_bound:float, out_l_bound:float, out_u_bound:float) -> float:
     """
