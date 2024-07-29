@@ -13,8 +13,8 @@ from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict
 
 # Constants
-NUM_PARALLEL   = 8
-NUM_PROCESSORS = 24
+NUM_PARALLEL   = 4
+NUM_PROCESSORS = 48
 
 # Define VP material parameters
 vp_param_dict = {
@@ -27,10 +27,10 @@ vp_param_dict = {
 
 # Get CP parameter combinations
 bounds_dict = {
-    "cp_tau_s": (2,   4), # 2**Nx50
-    "cp_b":     (1,   3), # 2**Nx0.5
-    "cp_tau_0": (2,   4), # 2**Nx25
-    "cp_n":     (2,   4), # 0.5*2**N
+    "cp_tau_s": (2, 4), # 2**Nx50
+    "cp_b":     (1, 3), # 2**Nx0.5
+    "cp_tau_0": (2, 4), # 2**Nx25
+    "cp_n":     (2, 4), # 0.5*2**N
 }
 param_dict_list = get_ccd(bounds_dict)
 
