@@ -1,3 +1,10 @@
+"""
+ Title:         Family
+ Description:   For testing grain family grouping
+ Author:        Janzen Choi
+
+"""
+
 # Libraries
 import sys; sys.path += [".."]
 from deer_sim.analyse.plotter import save_plot

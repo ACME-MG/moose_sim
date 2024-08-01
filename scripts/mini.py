@@ -1,6 +1,6 @@
 """
  Title:         617_s3
- Description:   Runs the CPFEM model once
+ Description:   Runs a mini CPFEM model once
  Author:        Janzen Choi
 
 """
