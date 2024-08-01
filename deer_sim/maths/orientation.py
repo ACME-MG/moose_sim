@@ -188,6 +188,8 @@ def fix_angle(angle:float, l_bound:float=0.0, u_bound:float=2*math.pi) -> float:
 
     Returns the fixed angle
     """
+    if abs(angle-l_bound) < 1e-4 or abs(angle-u_bound) < 1e-4:
+        return angle
     range = u_bound - l_bound
     if l_bound < angle and angle < u_bound:
         return angle

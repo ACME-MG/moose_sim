@@ -42,6 +42,11 @@ for param_dict in param_dict_list:
     param_dict["cp_n"]       = 0.5*2**param_dict["cp_n"]
     param_dict["cp_gamma_0"] = round_sf(1e-4/3, 4)
 
+# # Print out domains of parameters
+# from deer_sim.helper.sampler import get_domains
+# print(get_domains(param_dict_list))
+# exit()
+
 # Section CP parameter list for script
 sim_id     = int(sys.argv[1])
 num_sims   = int(len(param_dict_list)/NUM_PARALLEL)

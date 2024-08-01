@@ -215,6 +215,28 @@ class IPF:
         reduced_points = [p for p in points if np.dot(p, norm_0) >= 0 and np.dot(p, norm_1) >= 0 and np.dot(p, norm_2) >= 0]
         return reduced_points
 
+    def get_outline(self) -> list:
+        """
+        Returns a list of tuples for outlines of an IPF plot
+        """
+        all_points = []
+        for i,j in ((0,1), (2,0), (1,2)):
+            fs = np.linspace(0, 1, 5)
+            points = [project_stereographic((f*self.vectors[i]+(1-f)*self.vectors[j]) / 
+                      np.linalg.norm(f*self.vectors[i]+(1-f)*self.vectors[j])) for f in fs]
+            all_points += points
+        all_points = [tuple(point) for point in all_points]
+        return all_points
+
+    def plot_outline(self) -> None:
+        """
+        Plots the outline
+        """
+        all_points = self.get_outline()
+        x_list = [point[0] for point in all_points]
+        y_list = [point[1] for point in all_points]
+        plt.plot(x_list, y_list, color="black")
+
     def initialise_ipf(self) -> tuple:
         """
         Initialises the format and border of the IPF plot
@@ -229,16 +251,8 @@ class IPF:
         plt.text(0.86, 0.09, "[1 1 0]", transform=plt.gcf().transFigure)
         plt.text(0.74, 0.88, "[1 1 1]", transform=plt.gcf().transFigure)
 
-        # Create outline for the grid
-        all_points = []
-        for i,j in ((0,1), (2,0), (1,2)):
-            fs = np.linspace(0, 1, 5)
-            points = [project_stereographic((f*self.vectors[i]+(1-f)*self.vectors[j]) / 
-                      np.linalg.norm(f*self.vectors[i]+(1-f)*self.vectors[j])) for f in fs]
-            all_points += points
-        all_points = [tuple(point) for point in all_points]
-
         # Plot the outline and set clip
+        all_points = self.get_outline()
         path_codes = [Path.MOVETO] + [Path.LINETO]*(len(all_points)-2) + [Path.CLOSEPOLY]
         path = Path(all_points, path_codes)
         patch = PathPatch(path, facecolor="white", edgecolor="black")
@@ -294,6 +308,9 @@ class IPF:
             # Plot and clip
             pc = plot_points(axis, points, size, colour)
             pc.set_clip_path(patch)
+        
+        # Add final outline
+        self.plot_outline()
 
     def plot_ipf_trajectory(self, trajectories:list, direction:list, function:str="scatter", settings:dict={}) -> None:
         """
@@ -326,6 +343,9 @@ class IPF:
         
             # Clip the points
             pc.set_clip_path(patch)
+            
+        # Add final outline
+        self.plot_outline()
 
 def get_lattice(structure:str="fcc"):
     """
