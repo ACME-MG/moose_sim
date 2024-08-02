@@ -108,6 +108,10 @@ SIMULATION_FORMAT = """
     family = MONOMIAL
     order  = CONSTANT
   [../]
+  [./volume]
+    order  = CONSTANT
+    family = MONOMIAL
+  [../]
   [./orientation_q1]
     order  = CONSTANT
     family = MONOMIAL
@@ -136,6 +140,10 @@ SIMULATION_FORMAT = """
     variable      = block_id
     extra_id_name = block_id
   [../]
+  [volume]
+    type = VolumeAux
+    variable = volume
+  []
   [q1]
     type       = MaterialStdVectorAux
     property   = orientation
@@ -267,7 +275,7 @@ SIMULATION_FORMAT = """
 [VectorPostprocessors]
   [./element]
     type     = ElementValueSampler
-    variable = 'block_id
+    variable = 'block_id volume
                 orientation_q1 orientation_q2 orientation_q3 orientation_q4
                 cauchy_stress_xx strain_xx elastic_strain_xx mechanical_strain_xx'
     contains_complete_history = false

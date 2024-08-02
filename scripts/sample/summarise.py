@@ -47,9 +47,9 @@ print(num_values)
 # Iterate through the results
 for summary_dict, param_dict in zip(summary_dict_list, param_dict_list):
     for key in param_dict:
-        super_summary_dict[key] += [param_dict[key]]*num_values
+        super_summary_dict[key] += [param_dict[key]]*(num_values-1)
     for key in summary_dict:
-        super_summary_dict[key] += summary_dict[key]
+        super_summary_dict[key] += summary_dict[key][1:]
          
 # Save the super summary dictionary
 dict_to_csv(super_summary_dict, "summary.csv")
