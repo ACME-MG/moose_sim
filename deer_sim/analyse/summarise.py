@@ -113,7 +113,7 @@ def get_fields(data_dict:dict, source_field:str, target_fields:list, source_incl
             target_values_list.append(target_values)
     return target_values_list
 
-def map_average_field(data_dict_list:list, target_field:str, block_map:dict) -> dict:
+def map_average_field(data_dict_list:list, target_field:str, block_map:dict, weight_field:str=None) -> dict:
     """
     Maps the block IDs to the average values of a field
 
@@ -121,6 +121,7 @@ def map_average_field(data_dict_list:list, target_field:str, block_map:dict) -> 
     * `data_dict_list`: The list of dictionaries of data
     * `target_field`:   The field to conduct the mapping to
     * `block_map`:      The dictionary mapping the block IDs to element IDs
+    * `weight_field`:   The field to weight the orientations; doesn't weight if undefined
 
     Returns a dictionary mapping the block IDs to the averaged values
     """
@@ -132,14 +133,27 @@ def map_average_field(data_dict_list:list, target_field:str, block_map:dict) -> 
     # Iterate through data dictionaries
     for data_dict in data_dict_list:
         for block_id in block_ids:
+            
+            # Get target field
             target_value_list = get_fields(data_dict, "id", [target_field], block_map[block_id])
-            average_value = np.average(flatten(target_value_list))
-            average_dict[block_id].append(average_value)
+            target_value_list = flatten(target_value_list)
+            
+            # Get weight list if defined
+            if weight_field == None:
+                weight_list = [1]*len(target_value_list)
+            else:
+                weight_list = get_fields(data_dict, "id", [weight_field], block_map[block_id])
+                weight_list = flatten(weight_list)
+                weight_list = [1]*len(weight_list) if sum(weight_list) == 0 else weight_list
+            
+            # Get average based on weights
+            average_value = np.average(target_value_list, weights=weight_list)
+            average_dict[block_id].append(round_sf(average_value, 5))
     
     # Return
     return average_dict
 
-def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:dict) -> dict:
+def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:dict, weight_field:str=None) -> dict:
     """
     Gets the average orientations from a block map
 
@@ -147,6 +161,7 @@ def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:di
     * `data_dict_list`:     The list of dictionaries of orientation data
     * `orientation_fields`: The list of fields for the orientations (quaternions)
     * `block_map`:          The dictionary mapping the block IDs to element IDs
+    * `weight_field`:       The field to weight the orientations; doesn't weight if undefined
     
     Returns a dictionary mapping the block ID to a list of average orientations (euler-bunge, rads) 
     """
@@ -158,8 +173,20 @@ def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:di
     # Store average orientations
     for i, data_dict in enumerate(data_dict_list):
         for block_id in block_ids:
+            
+            # Get the quaternions
             quat_list = get_fields(data_dict, "id", orientation_fields, block_map[block_id])
-            average_quat = get_average_quat(quat_list)
+            
+            # Get average quaternions
+            if weight_field == None:
+                average_quat = get_average_quat(quat_list)
+            else:
+                weight_list = get_fields(data_dict, "id", [weight_field], block_map[block_id])
+                weight_list = flatten(weight_list)
+                weight_list = [1]*len(weight_list) if sum(weight_list) == 0 else weight_list
+                average_quat = get_average_quat(quat_list, weight_list)
+            
+            # Convert to euler-bunge angles and append
             average_euler = deer_quat_to_euler(average_quat, reorient=True, offset=(i==0))
             average_euler = [round_sf(ae, 5) for ae in average_euler]
             average_dict[block_id].append(average_euler)

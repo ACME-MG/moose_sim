@@ -499,14 +499,14 @@ class Simulation(__Simulation__):
         }
 
         # Calculate stress and elastic strain in each grain
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_map)
+        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_map, "volume")
         as_dict = {f"g{k}_stress": v for k, v in as_dict.items()}
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map)
+        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map, "volume")
         es_dict = {f"g{k}_elastic": v for k, v in es_dict.items()}
 
         # Calculate average orientations in each grain
         orientation_fields = [f"orientation_q{i}" for i in [1,2,3,4]]
-        average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map)
+        average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map, "volume")
         phi_dict = {}
         for grain_id in average_euler_dict.keys():
             euler_list = average_euler_dict[grain_id]

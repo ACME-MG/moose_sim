@@ -144,40 +144,22 @@ def quat_to_euler(quat:list) -> list:
     euler = [e+2*math.pi if e<0 else e for e in euler]
     return euler
 
-def get_average_quat(quat_list:list) -> list:
+def get_average_quat(quat_list:list, weight_list:list=None) -> list:
     """
     Gets the average quaternion;
     from Ref. [2]
 
     Parameters:
-    * `quat_list`: List of quaternions (x,y,z,w)
+    * `quat_list`:   List of quaternions (x,y,z,w)
+    * `weight_list`: List of weights; assumes equal if undefined
 
     Returns the averaged quaternion
     """
     quat_array = np.array(quat_list)
-    weights = np.array([1 for _ in range(len(quat_array))])
-    average = np.linalg.eigh(np.einsum('ij,ik,i->...jk', quat_array, quat_array, weights))[1][:, -1]
+    weight_list = [1 for _ in range(len(quat_array))] if weight_list == None else weight_list
+    weight_array = np.array(weight_list)
+    average = np.linalg.eigh(np.einsum('ij,ik,i->...jk', quat_array, quat_array, weight_array))[1][:, -1]
     return list(average)
-
-def get_average_euler(euler_list:list, degrees:bool=True) -> list:
-    """
-    Gets the average euler angle
-
-    Parameters:
-    * `euler_list`: List of euler-bunge angles (rads)
-    * `degrees`:    Whether the euler angles are in degrees
-    
-    Returns the averaged euler angles
-    """
-    euler_list = [list(euler) for euler in euler_list]
-    if degrees:
-        euler_list = deg_to_rad(euler_list)
-    quat_list = [euler_to_quat(euler) for euler in euler_list]
-    average_quat = get_average_quat(quat_list)
-    average_euler = quat_to_euler(average_quat)
-    if degrees:
-        average_euler = rad_to_deg(average_euler)
-    return average_euler
 
 def fix_angle(angle:float, l_bound:float=0.0, u_bound:float=2*math.pi) -> float:
     """
