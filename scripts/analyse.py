@@ -16,7 +16,8 @@ from deer_sim.helper.io import csv_to_dict
 EXP_PATH = "data/617_s3/617_s3_exp.csv"
 MAP_PATH = "data/617_s3/grain_map.csv"
 # SIM_PATH = "results/240718160621_mini/summary.csv"
-SIM_PATH = "/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/deer_sim/2024-07-24 (617_s3)/summary.csv"
+SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-08-04 (617_s3_pp)/summary.csv"
+EVP_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/opt_all/2024-07-24 (617_s3_evp)/data.csv"
 
 def get_grain_ids(exp_path:str, mesh_path:str) -> dict:
     """
@@ -107,7 +108,7 @@ sim_final_stresses     = [sim_dict[key][-1] for key in sim_dict.keys() if key.st
 sim_final_orientations = [trajectory[-1] for trajectory in get_trajectories(sim_dict)]
 
 # Gets EVP data
-evp_dict = csv_to_dict("/mnt/c/Users/Janzen/OneDrive - UNSW/PhD/results/opt_all/240718172051_617_s3_evp/data.csv")
+evp_dict = csv_to_dict(EVP_PATH)
 evp_strain = [strain for strain in evp_dict["cal_tensile_strain"] if strain < 0.45]
 evp_stress = evp_dict["cal_tensile_stress"][:len(evp_strain)]
 evp_ss = {"strain": evp_strain, "stress": evp_stress}

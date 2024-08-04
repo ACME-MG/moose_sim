@@ -110,11 +110,13 @@ def round_sf(value:float, sf:int) -> float:
     Rounds a float to a number of significant figures
 
     Parameters:
-    * `value`: The value to be rounded
+    * `value`: The value to be rounded; accounts for lists
     * `sf`:    The number of significant figures
 
     Returns the rounded number
     """
+    if isinstance(value, list):
+        return [round_sf(v, sf) for v in value]
     format_str = "{:." + str(sf) + "g}"
     rounded_value = float(format_str.format(value))
     return rounded_value
