@@ -29,7 +29,7 @@ class PF:
         
         Parameters:
         * `lattice`:         The lattice object
-        * `sample_symmetry`: Sample direction of the projection
+        * `sample_symmetry`: Sample direction of the projection ([1] is no symmetry)
         * `x_direction`:     X crystallographic direction of the projection
         * `y_direction`:     Y crystallographic direction of the projection
         """
@@ -155,7 +155,7 @@ class IPF:
 
         Parameters:
         * `lattice`:         The lattice object
-        * `sample_symmetry`: Sample direction of the projection
+        * `sample_symmetry`: Sample direction of the projection ([1] is no symmetry)
         * `x_direction`:     X crystallographic direction of the projection
         * `y_direction`:     Y crystallographic direction of the projection
         """
@@ -328,19 +328,28 @@ class IPF:
         # Initialise the IPF
         axis, patch = self.initialise_ipf()
         
+        # Add zorder in settings if not defined
+        if not "zorder" in settings.keys():
+            settings["zorder"] = 2
+        
         # Iterate through trajectories and plot each
         for trajectory in trajectories:
 
-            # Plot the points
+            # Get points
             points = np.array(flatten([self.get_points(euler, direction) for euler in trajectory]))
+            if len(points) == 0:
+                continue
+            
+            # Plot the points
             if function == "arrow": # experimental
                 pc = axis.arrow(points[-3,0], points[-3,1], points[-1,0]-points[-3,0], points[-1,1]-points[-3,1], **settings)
             elif function == "text":
                 pc = axis.text(points[0,0], points[0,1], **settings)
-            else:
-                plotter = getattr(axis, function)
-                pc = plotter(points[:,0], points[:,1], **settings)
-        
+            elif function == "plot":
+                pc = plt.plot(points[:,0], points[:,1], **settings)[0]
+            elif function == "scatter":
+                pc = plt.scatter(points[:,0], points[:,1], **settings)
+
             # Clip the points
             pc.set_clip_path(patch)
             

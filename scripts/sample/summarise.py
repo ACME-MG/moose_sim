@@ -8,7 +8,7 @@
 # Libraries
 import sys; sys.path += ["../.."]
 import os
-from deer_sim.analyse.pole_figure import IPF, get_lattice
+from deer_sim.maths.orientation import euler_to_quat
 from deer_sim.helper.general import transpose, round_sf
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
 
@@ -57,27 +57,20 @@ summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_
 param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
 print(len(param_dict_list))
 
-# Initialise IPF-100
-lattice = get_lattice("fcc")
-ipf = IPF(lattice)
-get_ipf = lambda euler : ipf.get_points(euler, [1,0,0])
-
-# Convert euler-bunge angles into IPF-100 coordinates
+# Convert euler-bunge angles into quaternions
 for summary_dict in summary_dict_list:
     
-    # Get trajectories
+    # Get trajectories and remove euler-bunge angles
     trajectories = get_trajectories(summary_dict)
-    
-    # Remove euler-bunge angles
     phi_keys = [key for key in summary_dict.keys() if "phi" in key.lower()]
     for phi_key in phi_keys:
         summary_dict.pop(phi_key)
 
-    # Convert trajectories into IPF-100 values
+    # Convert trajectories into quaternions
     for grain_id in trajectories.keys():
-        ipf_xy = [get_ipf(euler) for euler in trajectories[grain_id]]
-        summary_dict[f"g{grain_id}_ipf_x"] = round_sf([xy[0][0] for xy in ipf_xy], 5)
-        summary_dict[f"g{grain_id}_ipf_y"] = round_sf([xy[0][1] for xy in ipf_xy], 5)
+        quat_list = [euler_to_quat(euler) for euler in trajectories[grain_id]]
+        for i in range(len(quat_list[0])):
+            summary_dict[f"g{grain_id}_q{i+1}"] = round_sf([quat[i] for quat in quat_list], 5)
         
 # Initialise a summary dictionary for the summaries
 key_list = list(param_dict_list[0].keys()) + list(summary_dict_list[0].keys())

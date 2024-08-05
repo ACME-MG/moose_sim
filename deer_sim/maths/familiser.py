@@ -8,7 +8,8 @@
 
 # Libraries
 import math, numpy as np
-from deer_sim.maths.orientation import deg_to_rad, matrix_to_euler, fix_angle
+from neml.math import rotations, tensors
+from deer_sim.maths.orientation import deg_to_rad, fix_angle
 from deer_sim.maths.neml import get_cubic_misorientation
 
 def get_magnitude(vector:list) -> float:
@@ -24,6 +25,23 @@ def get_magnitude(vector:list) -> float:
     magnitude = math.sqrt(square_sum)
     return magnitude
 
+def is_equal(list_1:list, list_2:list) -> bool:
+    """
+    Checks whether the elements of two lists are the same
+    
+    Parameters:
+    * `list_1`: The first list
+    * `list_2`: The second list
+    
+    Returns the equality
+    """
+    if len(list_1) != len(list_2):
+        return False
+    for e_1, e_2 in zip(list_1, list_2):
+        if e_1 != e_2:
+            return False
+    return True
+
 def miller_to_euler(hkl:list, uvw:list) -> list:
     """
     Converts a list of miller indices to their euler-bunge form;
@@ -35,38 +53,13 @@ def miller_to_euler(hkl:list, uvw:list) -> list:
 
     Returns the euler-bunge orientation (rads)
     """
-    h, k, l = tuple(hkl)
-    u, v, w = tuple(uvw)
-    phi_2 = math.atan2(h, k)
-    Phi   = math.atan2(k, l*math.cos(phi_2))
-    phi_1 = math.atan2(l*w, (k*u-h*v)*math.cos(Phi))
-    euler = [fix_angle(phi) for phi in [phi_1, Phi, phi_2]]
-    return euler
-
-def miller_to_euler_2(hkl:list, uvw:list) -> list:
-    """
-    Converts a list of miller indices to their euler-bunge form;
-    (plane)[directionn] = (hkl)[uvw] = {hkl}<uvw>
-
-    Parameters:
-    * `hkl`: The crystallographic plane
-    * `uvw`: The crystallographic direction
-
-    Returns the euler-bunge orientation (rads)
-    """
-    hkl_mag = get_magnitude(hkl)
-    uvw_mag = get_magnitude(uvw)
-    n = [i/hkl_mag for i in hkl]
-    b = [i/uvw_mag for i in uvw]
-    nxb = np.cross(np.array(n), np.array(b))
-    nxb_mag = get_magnitude(nxb)
-    t = list(nxb/nxb_mag)
-    matrix = [
-        [b[0], t[0], n[0]],
-        [b[1], t[1], n[1]],
-        [b[2], t[2], n[2]]
-    ]
-    euler = matrix_to_euler(matrix)
+    if is_equal(hkl, uvw):
+        return [0,0,0]
+    hkl_vector = tensors.Vector(np.array([float(i) for i in hkl])).normalize()
+    uvw_vector = tensors.Vector(np.array([float(i) for i in uvw])).normalize()
+    quaternion = rotations.rotate_to(hkl_vector, uvw_vector)
+    euler = quaternion.to_euler(angle_type="radians", convention="bunge")
+    euler = [fix_angle(e) for e in euler]
     return euler
 
 def get_cubic_family(orientations:list, plane:list, direction:list, threshold:float=10.0) -> list:
@@ -90,6 +83,7 @@ def get_cubic_family(orientations:list, plane:list, direction:list, threshold:fl
     family_indices = []
     for i, orientation in enumerate(orientations):
         misorientation = get_cubic_misorientation(orientation, pd_orientation)
+        misorientation = min([misorientation, abs(misorientation-math.pi)])
         if misorientation < rad_threshold:
             family_indices.append(i)
     return family_indices
