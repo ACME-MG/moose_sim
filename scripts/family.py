@@ -11,7 +11,7 @@ from deer_sim.analyse.plotter import save_plot
 from deer_sim.analyse.pole_figure import IPF, get_lattice
 from deer_sim.helper.general import transpose, remove_consecutive_duplicates
 from deer_sim.helper.io import csv_to_dict
-from deer_sim.maths.familiser import get_cubic_family
+from deer_sim.maths.familiser import get_grain_family
 
 def get_trajectories(data_dict:dict) -> list:
     """
@@ -34,7 +34,7 @@ def get_trajectories(data_dict:dict) -> list:
 # Initialise IPF plotter
 ipf = IPF(get_lattice("fcc"))#, sample_symmetry=[1])
 direction = [1,0,0]
-plane     = [1,0,0]
+plane     = [1,1,1]
 
 # Get experimental orientations
 exp_dict = csv_to_dict("data/617_s3/617_s3_exp.csv")
@@ -42,7 +42,7 @@ exp_orientations = [trajectory[0] for trajectory in get_trajectories(exp_dict)]
 ipf.plot_ipf_trajectory([[eo] for eo in exp_orientations], direction, "scatter", {"color": "darkgray", "s": 8**2})
 
 # Plot grain family on IPF
-family_indices = get_cubic_family(exp_orientations, plane, direction, 15)
+family_indices = get_grain_family(exp_orientations, plane, direction, 15)
 exp_orientations = [exp_orientations[i] for i in family_indices]
 ipf.plot_ipf_trajectory([[eo] for eo in exp_orientations], direction, "scatter", {"color": "red", "s": 5**2})
 save_plot("family.png")
