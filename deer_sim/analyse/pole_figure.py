@@ -60,7 +60,7 @@ class PF:
         Gets the equivalent poles
 
         Parameters:
-        * `plane`: Plane of the projection
+        * `plane`: Plane of the projection (i.e., crystal direction)
 
         Returns the list of equivalent poles
         """
@@ -107,7 +107,7 @@ class PF:
 
         Parameters:
         * `euler_list`:  The list of orientations in euler-bunge form (rads)
-        * `plane`:       Plane of the projection
+        * `plane`:       Plane of the projection (i.e., crystal direction)
         * `colour_list`: List of values to define the colouring scheme
         * `size_list`:   List of values to define the sizing scheme
         
@@ -135,7 +135,7 @@ class PF:
         
         Parameters:
         * `euler_list`:  The list of orientations in euler-bunge form (rads)
-        * `plane`:       Plane of the projection
+        * `plane`:       Plane of the projection (i.e., crystal direction)
         """
         eq_poles = self.get_equivalent_poles(plane)
         self.initialise_polar_grid()
@@ -173,7 +173,7 @@ class IPF:
 
         Parameters:
         * `quaternion`: Orientation in quaternion form
-        * `direction`:  Direction of the projection
+        * `direction`:  The sample direction
 
         Returns the projected points
         """
@@ -267,7 +267,7 @@ class IPF:
 
         Parameters:
         * `euler`:     The orientation in euler-bunge form (rads)
-        * `direction`: Direction of the projection
+        * `direction`: The sample direction
 
         Returns a list of stereo points
         """
@@ -285,7 +285,7 @@ class IPF:
 
         Parameters:
         * `euler_list`:  The list of orientations in euler-bunge form (rads)
-        * `direction`:   Direction of the projection
+        * `direction`:   The sample direction
         * `colour_list`: List of values to define the colouring scheme
         * `size_list`:   List of values to define the sizing scheme
 
@@ -318,7 +318,7 @@ class IPF:
 
         Parameters:
         * `trajectories`: The list of reorientation trajectories
-        * `direction`:    Direction of the projection
+        * `direction`:    The sample direction
         * `function`      Function to plot points
         * `settings`:     The plotting settings
         

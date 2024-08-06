@@ -62,31 +62,33 @@ def miller_to_euler(hkl:list, uvw:list) -> list:
     euler = [fix_angle(e) for e in euler]
     return euler
 
-def get_grain_family(orientations:list, plane:list, direction:list, threshold:float=10.0) -> list:
+def get_grain_family(orientations:list, crystal_direction:list,
+                     sample_direction:list, threshold:float=10.0) -> list:
     """
     Groups a list of orientations to a family
 
     Parameters:
-    * `orientations`: The list of euler-bunge angles (rads)
-    * `plane`:        The plane (or the crystal direction)
-    * `direction`:    The direction (or the sample direction)
-    * `threshold`:    The misorientation threshold for being part of a family (deg)
+    * `orientations`:      The list of euler-bunge angles (rads)
+    * `crystal_direction`: The crystal direction
+    * `sample_direction`:  The sample direction
+    * `threshold`:         The misorientation threshold for being part of a family (deg)
 
     Returns the indices of the grain family
     """
     
     # Initialise
     lattice = crystallography.CubicLattice(1.0)
-    plane = tensors.Vector(np.array([float(p) for p in plane])).normalize()
-    direction = tensors.Vector(np.array([float(d) for d in direction])).normalize()
+    crystal_direction = tensors.Vector(np.array([float(cd) for cd in crystal_direction])).normalize()
+    sample_direction = tensors.Vector(np.array([float(sd) for sd in sample_direction])).normalize()
     rad_threshold = deg_to_rad(threshold)
     
     # Iterate through grains and add to family
     family_indices = []
     for i, orientation in enumerate(orientations):
         quat = rotations.Orientation(*orientation, convention="bunge")
-        quat = quat.apply(direction)
-        misorientations = [np.arccos(np.abs(plane.dot(sop.apply(quat)))) for sop in lattice.symmetry.ops]
+        quat = quat.apply(sample_direction)
+        dot_list = [crystal_direction.dot(sop.apply(quat)) for sop in lattice.symmetry.ops]
+        misorientations = [np.arccos(np.abs(dot)) for dot in dot_list]
         misorientation = np.min(misorientations)
         if misorientation < rad_threshold:
             family_indices.append(i)

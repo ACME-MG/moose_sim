@@ -8,7 +8,7 @@
 # Libraries
 import numpy as np
 from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
-from deer_sim.analyse.summarise import get_average_euler, map_average_field
+from deer_sim.analyse.summarise import get_average_euler, map_average_field, map_total_field
 from deer_sim.helper.general import transpose
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
 from deer_sim.simulations.__simulation__ import __Simulation__
@@ -504,6 +504,10 @@ class Simulation(__Simulation__):
         es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map, "volume")
         es_dict = {f"g{k}_elastic": v for k, v in es_dict.items()}
 
+        # Calculate total volume of each grain
+        volume_dict = map_total_field(sim_dict_list, "volume", grain_map)
+        volume_dict = {f"g{k}_volume": v for k, v in volume_dict.items()}
+        
         # Calculate average orientations in each grain
         orientation_fields = [f"orientation_q{i}" for i in [1,2,3,4]]
         average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map, "volume")
@@ -515,5 +519,5 @@ class Simulation(__Simulation__):
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
         # Combine all summaries and save
-        summary_dict = {**average_dict, **as_dict, **es_dict, **phi_dict}
+        summary_dict = {**average_dict, **as_dict, **es_dict, **volume_dict, **phi_dict}
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")

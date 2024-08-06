@@ -153,6 +153,33 @@ def map_average_field(data_dict_list:list, target_field:str, block_map:dict, wei
     # Return
     return average_dict
 
+def map_total_field(data_dict_list:list, target_field:str, block_map:dict) -> dict:
+    """
+    Maps the block IDs to the sum of values of a field
+
+    Parameters:
+    * `data_dict_list`: The list of dictionaries of data
+    * `target_field`:   The field to conduct the mapping to
+    * `block_map`:      The dictionary mapping the block IDs to element IDs
+
+    Returns a dictionary mapping the block IDs to the totaled values
+    """
+    
+    # Initialise
+    block_ids = list(block_map.keys())
+    total_dict = dict(zip(block_ids, [[] for _ in range(len(block_ids))]))
+
+    # Iterate through data dictionaries
+    for data_dict in data_dict_list:
+        for block_id in block_ids:
+            target_value_list = get_fields(data_dict, "id", [target_field], block_map[block_id])
+            target_value_list = flatten(target_value_list)
+            total_value = sum(target_value_list)
+            total_dict[block_id].append(round_sf(total_value, 5))
+    
+    # Return
+    return total_dict
+
 def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:dict, weight_field:str=None) -> dict:
     """
     Gets the average orientations from a block map
