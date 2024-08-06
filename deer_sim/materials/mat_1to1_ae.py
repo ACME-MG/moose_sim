@@ -97,7 +97,7 @@ MATERIAL_FORMAT = """
 # VSHAI Class
 class Material(__Material__):
     
-    def get_material(self, youngs:float, poissons:float) -> str:
+    def get_material(self, youngs:float, poissons:float, shear:float) -> str:
         """
         Gets the content for the material file;
         must be overridden
@@ -105,11 +105,13 @@ class Material(__Material__):
         Parameters:
         * `youngs`:   The elastic modulus
         * `poissons`: The poissons ratio
+        * `shear`:    The shear modulus
         """
         material_content = MATERIAL_FORMAT.format(
             material   = self.get_name(),
             youngs     = youngs,
             poissons   = poissons,
+            shear      = shear,
             cp_tau_s   = self.get_param("cp_tau_s"),
             cp_b       = self.get_param("cp_b"),
             cp_tau_0   = self.get_param("cp_tau_0"),
