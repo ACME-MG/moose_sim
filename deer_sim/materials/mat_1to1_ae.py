@@ -16,7 +16,7 @@ MATERIAL_FORMAT = """
       <emodel type="CubicLinearElasticModel">
         <m1>{youngs}</m1>
         <m2>{poissons}</m2>
-        <m2>{shear}</m2>
+        <m3>{shear}</m3>
         <method>moduli</method>
       </emodel>
       <imodel type="AsaroInelasticity">
