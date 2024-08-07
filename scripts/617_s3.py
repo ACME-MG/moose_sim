@@ -40,12 +40,16 @@ itf.define_material(
     shear           = 81000.0,
 )
 
-# Defines the simulation parameters
+# Read experimental data
 exp_dict = csv_to_dict(f"data/{FOLDER}/617_s3_exp.csv")
+time_intervals = exp_dict["time_intervals"] + [2**i for i in range(9)]
+end_strain = exp_dict["strain_intervals"][-1] * 2200 * 5/3
+
+# Defines the simulation parameters
 itf.define_simulation(
     simulation_name = "sim_1to1",
-    time_intervals  = exp_dict["time_intervals"],
-    end_strain      = exp_dict["strain_intervals"][-1] * 2200 * 5/3
+    time_intervals  = time_intervals,
+    end_strain      = end_strain,
 )
 
 # Runs the model and saves results
