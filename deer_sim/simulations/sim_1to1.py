@@ -457,11 +457,11 @@ class Simulation(__Simulation__):
             grip_ids   = " ".join([str(id) for id in grip_ids]),
 
             # Temporal parameters
-            start_time = time_intervals[0],
-            end_time   = time_intervals[-1],
+            start_time = min(time_intervals),
+            end_time   = max(time_intervals),
             dt_start   = 1e0,
             dt_min     = 1e-2,
-            dt_max     = time_intervals[-1],
+            dt_max     = max(time_intervals),
             times      = " ".join([str(ti) for ti in time_intervals]),
 
             # Other parameters

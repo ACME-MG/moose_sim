@@ -42,7 +42,8 @@ itf.define_material(
 
 # Read experimental data
 exp_dict = csv_to_dict(f"data/{FOLDER}/617_s3_exp.csv")
-time_intervals = exp_dict["time_intervals"] + [2**i for i in range(9)]
+# time_intervals = exp_dict["time_intervals"]
+time_intervals = sorted(list(exp_dict["time_intervals"] + [2**i for i in range(9)]))
 end_strain = exp_dict["strain_intervals"][-1] * 2200 * 5/3
 
 # Defines the simulation parameters
