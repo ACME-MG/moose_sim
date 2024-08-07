@@ -179,7 +179,7 @@ sim_elastics = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") 
 
 # Plot elastic strains and stresses
 for crystal_direction, colour in zip(crystal_directions, colour_list):
-    family_indices = get_grain_family(sim_start_orientations, crystal_direction, sample_direction, 15)
+    family_indices = get_grain_family(sim_start_orientations, crystal_direction, sample_direction, 10)
     family_elastics = transpose([sim_elastics[i] for i in family_indices])
     average_elastics = [np.average(family_elastic) for family_elastic in family_elastics]
     family_stresses = transpose([sim_stresses[i] for i in family_indices])

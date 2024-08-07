@@ -42,7 +42,7 @@ exp_orientations = [trajectory[0] for trajectory in get_trajectories(exp_dict)]
 ipf.plot_ipf_trajectory([[eo] for eo in exp_orientations], sample_direction, "scatter", {"color": "darkgray", "s": 8**2})
 
 # Plot grain family on IPF
-family_indices = get_grain_family(exp_orientations, crystal_direction, sample_direction, 15)
+family_indices = get_grain_family(exp_orientations, crystal_direction, sample_direction, 10)
 exp_orientations = [exp_orientations[i] for i in family_indices]
 ipf.plot_ipf_trajectory([[eo] for eo in exp_orientations], sample_direction, "scatter", {"color": "red", "s": 5**2})
 save_plot("family.png")
