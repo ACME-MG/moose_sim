@@ -17,7 +17,7 @@ from deer_sim.helper.io import csv_to_dict
 # Constants
 EXP_PATH = "../data/617_s3/617_s3_exp.csv"
 MAP_PATH = "../data/617_s3/grain_map.csv"
-SIM_PATH = "sim_data_lr.csv"
+SIM_PATH = "sim_data.csv"
 EVP_PATH = "evp_data.csv"
 
 def get_grain_ids(exp_path:str, mesh_path:str) -> dict:
@@ -155,36 +155,36 @@ save_plot_results("plot_ipf_stress_cm.png")
 # define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["scatter", "scatter"])
 # save_plot_results("plot_ipf_final.png")
 
-# # Plot trajectories
-# ipf.plot_ipf_trajectory(exp_trajectories, direction, "plot", {"color": "darkgray", "linewidth": 2})
-# ipf.plot_ipf_trajectory(exp_trajectories, direction, "arrow", {"color": "darkgray", "head_width": 0.01, "head_length": 0.015})
-# ipf.plot_ipf_trajectory([[et[0]] for et in exp_trajectories], direction, "scatter", {"color": "darkgray", "s": 8**2})
-# for exp_trajectory, grain_id in zip(exp_trajectories, exp_grain_ids):
-#     ipf.plot_ipf_trajectory([[exp_trajectory[0]]], direction, "text", {"color": "black", "fontsize": 8, "s": grain_id})
-# ipf.plot_ipf_trajectory(sim_trajectories, direction, "plot", {"color": "green", "linewidth": 1, "zorder": 3})
-# ipf.plot_ipf_trajectory(sim_trajectories, direction, "arrow", {"color": "green", "head_width": 0.0075, "head_length": 0.0075*1.5, "zorder": 3})
-# ipf.plot_ipf_trajectory([[st[0]] for st in sim_trajectories], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
-# define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["line", "line"])
-# save_plot_results("plot_ipf_trajectories.png")
+# Plot trajectories
+ipf.plot_ipf_trajectory(exp_trajectories, direction, "plot", {"color": "darkgray", "linewidth": 2})
+ipf.plot_ipf_trajectory(exp_trajectories, direction, "arrow", {"color": "darkgray", "head_width": 0.01, "head_length": 0.015})
+ipf.plot_ipf_trajectory([[et[0]] for et in exp_trajectories], direction, "scatter", {"color": "darkgray", "s": 8**2})
+for exp_trajectory, grain_id in zip(exp_trajectories, exp_grain_ids):
+    ipf.plot_ipf_trajectory([[exp_trajectory[0]]], direction, "text", {"color": "black", "fontsize": 8, "s": grain_id})
+ipf.plot_ipf_trajectory(sim_trajectories, direction, "plot", {"color": "green", "linewidth": 1, "zorder": 3})
+ipf.plot_ipf_trajectory(sim_trajectories, direction, "arrow", {"color": "green", "head_width": 0.0075, "head_length": 0.0075*1.5, "zorder": 3})
+ipf.plot_ipf_trajectory([[st[0]] for st in sim_trajectories], direction, "scatter", {"color": "green", "s": 6**2, "zorder": 3})
+define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["line", "line"])
+save_plot_results("plot_ipf_trajectories.png")
 
-# Initialise elastic strain / stress plotting
-crystal_directions = [[2,2,0], [1,1,1], [3,1,1], [2,0,0]]
-colour_list = ["green", "black", "blue", "red"]
-plotter_es = Plotter("Elastic Strain", "Applied Stress", "mm/mm", "MPa")
-plotter_es.prep_plot()
-sim_elastics = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_elastic" in key]
-sim_volumes = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_volume" in key]
+# # Initialise elastic strain / stress plotting
+# crystal_directions = [[2,2,0], [1,1,1], [3,1,1], [2,0,0]]
+# colour_list = ["green", "black", "blue", "red"]
+# plotter_es = Plotter("Elastic Strain", "Applied Stress", "mm/mm", "MPa")
+# plotter_es.prep_plot()
+# sim_elastics = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_elastic" in key]
+# sim_volumes = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_volume" in key]
 
-# Plot elastic strains and stresses
-for crystal_direction, colour in zip(crystal_directions, colour_list):
-    family_indices = get_grain_family(sim_start_orientations, crystal_direction, direction, 10)
-    family_elastics = transpose([sim_elastics[i] for i in family_indices])
-    family_volumes = transpose([sim_volumes[i] for i in family_indices])
-    average_elastics = [np.average(family_elastic, weights=family_volume) if sum(family_volume) > 0 else np.average(family_elastic)
-                        for family_elastic, family_volume in zip(family_elastics, family_volumes)]
-    average_dict = {"Elastic Strain": average_elastics, "Applied Stress": sim_dict["average_grain_stress"]}
-    crystal_str = "{" + "".join([str(cd) for cd in crystal_direction]) + "}"
-    plotter_es.scat_plot(average_dict, colour=colour, name=crystal_str)
-    plotter_es.line_plot(average_dict, colour=colour)
-plotter_es.set_legend()
-save_plot_results("plot_es.png")
+# # Plot elastic strains and stresses
+# for crystal_direction, colour in zip(crystal_directions, colour_list):
+#     family_indices = get_grain_family(sim_start_orientations, crystal_direction, direction, 10)
+#     family_elastics = transpose([sim_elastics[i] for i in family_indices])
+#     family_volumes = transpose([sim_volumes[i] for i in family_indices])
+#     average_elastics = [np.average(family_elastic, weights=family_volume) if sum(family_volume) > 0 else np.average(family_elastic)
+#                         for family_elastic, family_volume in zip(family_elastics, family_volumes)]
+#     average_dict = {"Elastic Strain": average_elastics, "Applied Stress": sim_dict["average_grain_stress"]}
+#     crystal_str = "{" + "".join([str(cd) for cd in crystal_direction]) + "}"
+#     plotter_es.scat_plot(average_dict, colour=colour, name=crystal_str)
+#     plotter_es.line_plot(average_dict, colour=colour)
+# plotter_es.set_legend()
+# save_plot_results("plot_es.png")

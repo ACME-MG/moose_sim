@@ -122,8 +122,10 @@ class Material(__Material__):
             vp_d       = self.get_param("vp_d"),
             vp_n       = self.get_param("vp_n"),
             vp_eta     = self.get_param("vp_eta"),
-            slip_dir   = "1 1 0",
-            slip_plane = "1 1 1",
+            # slip_dir   = "1 1 0",
+            # slip_plane = "1 1 1",
+            slip_dir   = "1 1 1",
+            slip_plane = "1 1 0",
             miter      = 50,
             max_divide = 4,
         )
