@@ -68,7 +68,7 @@ def get_grain_family(orientations:list, crystal_direction:list,
     Groups a list of orientations to a family
 
     Parameters:
-    * `orientations`:      The list of euler-bunge angles (rads)
+    * `orientations`:      The list of passive euler-bunge angles (rads)
     * `crystal_direction`: The crystal direction
     * `sample_direction`:  The sample direction
     * `threshold`:         The misorientation threshold for being part of a family (deg)

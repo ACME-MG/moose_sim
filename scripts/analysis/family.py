@@ -34,7 +34,7 @@ def get_trajectories(data_dict:dict) -> list:
 # Initialise IPF plotter
 ipf = IPF(get_lattice("fcc"))#, sample_symmetry=[1])
 sample_direction = [1,0,0]
-crystal_direction = [1,1,1]
+crystal_direction = [2,2,0]
 
 # Get experimental orientations
 exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")

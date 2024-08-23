@@ -400,6 +400,7 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 [Outputs]
+  exodus = true
   print_linear_residuals = false
   [./console]
     type        = Console

@@ -14,10 +14,10 @@ MATERIAL_FORMAT = """
   <{material}_cp type="SingleCrystalModel">
     <kinematics type="StandardKinematicModel">
       <emodel type="CubicLinearElasticModel">
-        <m1>{youngs}</m1>
-        <m2>{poissons}</m2>
-        <m3>{shear}</m3>
-        <method>moduli</method>
+        <m1>{c_11}</m1>
+        <m2>{c_12}</m2>
+        <m3>{c_44}</m3>
+        <method>components</method>
       </emodel>
       <imodel type="AsaroInelasticity">
         <rule type="PowerLawSlipRule">
@@ -97,21 +97,26 @@ MATERIAL_FORMAT = """
 # VSHAI Class
 class Material(__Material__):
     
-    def get_material(self, youngs:float, poissons:float, shear:float) -> str:
+    def get_material(self, c_11:float, c_12:float, c_44:float, youngs:float,
+                     poissons:float) -> str:
         """
         Gets the content for the material file;
         must be overridden
 
         Parameters:
+        * `c_11`:     The component of the elastic tensor in (0,0)
+        * `c_12`:     The component of the elastic tensor in (0,1)
+        * `c_44`:     The component of the elastic tensor in (3,3)
         * `youngs`:   The elastic modulus
-        * `poissons`: The poissons ratio
-        * `shear`:    The shear modulus
+        * `poissons`: The poisson ratio
         """
         material_content = MATERIAL_FORMAT.format(
             material   = self.get_name(),
+            c_11       = c_11,
+            c_12       = c_12,
+            c_44       = c_44,
             youngs     = youngs,
             poissons   = poissons,
-            shear      = shear,
             cp_tau_s   = self.get_param("cp_tau_s"),
             cp_b       = self.get_param("cp_b"),
             cp_tau_0   = self.get_param("cp_tau_0"),
@@ -122,10 +127,8 @@ class Material(__Material__):
             vp_d       = self.get_param("vp_d"),
             vp_n       = self.get_param("vp_n"),
             vp_eta     = self.get_param("vp_eta"),
-            # slip_dir   = "1 1 0",
-            # slip_plane = "1 1 1",
-            slip_dir   = "1 1 1",
-            slip_plane = "1 1 0",
+            slip_dir   = "1 1 0",
+            slip_plane = "1 1 1",
             miter      = 50,
             max_divide = 4,
         )

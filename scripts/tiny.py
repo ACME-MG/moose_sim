@@ -11,7 +11,7 @@ from deer_sim.interface import Interface
 from deer_sim.helper.general import round_sf
 
 # Define the mesh and orientations
-itf = Interface(input_path="data/mini")
+itf = Interface(input_path="data/tiny")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters

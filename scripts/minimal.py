@@ -1,6 +1,6 @@
 """
- Title:         617_s3
- Description:   Runs the CPFEM model once
+ Title:         Minimal
+ Description:   Runs a mini CPFEM model once
  Author:        Janzen Choi
 
 """
@@ -9,11 +9,9 @@
 import sys; sys.path += [".."]
 from deer_sim.interface import Interface
 from deer_sim.helper.general import round_sf
-from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
-FOLDER = "617_s3_lr"
-itf = Interface(input_path=f"data/{FOLDER}")
+itf = Interface(input_path="data/minimal_sachs")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
@@ -22,18 +20,18 @@ itf.define_material(
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   125,
+        "cp_tau_s":   1250,
         "cp_b":       0.25,
         "cp_tau_0":   107,
         "cp_gamma_0": round_sf(1e-4/3, 5),
         "cp_n":       4.5,
 
         # Viscoplastic Parameters
-        "vp_s0":      93.655,
-        "vp_R":       3957.3,
-        "vp_d":       0.5651,
-        "vp_n":       7.3648,
-        "vp_eta":     721.59,
+        "vp_s0":      95.121,
+        "vp_R":       559.17,
+        "vp_d":       1.3763,
+        "vp_n":       4.2967,
+        "vp_eta":     2385.9,
     },
     c_11     = 205000,
     c_12     = 138000,
@@ -42,17 +40,12 @@ itf.define_material(
     poissons = 0.30,
 )
 
-# Read experimental data
-exp_dict = csv_to_dict(f"data/{FOLDER}/617_s3_exp.csv")
-# time_intervals = exp_dict["time_intervals"]
-time_intervals = sorted(list(exp_dict["time_intervals"] + [2**i for i in range(9)]))
-end_strain = exp_dict["strain_intervals"][-1] * 2200 * 5/3
-
 # Defines the simulation parameters
 itf.define_simulation(
     simulation_name = "sim_1to1",
-    time_intervals  = time_intervals,
-    end_strain      = end_strain,
+    time_intervals  = [0] + [2**i for i in range(13)],
+    # end_strain      = (1+1)*0.5,
+    end_strain      = (4+1)*0.5,
 )
 
 # Runs the model and saves results
@@ -63,4 +56,4 @@ itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
 itf.post_process()
-itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"])
+itf.remove_files(["mesh.e", "element_stats.csv", "results"])
