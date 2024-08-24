@@ -69,8 +69,11 @@ for i, param_dict in enumerate(param_dict_list):
 
     # Defines the material parameters
     itf.define_material(
-        material_name   = "mat_1to1",
+        material_name   = "mat_1to1_ae",
         material_params = {**param_dict, **vp_param_dict},
+        c_11            = 205000,
+        c_12            = 138000,
+        c_44            = 126000,
         youngs          = 211000.0,
         poissons        = 0.30,
     )

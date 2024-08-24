@@ -4,7 +4,7 @@ BEGIN SCULPT
     # Dimensions
     nelx = 170
     nely = 78
-    nelz = 5
+    nelz = 1
     scale = 20
     
     # Fixed mesh improvement
@@ -24,7 +24,7 @@ BEGIN SCULPT
     max_opt_iters = 50
     
     # Output
-    input_spn = ./results/240707014913_617_s3/voxels.spn
-    exodus_file = ./results/240707014913_617_s3/mesh.e
+    input_spn = ./results/240824161517_617_s3/voxels.spn
+    exodus_file = ./results/240824161517_617_s3/mesh.e
 
 END SCULPT
