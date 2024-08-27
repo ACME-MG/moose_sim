@@ -70,7 +70,7 @@ def convert_grain_ids(data_dict:dict, grain_map_path:str) -> dict:
         if bool(re.match(r'^g\d+.*$', key)):
             key_list = key.split("_")
             mesh_id = int(key_list[0].replace("g",""))
-            new_key = f"g{int(mesh_to_ebsd[mesh_id])}_{''.join(key_list[1:])}"
+            new_key = f"g{int(mesh_to_ebsd[mesh_id])}_{'_'.join(key_list[1:])}"
             new_data_dict[new_key] = data_dict[key]
         else:
             new_data_dict[key] = data_dict[key]

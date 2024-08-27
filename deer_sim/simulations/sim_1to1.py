@@ -534,7 +534,7 @@ class Simulation(__Simulation__):
                 if bool(re.match(r'^g\d+.*$', key)):
                     key_list = key.split("_")
                     mesh_id = int(key_list[0].replace("g",""))
-                    new_key = f"g{int(mesh_to_ebsd[mesh_id])}_{''.join(key_list[1:])}"
+                    new_key = f"g{int(mesh_to_ebsd[mesh_id])}_{'_'.join(key_list[1:])}"
                     new_summary_dict[new_key] = summary_dict[key]
                 else:
                   new_summary_dict[key] = summary_dict[key]
