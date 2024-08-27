@@ -6,7 +6,7 @@
 """
 
 # Libraries
-import numpy as np
+import numpy as np, re
 from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
 from deer_sim.analyse.summarise import get_average_euler, map_average_field, map_total_field
 from deer_sim.helper.general import transpose
@@ -470,21 +470,22 @@ class Simulation(__Simulation__):
         )
         return simulation_content
 
-    def post_process(self, sim_path:str, results_path:str) -> None:
+    def post_process(self, sim_path:str, results_path:str, grain_map_path:str=None) -> None:
         """
         Conducts post processing after the simulation has completed
 
         Parameters:
-        * `sim_path`:     The path to conduct the post processing;
-                          uses current result path if undefined
-        * `results_path`: The path to current results
+        * `sim_path`:       The path to conduct the post processing;
+                            uses current result path if undefined
+        * `results_path`:   The path to current results
+        * `grain_map_path`: The path to the grain map so that the grain IDs are consistent
         """
 
         # Initialise summary
         results_dict  = csv_to_dict(f"{sim_path}/results.csv")
         sim_dict_list = get_csv_results(sim_path, "results_element", "time")
         block_ids = get_block_ids(sim_dict_list[-1], "block_id")
-        grain_map = map_field(sim_dict_list[-1], "block_id", "id", block_ids[:-2])
+        grain_field_map = map_field(sim_dict_list[-1], "block_id", "id", block_ids[:-2])
 
         # Calculate average stresses and elastic strains
         average_dict = {
@@ -500,18 +501,18 @@ class Simulation(__Simulation__):
         }
 
         # Calculate stress and elastic strain in each grain
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_map, "volume")
+        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_field_map, "volume")
         as_dict = {f"g{k}_stress": v for k, v in as_dict.items()}
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_map, "volume")
+        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_field_map, "volume")
         es_dict = {f"g{k}_elastic": v for k, v in es_dict.items()}
 
         # Calculate total volume of each grain
-        volume_dict = map_total_field(sim_dict_list, "volume", grain_map)
+        volume_dict = map_total_field(sim_dict_list, "volume", grain_field_map)
         volume_dict = {f"g{k}_volume": v for k, v in volume_dict.items()}
         
         # Calculate average orientations in each grain
         orientation_fields = [f"orientation_q{i}" for i in [1,2,3,4]]
-        average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_map, "volume")
+        average_euler_dict = get_average_euler(sim_dict_list, orientation_fields, grain_field_map, "volume")
         phi_dict = {}
         for grain_id in average_euler_dict.keys():
             euler_list = average_euler_dict[grain_id]
@@ -519,6 +520,27 @@ class Simulation(__Simulation__):
                 field = f"g{grain_id}_{phi}"
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
-        # Combine all summaries and save
+        # Combine all summaries and convert grain IDs if defined
         summary_dict = {**average_dict, **as_dict, **es_dict, **volume_dict, **phi_dict}
+        if grain_map_path != None:
+            
+            # Initialise conversion
+            grain_map = csv_to_dict(grain_map_path)
+            new_summary_dict = {}
+            mesh_to_ebsd = dict(zip(grain_map["mesh_id"], grain_map["ebsd_id"]))
+            
+            # Iterate through keys
+            for key in summary_dict:
+                if bool(re.match(r'^g\d+.*$', key)):
+                    key_list = key.split("_")
+                    mesh_id = int(key_list[0].replace("g",""))
+                    new_key = f"g{int(mesh_to_ebsd[mesh_id])}_{''.join(key_list[1:])}"
+                    new_summary_dict[new_key] = summary_dict[key]
+                else:
+                  new_summary_dict[key] = summary_dict[key]
+              
+            # Replace old summary
+            summary_dict = new_summary_dict
+        
+        # Save the summaries
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")

@@ -13,7 +13,7 @@ from deer_sim.helper.general import transpose, round_sf
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
 
 # Constants
-SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-08-01 (617_s3_sm)"
+SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-08-25 (617_s3_sm)"
 PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
 
 def get_param_dict(params_path:str) -> dict:
@@ -57,20 +57,20 @@ summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_
 param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
 print(len(param_dict_list))
 
-# Convert euler-bunge angles into quaternions
-for summary_dict in summary_dict_list:
+# # Convert euler-bunge angles into quaternions
+# for summary_dict in summary_dict_list:
     
-    # Get trajectories and remove euler-bunge angles
-    trajectories = get_trajectories(summary_dict)
-    phi_keys = [key for key in summary_dict.keys() if "phi" in key.lower()]
-    for phi_key in phi_keys:
-        summary_dict.pop(phi_key)
+#     # Get trajectories and remove euler-bunge angles
+#     trajectories = get_trajectories(summary_dict)
+#     phi_keys = [key for key in summary_dict.keys() if "phi" in key.lower()]
+#     for phi_key in phi_keys:
+#         summary_dict.pop(phi_key)
 
-    # Convert trajectories into quaternions
-    for grain_id in trajectories.keys():
-        quat_list = [euler_to_quat(euler) for euler in trajectories[grain_id]]
-        for i in range(len(quat_list[0])):
-            summary_dict[f"g{grain_id}_q{i+1}"] = round_sf([quat[i] for quat in quat_list], 5)
+#     # Convert trajectories into quaternions
+#     for grain_id in trajectories.keys():
+#         quat_list = [euler_to_quat(euler) for euler in trajectories[grain_id]]
+#         for i in range(len(quat_list[0])):
+#             summary_dict[f"g{grain_id}_q{i+1}"] = round_sf([quat[i] for quat in quat_list], 5)
         
 # Initialise a summary dictionary for the summaries
 key_list = list(param_dict_list[0].keys()) + list(summary_dict_list[0].keys())

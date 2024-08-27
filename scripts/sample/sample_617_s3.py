@@ -45,7 +45,13 @@ for param_dict in param_dict_list:
 # # Print out domains of parameters
 # from deer_sim.helper.sampler import get_domains
 # print(get_domains(param_dict_list))
-# exit()
+# {
+#    'cp_tau_s':   [100.0, 200.0, 400.0, 800.0, 1600.0],
+#    'cp_b':       [0.5, 1.0, 2.0, 4.0, 8.0],
+#    'cp_tau_0':   [50.0, 100.0, 200.0, 400.0, 800.0],
+#    'cp_n':       [1.0, 2.0, 4.0, 8.0, 16.0],
+#    'cp_gamma_0': [3.333e-05]
+# }
 
 # Section CP parameter list for script
 sim_id     = int(sys.argv[1])

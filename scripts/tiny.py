@@ -33,16 +33,18 @@ itf.define_material(
         "vp_n":       4.2967,
         "vp_eta":     2385.9,
     },
-    youngs          = 211000.0,
-    poissons        = 0.30,
-    shear           = 81000.0,
+    c_11     = 205000,
+    c_12     = 138000,
+    c_44     = 126000,
+    youngs   = 211000.0,
+    poissons = 0.30,
 )
 
 # Defines the simulation parameters
 itf.define_simulation(
     simulation_name = "sim_1to1",
-    time_intervals  = [0.0, 1, 2, 4],
-    end_strain      = 4,
+    time_intervals  = [0.0, 1, 2],
+    end_strain      = 2,
 )
 
 # Runs the model and saves results
@@ -52,5 +54,5 @@ itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-itf.post_process()
+itf.post_process(grain_map_path="data/tiny/grain_map.csv")
 itf.remove_files(["mesh.e", "element_stats.csv", "results"])
