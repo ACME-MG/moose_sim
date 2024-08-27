@@ -7,7 +7,7 @@
 
 # Libraries
 import sys; sys.path += ["../.."]
-import os
+import os, re
 from deer_sim.maths.orientation import euler_to_quat
 from deer_sim.helper.general import transpose, round_sf
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
@@ -49,6 +49,35 @@ def get_trajectories(data_dict:dict) -> dict:
         trajectories[grain_id] = trajectory
     return trajectories
 
+def convert_grain_ids(data_dict:dict, grain_map_path:str) -> dict:
+    """
+    Converts the grain IDs of a dictionary
+    
+    Parameters:
+    * `data_dict`:      The dictionary
+    * `grain_map_path`: The path to the grain map
+    
+    Returns the dictionary with renamed keys
+    """
+    
+    # Initialise conversion
+    grain_map = csv_to_dict(grain_map_path)
+    new_data_dict = {}
+    mesh_to_ebsd = dict(zip(grain_map["mesh_id"], grain_map["ebsd_id"]))
+
+    # Iterate through keys
+    for key in data_dict:
+        if bool(re.match(r'^g\d+.*$', key)):
+            key_list = key.split("_")
+            mesh_id = int(key_list[0].replace("g",""))
+            new_key = f"g{int(mesh_to_ebsd[mesh_id])}_{''.join(key_list[1:])}"
+            new_data_dict[new_key] = data_dict[key]
+        else:
+            new_data_dict[key] = data_dict[key]
+    
+    # Return
+    return new_data_dict
+
 # Read all summary files
 dir_path_list = [f"{SIM_PATH}/{dir_path}" for dir_path in os.listdir(SIM_PATH)
             if os.path.exists(f"{SIM_PATH}/{dir_path}/summary.csv")]
@@ -85,6 +114,9 @@ for summary_dict, param_dict in zip(summary_dict_list, param_dict_list):
         super_summary_dict[key] += [param_dict[key]]*(num_values-1)
     for key in summary_dict:
         super_summary_dict[key] += round_sf(summary_dict[key][1:], 5)
-         
+
+# # Replace grain IDs if necessary
+# super_summary_dict = convert_grain_ids(super_summary_dict, "../data/617_s3/grain_map.csv")
+
 # Save the super summary dictionary
 dict_to_csv(super_summary_dict, "summary.csv")
