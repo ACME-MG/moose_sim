@@ -31,24 +31,6 @@ def get_param_dict(params_path:str) -> dict:
                       if line.split(" ")[0] in PARAMS}
         return param_dict
 
-def get_trajectories(data_dict:dict) -> dict:
-    """
-    Gets the reorientation trajectories
-
-    Parameters:
-    * `data_dict`: The data dictionary
-    
-    Return trajectories as a dictoinary of lists of euler angles
-    """
-    grain_ids = [int(key.replace("g","").replace("_phi_1",""))
-                 for key in data_dict.keys() if "_phi_1" in key]
-    trajectories = {}
-    for grain_id in grain_ids:
-        trajectory = [data_dict[f"g{grain_id}_{phi}"] for phi in ["phi_1", "Phi", "phi_2"]]
-        trajectory = transpose(trajectory)
-        trajectories[grain_id] = trajectory
-    return trajectories
-
 def convert_grain_ids(data_dict:dict, grain_map_path:str) -> dict:
     """
     Converts the grain IDs of a dictionary
@@ -85,21 +67,6 @@ summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
 summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_list]
 param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
 print(len(param_dict_list))
-
-# # Convert euler-bunge angles into quaternions
-# for summary_dict in summary_dict_list:
-    
-#     # Get trajectories and remove euler-bunge angles
-#     trajectories = get_trajectories(summary_dict)
-#     phi_keys = [key for key in summary_dict.keys() if "phi" in key.lower()]
-#     for phi_key in phi_keys:
-#         summary_dict.pop(phi_key)
-
-#     # Convert trajectories into quaternions
-#     for grain_id in trajectories.keys():
-#         quat_list = [euler_to_quat(euler) for euler in trajectories[grain_id]]
-#         for i in range(len(quat_list[0])):
-#             summary_dict[f"g{grain_id}_q{i+1}"] = round_sf([quat[i] for quat in quat_list], 5)
         
 # Initialise a summary dictionary for the summaries
 key_list = list(param_dict_list[0].keys()) + list(summary_dict_list[0].keys())
@@ -119,4 +86,4 @@ for summary_dict, param_dict in zip(summary_dict_list, param_dict_list):
 # super_summary_dict = convert_grain_ids(super_summary_dict, "../data/617_s3/grain_map.csv")
 
 # Save the super summary dictionary
-dict_to_csv(super_summary_dict, "summary.csv")
+dict_to_csv(super_summary_dict, "617_s3_sampled.csv")
