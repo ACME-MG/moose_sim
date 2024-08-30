@@ -22,11 +22,11 @@ itf.define_material(
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   825,
-        "cp_b":       2,#0.3,
-        "cp_tau_0":   112,
+        "cp_tau_s":   650,
+        "cp_b":       3.5,#0.3,
+        "cp_tau_0":   212,
         "cp_gamma_0": round_sf(1e-4/3, 5),
-        "cp_n":       15,
+        "cp_n":       9,
 
         # Viscoplastic Parameters
         "vp_s0":      93.655,
@@ -62,5 +62,5 @@ itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-itf.post_process()
+itf.post_process(grain_map_path="data/617_s3/grain_map.csv")
 itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"])

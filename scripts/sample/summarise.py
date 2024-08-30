@@ -8,8 +8,7 @@
 # Libraries
 import sys; sys.path += ["../.."]
 import os, re
-from deer_sim.maths.orientation import euler_to_quat
-from deer_sim.helper.general import transpose, round_sf
+from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
 
 # Constants
