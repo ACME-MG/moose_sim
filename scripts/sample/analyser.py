@@ -28,14 +28,13 @@ direction = [1,0,0]
 colour_list = ["red", "blue", "green", "orange", "purple"]*10
 
 # Iterate through grains
-for grain_id, colour in zip(GRAIN_IDS, colour_list):
-    for index_list in indexes_list:
+for j, index_list in enumerate(indexes_list):
+    for grain_id, colour in zip(GRAIN_IDS, colour_list):
         trajectory = [[sample_dict[f"g{grain_id}_{phi}"][i] for phi in ["phi_1", "Phi", "phi_2"]] for i in index_list]
         ipf.plot_ipf_trajectory([trajectory], direction, "plot", {"color": colour, "linewidth": 2})
         ipf.plot_ipf_trajectory([trajectory], direction, "arrow", {"color": colour, "head_width": 0.01, "head_length": 0.015})
         ipf.plot_ipf_trajectory([[trajectory[0]]], direction, "scatter", {"color": colour, "s": 8**2})
-
-# Save
+    # save_plot(f"plot_rt_{j}.png")
 save_plot("plot_rt.png")
 
 # Plot stress-strain response
