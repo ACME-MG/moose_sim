@@ -22,11 +22,11 @@ itf.define_material(
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   250,
-        "cp_b":       1.5,#0.3,
-        "cp_tau_0":   150,
+        "cp_tau_s":   150,
+        "cp_b":       0.7,#0.3,
+        "cp_tau_0":   70,
         "cp_gamma_0": round_sf(1e-4/3, 5),
-        "cp_n":       9,
+        "cp_n":       1.5,
 
         # Viscoplastic Parameters
         "vp_s0":      93.655,
