@@ -18,15 +18,15 @@ itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "mat_1to1_ae",
+    material_name   = "mat_1to1",
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   150,
-        "cp_b":       0.7,#0.3,
-        "cp_tau_0":   70,
+        "cp_tau_s":   825,
+        "cp_b":       2,#0.3,
+        "cp_tau_0":   112,
         "cp_gamma_0": round_sf(1e-4/3, 5),
-        "cp_n":       1.5,
+        "cp_n":       15,
 
         # Viscoplastic Parameters
         "vp_s0":      93.655,
@@ -35,9 +35,9 @@ itf.define_material(
         "vp_n":       7.3648,
         "vp_eta":     721.59,
     },
-    c_11     = 205000,
-    c_12     = 138000,
-    c_44     = 126000,
+    # c_11     = 205000,
+    # c_12     = 138000,
+    # c_44     = 126000,
     youngs   = 211000.0,
     poissons = 0.30,
 )
