@@ -11,6 +11,7 @@ import numpy as np, os, re
 from scipy.interpolate import splev, splrep, splder
 from deer_sim.helper.general import transpose, round_sf, get_thinned_list
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
+from deer_sim.analyse.plotter import Plotter, save_plot
 
 # Constants
 SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-08-25 (617_s3_sm)"
@@ -128,27 +129,22 @@ def process_data_dict(data_dict:dict) -> dict:
     
     # Prepare old and new strain values
     strain_list = data_dict["average_strain"]
-    strain_inc = 0.01
-    num_inc = round(strain_list[-1]//strain_inc+1)
-    new_strain_list = [i*strain_inc for i in range(num_inc)]
+    # strain_inc = 0.001
+    # num_inc = round(strain_list[-1]//strain_inc+1)
+    # new_strain_list = [i*strain_inc for i in range(1,num_inc)]
+    new_strain_list = list(np.linspace(0,data_dict["average_strain"][-1],51)[1:])
     
     # Prepare fields
     grain_ids = [int(key.replace("g","").replace("_phi_1","")) for key in data_dict.keys() if "_phi_1" in key]
     euler_fields = [f"g{grain_id}_{field}" for grain_id in grain_ids for field in ["phi_1", "Phi", "phi_2"]]
     field_list = ["average_stress"] + euler_fields
     
-    # Prepare processed dictionary
+    # Interpolate for each field and return
     processed_dict = {"average_strain": new_strain_list}
-    
-    # Interpolate for each feild
     for field in field_list:
         field_itp = Interpolator(strain_list, data_dict[field], len(strain_list))
         new_list = field_itp.evaluate(new_strain_list)
         processed_dict[field] = new_list
-        # processed_dict[f"{field}_n-1"] = [data_dict[field][0]] + new_list[:-1]
-        # processed_dict[f"{field}_n"] = new_list
-
-    # Return the processed dictionary
     return processed_dict
 
 # Read all summary files
@@ -175,5 +171,5 @@ for processed_dict, param_dict in zip(processed_dict_list, param_dict_list):
         super_processed_dict[key] += round_sf(processed_dict[key], 5)
 
 # Save the super summary dictionary
-# super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3/grain_map.csv")
-dict_to_csv(super_processed_dict, "617_s3_sampled.csv")
+super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3/grain_map.csv")
+dict_to_csv(super_processed_dict, "617_s3_sampled_2.csv")

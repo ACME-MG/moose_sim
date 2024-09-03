@@ -18,7 +18,7 @@ itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "mat_1to1",
+    material_name   = "mat_1to1_ae",
     material_params = {
 
         # Crystal Plasticity Parameters
@@ -35,9 +35,9 @@ itf.define_material(
         "vp_n":       7.3648,
         "vp_eta":     721.59,
     },
-    # c_11     = 205000,
-    # c_12     = 138000,
-    # c_44     = 126000,
+    c_11     = 205000,
+    c_12     = 138000,
+    c_44     = 126000,
     youngs   = 211000.0,
     poissons = 0.30,
 )
@@ -50,7 +50,7 @@ end_strain = exp_dict["strain_intervals"][-1] * 2200 * 5/3
 
 # Defines the simulation parameters
 itf.define_simulation(
-    simulation_name = "sim_1to1",
+    simulation_name = "sim_1to1_vb",
     time_intervals  = time_intervals,
     end_strain      = end_strain,
 )
