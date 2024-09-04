@@ -609,18 +609,18 @@ class Simulation(__Simulation__):
         }
 
         # Calculate stress and elastic strain in each grain
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_field_map, "volume")
-        as_dict = {f"g{k}_stress_xx": v for k, v in as_dict.items()}
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_field_map, "volume")
-        es_dict = {f"g{k}_elastic_xx": v for k, v in es_dict.items()}
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_yy", grain_field_map, "volume")
-        as_dict = {f"g{k}_stress_yy": v for k, v in as_dict.items()}
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_yy", grain_field_map, "volume")
-        es_dict = {f"g{k}_elastic_yy": v for k, v in es_dict.items()}
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_zz", grain_field_map, "volume")
-        as_dict = {f"g{k}_stress_zz": v for k, v in as_dict.items()}
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_zz", grain_field_map, "volume")
-        es_dict = {f"g{k}_elastic_zz": v for k, v in es_dict.items()}
+        as_dict_xx = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_field_map, "volume")
+        as_dict_xx = {f"g{k}_stress_xx": v for k, v in as_dict_xx.items()}
+        es_dict_xx = map_average_field(sim_dict_list, "elastic_strain_xx", grain_field_map, "volume")
+        es_dict_xx = {f"g{k}_elastic_xx": v for k, v in es_dict_xx.items()}
+        as_dict_yy = map_average_field(sim_dict_list, "cauchy_stress_yy", grain_field_map, "volume")
+        as_dict_yy = {f"g{k}_stress_yy": v for k, v in as_dict_yy.items()}
+        es_dict_yy = map_average_field(sim_dict_list, "elastic_strain_yy", grain_field_map, "volume")
+        es_dict_yy = {f"g{k}_elastic_yy": v for k, v in es_dict_yy.items()}
+        as_dict_zz = map_average_field(sim_dict_list, "cauchy_stress_zz", grain_field_map, "volume")
+        as_dict_zz = {f"g{k}_stress_zz": v for k, v in as_dict_zz.items()}
+        es_dict_zz = map_average_field(sim_dict_list, "elastic_strain_zz", grain_field_map, "volume")
+        es_dict_zz = {f"g{k}_elastic_zz": v for k, v in es_dict_zz.items()}
 
         # Calculate total volume of each grain
         volume_dict = map_total_field(sim_dict_list, "volume", grain_field_map)
@@ -637,7 +637,8 @@ class Simulation(__Simulation__):
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
         # Combine all summaries and convert grain IDs if defined
-        summary_dict = {**average_dict, **as_dict, **es_dict, **volume_dict, **phi_dict}
+        summary_dict = {**average_dict, **as_dict_xx, **es_dict_xx, **as_dict_yy, **es_dict_yy,
+                        **as_dict_zz, **es_dict_zz, **volume_dict, **phi_dict}
         if grain_map_path != None:
             
             # Initialise conversion

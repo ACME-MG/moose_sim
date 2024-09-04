@@ -15,7 +15,7 @@ from deer_sim.maths.familiser import get_grain_family
 from deer_sim.analyse.pole_figure import IPF, get_lattice, get_colour_map
 
 # Read data
-SUMMARY_PATH = "data/summary_taylor_ie.csv"
+SUMMARY_PATH = "data/summary_ae.csv"
 summary_dict = csv_to_dict(SUMMARY_PATH)
 
 # Get orientations (euler-bunge, passive, rads)

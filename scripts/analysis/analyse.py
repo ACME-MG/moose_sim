@@ -17,8 +17,7 @@ from deer_sim.helper.io import csv_to_dict
 # Constants
 EXP_PATH = "../data/617_s3/617_s3_exp.csv"
 MAP_PATH = "../data/617_s3/grain_map.csv"
-# SIM_PATH = "sim_data.csv"
-SIM_PATH = "./data/summary_617_s3_lr_2.csv"
+SIM_PATH = "./data/sim_data.csv"
 EVP_PATH = "./data/evp_data.csv"
 
 def get_grain_ids(exp_path:str, mesh_path:str) -> dict:

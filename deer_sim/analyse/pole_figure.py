@@ -149,7 +149,8 @@ class PF:
 # Inverse pole figure class
 class IPF:
 
-    def __init__(self, lattice, sample_symmetry:list=[2,2,2], x_direction=[1,0,0], y_direction=[0,1,0]):
+    def __init__(self, lattice, sample_symmetry:list=[2,2,2], x_direction=[1,0,0],
+                 y_direction=[0,1,0], colour_limits:tuple=None, size_limits:tuple=None):
         """
         Constructor for IPF class
 
@@ -158,6 +159,7 @@ class IPF:
         * `sample_symmetry`: Sample direction of the projection ([1] is no symmetry)
         * `x_direction`:     X crystallographic direction of the projection
         * `y_direction`:     Y crystallographic direction of the projection
+        * `colour_limits`:   A tuple of the minimum and maximum stress
         """
         self.lattice = lattice
         sample_symmetry_str = "".join([str(ss) for ss in sample_symmetry])
@@ -166,6 +168,8 @@ class IPF:
         self.norm_vectors = [vector / np.linalg.norm(np.array(vector)) for vector in self.vectors]
         self.x_direction = [int(x) for x in x_direction]
         self.y_direction = [int(y) for y in y_direction]
+        self.colour_limits = colour_limits
+        self.size_limits = size_limits
 
     def project_ipf(self, quaternion:np.array, direction:list) -> None:
         """
@@ -293,8 +297,8 @@ class IPF:
         """
 
         # Initialise
-        rgb_colours = get_colours(euler_list, colour_list)
-        norm_size_list = get_sizes(euler_list, size_list)
+        rgb_colours = get_colours(euler_list, colour_list, self.colour_limits)
+        norm_size_list = get_sizes(euler_list, size_list, self.size_limits)
         axis, patch = self.initialise_ipf()
 
         # Iterate and plot the orientations
@@ -366,9 +370,9 @@ def get_lattice(structure:str="fcc"):
     Returns the lattice object
     """
     lattice = crystallography.CubicLattice(1.0)
-    if structure == "bcc":
+    if structure == "fcc":
         lattice.add_slip_system([1,1,0], [1,1,1])
-    elif structure == "fcc":
+    elif structure == "bcc":
         lattice.add_slip_system([1,1,1], [1,1,0])
         lattice.add_slip_system([1,1,1], [1,2,3])
         lattice.add_slip_system([1,1,1], [1,1,2])
@@ -395,13 +399,14 @@ def get_trajectories(euler_history:list, index_list:list=None) -> list:
         trajectories.append(trajectory)
     return trajectories
 
-def get_colours(orientations:list, values:list) -> list:
+def get_colours(orientations:list, values:list, colour_limits:tuple=None) -> list:
     """
     Checks the colour list and returns a list of RGB colours
 
     Parameters:
     * `orientations`: The list of orientations
     * `values`:       The list of values
+    * `norm_limits`:  A tuple of predefined minimum and maximum values
 
     Returns the list of colours
     """
@@ -414,7 +419,13 @@ def get_colours(orientations:list, values:list) -> list:
     
     # Normalise values
     norm_values = np.array(values)
-    norm_values = (norm_values - min(norm_values)) / (max(norm_values) - min(norm_values))
+    if colour_limits == None:
+        min_value = min(norm_values)
+        max_value = max(norm_values)
+    else:
+        min_value = colour_limits[0]
+        max_value = colour_limits[1]
+    norm_values = (norm_values-min_value)/(max_value-min_value)
 
     # Define colour map and return
     colours = cm.jet(norm_values)
@@ -432,11 +443,11 @@ def get_colour_map(values:list, orientation:str="horizontal") -> None:
 
     # Initialise figure
     if orientation == "horizontal":
-        figure = plt.figure(figsize=(6, 2))
-        axis = figure.add_axes([0.2, 0.4, 0.6, 0.2])
+        figure = plt.figure(figsize=(5, 1.5))
+        axis = figure.add_axes([0.15, 0.15, 0.7, 0.3]) # x_lower, y_lower, x_size, y_size
     else:
-        figure = plt.figure(figsize=(2, 6))
-        axis = figure.add_axes([0.4, 0.2, 0.2, 0.6])
+        figure = plt.figure(figsize=(1.5, 5))
+        axis = figure.add_axes([0.15, 0.15, 0.3, 0.7]) # x_lower, y_lower, x_size, y_size
 
     # Get normalised values
     min_value = min(values)
@@ -453,7 +464,7 @@ def get_colour_map(values:list, orientation:str="horizontal") -> None:
     colour_bar.set_ticks(ticks)
     colour_bar.set_ticklabels([str(tick) for tick in ticks])
 
-def get_sizes(orientations:list, values:list) -> list:
+def get_sizes(orientations:list, values:list, size_limits:tuple=None) -> list:
     """
     Checks the colour list and returns a list of RGB colours
 
@@ -471,7 +482,15 @@ def get_sizes(orientations:list, values:list) -> list:
         raise ValueError("The 'size_list' does not have the same number of values as the quaternions!")
     
     # Normalise sizes and return
-    norm_size_list = normalise(values)
+    min_norm = 1.0
+    max_norm = 32.0
+    if size_limits == None:
+        min_value = min(values)
+        max_value = max(values)
+    else:
+        min_value = size_limits[0]
+        max_value = size_limits[1]
+    norm_size_list = [min_norm+((value-min_value)/(max_value-min_value))*(max_norm-min_norm) for value in values]
     return norm_size_list
 
 def project_stereographic(vector:np.array) -> np.array:
@@ -495,22 +514,6 @@ def cart2pol(cart_point:np.array):
     Returns the polar coordinates
     """
     return np.array([np.arctan2(cart_point[1], cart_point[0]), np.linalg.norm(cart_point)])
-
-def normalise(value_list:list, min_norm:float=1.0, max_norm:list=32.0) -> list:
-    """
-    Normalises a list of values
-
-    Parameters:
-    * `value_list`: The list of values
-    * `min_norm`:   The minimum value for the normalised list of values
-    * `max_norm`:   The maximum value for the normalised list of values
-
-    Returns the normalised list
-    """
-    min_value = min(value_list)
-    max_value = max(value_list)
-    normalised = [min_norm+((value-min_value)/(max_value-min_value))*(max_norm-min_norm) for value in value_list]
-    return normalised
 
 def plot_points(axis:plt.Axes, points:list, size:float, colour:np.ndarray) -> PathCollection:
     """

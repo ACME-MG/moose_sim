@@ -9,11 +9,14 @@
 import sys; sys.path += ["../.."]
 import cv2, numpy as np
 import matplotlib.pyplot as plt
+from deer_sim.helper.general import flatten
 from deer_sim.helper.io import csv_to_dict
-from deer_sim.analyse.pole_figure import IPF, get_lattice
+from deer_sim.analyse.plotter import save_plot
+from deer_sim.analyse.pole_figure import IPF, get_lattice, get_colour_map
 
 # Read data
-SUMMARY_PATH = "data/summary_617_s3_lr_2.csv"
+SUMMARY_PATH = "data/sim_data.csv"
+KEYWORD      = "_stress"
 summary_dict = csv_to_dict(SUMMARY_PATH)
 
 # Extract initialisation information
@@ -25,7 +28,11 @@ num_states = len(summary_dict[orientation_keys[0][0]])
 orientation_history = [[[summary_dict[key][i] for key in keys] for keys in orientation_keys]
                        for i in range(num_states)]
 stress_history = [[summary_dict[key][i] for key in summary_dict.keys()
-                   if key.startswith("g") and "_stress" in key] for i in range(num_states)]
+                   if key.startswith("g") and KEYWORD in key] for i in range(num_states)]
+volume_history = [[summary_dict[key][i] for key in summary_dict.keys()
+                   if key.startswith("g") and "volume" in key] for i in range(num_states)]
+all_stresses = flatten(stress_history)
+all_volumes = flatten(volume_history)
 
 # Initialise video writer
 frame_rate = 3
@@ -34,9 +41,13 @@ fourcc = cv2.VideoWriter_fourcc(*"mp4v") # codec for mp4
 video_writer = cv2.VideoWriter("stresses.mp4", fourcc, frame_rate, frame_size)
 
 # Record stress distribution
-ipf = IPF(get_lattice("fcc"))
+ipf = IPF(
+    lattice       = get_lattice("fcc"),
+    colour_limits = (min(all_stresses), max(all_stresses)),
+    size_limits   = (min(all_volumes), max(all_volumes)),
+)
 sample_direction = [1,0,0]
-for i, (orientations, stresses) in enumerate(zip(orientation_history, stress_history)):
+for i, (orientations, stresses, volumes) in enumerate(zip(orientation_history, stress_history, volume_history)):
     
     # Ignore initial (zero stress)
     if i == 0:
@@ -44,7 +55,7 @@ for i, (orientations, stresses) in enumerate(zip(orientation_history, stress_his
     print(f"Adding frame {i}")
     
     # Otherwise, draw the IPF
-    ipf.plot_ipf(orientations, sample_direction, stresses)
+    ipf.plot_ipf(orientations, sample_direction, stresses, volumes)
     figure = plt.gcf()
     figure.canvas.draw()
     
@@ -57,3 +68,6 @@ for i, (orientations, stresses) in enumerate(zip(orientation_history, stress_his
     
 # Release writer
 video_writer.release()
+
+get_colour_map(all_stresses, orientation="vertical")
+save_plot("cm.png")
