@@ -25,9 +25,42 @@ def linear_scale(value:float, in_l_bound:float, in_u_bound:float, out_l_bound:fl
     scaled_value = (value-in_l_bound)*out_range/in_range + out_l_bound
     return scaled_value
 
+def get_lhs(param_bounds:dict, num_points:int) -> list:
+    """
+    Generates points using latin hypercube sampling
+    
+    Parameters:
+    * `param_bounds`: Dictionary of parameter bounds;
+                      (i.e., `{"name": (l_bound, u_bound)}`)
+    * `num_points`:   The number of points to sample
+    
+    Returns the list of dictionaries of parameter combinations
+    """
+    
+    # Get unscaled LHS points
+    num_params = len(param_bounds.keys())
+    combinations = list(pyDOE2.lhs(num_params, samples=num_points))
+    
+    # Create linear scales for each parameter
+    param_scales = {}
+    for param in param_bounds.keys():
+        param_scales[param] = lambda x : linear_scale(x, 0, 1, param_bounds[param][0], param_bounds[param][1])
+
+    # Linearly scale the unscaled combinations
+    scaled_dict_list = []
+    for combination in combinations:
+        scaled_dict = {}
+        for i, param in enumerate(param_scales.keys()):
+            scaled_param = param_scales[param](combination[i])
+            scaled_dict[param] = scaled_param
+        scaled_dict_list.append(scaled_dict)
+
+    # Return scaled LHS points
+    return scaled_dict_list
+
 def get_ccd(param_bounds:dict, centre_points:int=4, alpha:str="r") -> list:
     """
-    Generates a Central Composite Design
+    Generates points using central composite design
 
     Parameters:
     * `param_bounds`:  Dictionary of parameter bounds;

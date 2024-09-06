@@ -19,7 +19,7 @@ itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "mat_1to1_ae",
+    material_name   = "cvp_ae",
     material_params = {
 
         # Crystal Plasticity Parameters

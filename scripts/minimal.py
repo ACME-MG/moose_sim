@@ -16,13 +16,13 @@ itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "mat_1to1_ae",
+    material_name   = "cvp_ae_lh",
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   1250,
-        "cp_b":       0.25,
         "cp_tau_0":   107,
+        "cp_lh_0":    2000, # latent hardening (off diagonal)
+        "cp_lh_1":    4000, # self-hardening (main diagonal)
         "cp_gamma_0": round_sf(1e-4/3, 5),
         "cp_n":       4.5,
 
@@ -33,9 +33,9 @@ itf.define_material(
         "vp_n":       4.2967,
         "vp_eta":     2385.9,
     },
-    c_11     = 205000,
-    c_12     = 138000,
-    c_44     = 126000,
+    c_11     = 250000,
+    c_12     = 151000,
+    c_44     = 123000,
     youngs   = 211000.0,
     poissons = 0.30,
 )
@@ -43,9 +43,9 @@ itf.define_material(
 # Defines the simulation parameters
 itf.define_simulation(
     simulation_name = "sim_1to1",
-    time_intervals  = [0] + [2**i for i in range(13)],
+    time_intervals  = [0] + [2**i for i in range(5)],
     # end_strain      = (1+1)*0.5,
-    end_strain      = (4+1)*0.5,
+    end_strain      = (4+1)*0.1,
 )
 
 # Runs the model and saves results
