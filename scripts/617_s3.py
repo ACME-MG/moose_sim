@@ -1,6 +1,7 @@
 """
  Title:         617_s3
  Description:   Runs the CPFEM model once
+ References:    https://asmedigitalcollection.asme.org/pressurevesseltech/article/135/2/021502/378322/Synchrotron-Radiation-Study-on-Alloy-617-and-Alloy
  Author:        Janzen Choi
 
 """
@@ -35,9 +36,9 @@ itf.define_material(
         "vp_n":       7.3648,
         "vp_eta":     721.59,
     },
-    c_11     = 205000,
-    c_12     = 138000,
-    c_44     = 126000,
+    c_11     = 250000,
+    c_12     = 151000,
+    c_44     = 123000,
     youngs   = 211000.0,
     poissons = 0.30,
 )

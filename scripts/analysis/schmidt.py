@@ -20,6 +20,7 @@ from neml.cp import crystallography
 SUMMARY_PATH = "data/sim_data.csv"
 KEYWORD      = "_stress"
 
+
 def get_lattice(structure:str="fcc"):
     """
     Gets the lattice object
@@ -46,11 +47,9 @@ grain_ids = [int(key.replace("_phi_1","").replace("g","")) for key in summary_di
 orientation_keys = [[f"g{grain_id}_{phi}" for phi in ["phi_1", "Phi", "phi_2"]] for grain_id in grain_ids]
 num_states = len(summary_dict[orientation_keys[0][0]])
 
-# Get orientations (euler-bunge, passive, rads) and grain stress for each state
+# Get orientations (euler-bunge, passive, rads) and volumes at each state
 orientation_history = [[[summary_dict[key][i] for key in keys] for keys in orientation_keys]
                        for i in range(num_states)]
-stress_history = [[summary_dict[key][i] for key in summary_dict.keys()
-                   if key.startswith("g") and KEYWORD in key] for i in range(num_states)]
 volume_history = [[summary_dict[key][i] for key in summary_dict.keys()
                    if key.startswith("g") and "volume" in key] for i in range(num_states)]
 all_volumes = flatten(volume_history)
@@ -58,12 +57,12 @@ all_volumes = flatten(volume_history)
 # Calculate schmidt factor history
 lattice = get_lattice("fcc")
 schmidt_history = []
-for orientation_list, stress_list in zip(orientation_history, stress_history):
+for orientation_list in orientation_history:
     schmidt_list = []
-    for orientation, stress in zip(orientation_list, stress_list):
+    for orientation in orientation_list:
         co = rotations.CrystalOrientation(*orientation, angle_type="radians", convention="bunge")
         matrix_list = [lattice.M(0,i,co) for i in range(12)]
-        schmidt = np.average([stress*matrix.data[0] for matrix in matrix_list])
+        schmidt = np.average([abs(matrix.data[0]) for matrix in matrix_list])
         schmidt_list.append(schmidt)
     schmidt_history.append(schmidt_list)
 all_schmidts = flatten(schmidt_history)
@@ -72,13 +71,13 @@ all_schmidts = flatten(schmidt_history)
 frame_rate = 3
 frame_size = (640, 480)
 fourcc = cv2.VideoWriter_fourcc(*"mp4v") # codec for mp4
-video_writer = cv2.VideoWriter("stresses.mp4", fourcc, frame_rate, frame_size)
+video_writer = cv2.VideoWriter("schmidt.mp4", fourcc, frame_rate, frame_size)
 
 # Record stress distribution
 ipf = IPF(
     lattice = get_lattice("fcc"),
-    # colour_limits = (min(all_schmidts), max(all_schmidts)),
-    # size_limits = (min(all_volumes), max(all_volumes)),
+    colour_limits = (min(all_schmidts), max(all_schmidts)),
+    size_limits = (min(all_volumes), max(all_volumes)),
 )
 sample_direction = [1,0,0]
 for i, (orientations, schmidts, volumes) in enumerate(zip(orientation_history, schmidt_history, volume_history)):
@@ -89,8 +88,8 @@ for i, (orientations, schmidts, volumes) in enumerate(zip(orientation_history, s
     print(f"Adding frame {i}")
     
     # Otherwise, draw the IPF
-    # ipf.plot_ipf(orientations, sample_direction, schmidts, volumes)
-    ipf.plot_ipf(orientations, sample_direction, schmidts)
+    ipf.plot_ipf(orientations, sample_direction, schmidts, volumes)
+    # ipf.plot_ipf(orientations, sample_direction, schmidts)
     figure = plt.gcf()
     figure.canvas.draw()
     
