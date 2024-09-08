@@ -72,8 +72,8 @@ for i, cp_param_dict in enumerate(param_dict_list):
     # Defines the simulation parameters
     exp_dict = csv_to_dict(f"{DATA_PATH}/617_s3_exp.csv")
     itf.define_simulation(
-        simulation_name = "sim_1to1",
-        time_intervals  = exp_dict["time_intervals"],
+        simulation_name = "1to1_ui",
+        end_time        = exp_dict["time_intervals"][-1],
         end_strain      = exp_dict["strain_intervals"][-1] * 2200 * 5/3
     )
 

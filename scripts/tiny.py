@@ -42,9 +42,9 @@ itf.define_material(
 
 # Defines the simulation parameters
 itf.define_simulation(
-    simulation_name = "sim_1to1",
-    time_intervals  = [0.0, 1, 2],
-    end_strain      = 2,
+    simulation_name = "1to1_ui",
+    end_time   = 2,
+    end_strain = 2,
 )
 
 # Runs the model and saves results

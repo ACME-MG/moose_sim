@@ -51,7 +51,7 @@ end_strain = exp_dict["strain_intervals"][-1] * 2200 * 5/3
 
 # Defines the simulation parameters
 itf.define_simulation(
-    simulation_name = "sim_1to1_vb",
+    simulation_name = "1to1_vb",
     time_intervals  = time_intervals,
     end_strain      = end_strain,
 )

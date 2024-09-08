@@ -1,5 +1,5 @@
 """
- Title:         Crystal Plasticity Model
+ Title:         Simulator for a 1:1 mesh with verbose output
  Description:   For creating the CP simulation file
  Author:        Janzen Choi
 
@@ -93,7 +93,9 @@ SIMULATION_FORMAT = """
         add_variables   = true
         new_system      = true
         volumetric_locking_correction = true # linear hex elements
-        generate_output = 'elastic_strain_xx strain_xx cauchy_stress_xx mechanical_strain_xx'
+        generate_output = 'elastic_strain_xx strain_xx cauchy_stress_xx mechanical_strain_xx
+                           elastic_strain_yy strain_yy cauchy_stress_yy mechanical_strain_yy
+                           elastic_strain_zz strain_zz cauchy_stress_zz mechanical_strain_zz'
       [../]
     [../]
   [../]
@@ -277,7 +279,9 @@ SIMULATION_FORMAT = """
     type     = ElementValueSampler
     variable = 'block_id volume
                 orientation_q1 orientation_q2 orientation_q3 orientation_q4
-                cauchy_stress_xx strain_xx elastic_strain_xx mechanical_strain_xx'
+                cauchy_stress_xx strain_xx elastic_strain_xx mechanical_strain_xx
+                cauchy_stress_yy strain_yy elastic_strain_yy mechanical_strain_yy
+                cauchy_stress_zz strain_zz elastic_strain_zz mechanical_strain_zz'
     contains_complete_history = false
     execute_on = 'INITIAL TIMESTEP_END'
     sort_by    = id
@@ -306,6 +310,34 @@ SIMULATION_FORMAT = """
     variable = strain_xx
     block    = '{grip_ids}'
   [../]
+  [./mTE_cpvp_yy]
+    type     = ElementAverageValue
+    variable = strain_yy
+  [../]
+  [./mTE_cp_yy]
+    type     = ElementAverageValue
+    variable = strain_yy
+    block    = '{grain_ids}'
+  [../]
+  [./mTE_vp_yy]
+    type     = ElementAverageValue
+    variable = strain_yy
+    block    = '{grip_ids}'
+  [../]
+  [./mTE_cpvp_zz]
+    type     = ElementAverageValue
+    variable = strain_zz
+  [../]
+  [./mTE_cp_zz]
+    type     = ElementAverageValue
+    variable = strain_zz
+    block    = '{grain_ids}'
+  [../]
+  [./mTE_vp_zz]
+    type     = ElementAverageValue
+    variable = strain_zz
+    block    = '{grip_ids}'
+  [../]
 
   # Cuachy Stress
   [./mCS_cpvp_xx]
@@ -322,6 +354,34 @@ SIMULATION_FORMAT = """
     variable = cauchy_stress_xx
     block    = '{grip_ids}'
   [../]
+  [./mCS_cpvp_yy]
+    type     = ElementAverageValue
+    variable = cauchy_stress_yy
+  [../]
+  [./mCS_cp_yy]
+    type     = ElementAverageValue
+    variable = cauchy_stress_yy
+    block    = '{grain_ids}'
+  [../]
+  [./mCS_vp_yy]
+    type     = ElementAverageValue
+    variable = cauchy_stress_yy
+    block    = '{grip_ids}'
+  [../]
+  [./mCS_cpvp_zz]
+    type     = ElementAverageValue
+    variable = cauchy_stress_zz
+  [../]
+  [./mCS_cp_zz]
+    type     = ElementAverageValue
+    variable = cauchy_stress_zz
+    block    = '{grain_ids}'
+  [../]
+  [./mCS_vp_zz]
+    type     = ElementAverageValue
+    variable = cauchy_stress_zz
+    block    = '{grip_ids}'
+  [../]
 
   # Elastic Strain
   [./mEE_cpvp_xx]
@@ -336,6 +396,34 @@ SIMULATION_FORMAT = """
   [./mEE_vp_xx]
     type     = ElementAverageValue
     variable = elastic_strain_xx
+    block    = '{grip_ids}'
+  [../]
+  [./mEE_cpvp_yy]
+    type     = ElementAverageValue
+    variable = elastic_strain_yy
+  [../]
+  [./mEE_cp_yy]
+    type     = ElementAverageValue
+    variable = elastic_strain_yy
+    block    = '{grain_ids}'
+  [../]
+  [./mEE_vp_yy]
+    type     = ElementAverageValue
+    variable = elastic_strain_yy
+    block    = '{grip_ids}'
+  [../]
+  [./mEE_cpvp_zz]
+    type     = ElementAverageValue
+    variable = elastic_strain_zz
+  [../]
+  [./mEE_cp_zz]
+    type     = ElementAverageValue
+    variable = elastic_strain_zz
+    block    = '{grain_ids}'
+  [../]
+  [./mEE_vp_zz]
+    type     = ElementAverageValue
+    variable = elastic_strain_zz
     block    = '{grip_ids}'
   [../]
 []
@@ -489,22 +577,50 @@ class Simulation(__Simulation__):
 
         # Calculate average stresses and elastic strains
         average_dict = {
-            "average_strain":        results_dict["mTE_cpvp_xx"],
-            "average_grain_strain":  results_dict["mTE_cp_xx"],
-            "average_grip_strain":   results_dict["mTE_vp_xx"],
-            "average_stress":        results_dict["mCS_cpvp_xx"],
-            "average_grain_stress":  results_dict["mCS_cp_xx"],
-            "average_grip_stress":   results_dict["mCS_vp_xx"],
-            "average_elastic":       results_dict["mEE_cpvp_xx"],
-            "average_grain_elastic": results_dict["mEE_cp_xx"],
-            "average_grip_elastic":  results_dict["mEE_vp_xx"]
+            "average_strain_xx":        results_dict["mTE_cpvp_xx"],
+            "average_grain_strain_xx":  results_dict["mTE_cp_xx"],
+            "average_grip_strain_xx":   results_dict["mTE_vp_xx"],
+            "average_stress_xx":        results_dict["mCS_cpvp_xx"],
+            "average_grain_stress_xx":  results_dict["mCS_cp_xx"],
+            "average_grip_stress_xx":   results_dict["mCS_vp_xx"],
+            "average_elastic_xx":       results_dict["mEE_cpvp_xx"],
+            "average_grain_elastic_xx": results_dict["mEE_cp_xx"],
+            "average_grip_elastic_xx":  results_dict["mEE_vp_xx"],
+            
+            "average_strain_yy":        results_dict["mTE_cpvp_yy"],
+            "average_grain_strain_yy":  results_dict["mTE_cp_yy"],
+            "average_grip_strain_yy":   results_dict["mTE_vp_yy"],
+            "average_stress_yy":        results_dict["mCS_cpvp_yy"],
+            "average_grain_stress_yy":  results_dict["mCS_cp_yy"],
+            "average_grip_stress_yy":   results_dict["mCS_vp_yy"],
+            "average_elastic_yy":       results_dict["mEE_cpvp_yy"],
+            "average_grain_elastic_yy": results_dict["mEE_cp_yy"],
+            "average_grip_elastic_yy":  results_dict["mEE_vp_yy"],
+            
+            "average_strain_zz":        results_dict["mTE_cpvp_zz"],
+            "average_grain_strain_zz":  results_dict["mTE_cp_zz"],
+            "average_grip_strain_zz":   results_dict["mTE_vp_zz"],
+            "average_stress_zz":        results_dict["mCS_cpvp_zz"],
+            "average_grain_stress_zz":  results_dict["mCS_cp_zz"],
+            "average_grip_stress_zz":   results_dict["mCS_vp_zz"],
+            "average_elastic_zz":       results_dict["mEE_cpvp_zz"],
+            "average_grain_elastic_zz": results_dict["mEE_cp_zz"],
+            "average_grip_elastic_zz":  results_dict["mEE_vp_zz"],
         }
 
         # Calculate stress and elastic strain in each grain
-        as_dict = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_field_map, "volume")
-        as_dict = {f"g{k}_stress": v for k, v in as_dict.items()}
-        es_dict = map_average_field(sim_dict_list, "elastic_strain_xx", grain_field_map, "volume")
-        es_dict = {f"g{k}_elastic": v for k, v in es_dict.items()}
+        as_dict_xx = map_average_field(sim_dict_list, "cauchy_stress_xx", grain_field_map, "volume")
+        as_dict_xx = {f"g{k}_stress_xx": v for k, v in as_dict_xx.items()}
+        es_dict_xx = map_average_field(sim_dict_list, "elastic_strain_xx", grain_field_map, "volume")
+        es_dict_xx = {f"g{k}_elastic_xx": v for k, v in es_dict_xx.items()}
+        as_dict_yy = map_average_field(sim_dict_list, "cauchy_stress_yy", grain_field_map, "volume")
+        as_dict_yy = {f"g{k}_stress_yy": v for k, v in as_dict_yy.items()}
+        es_dict_yy = map_average_field(sim_dict_list, "elastic_strain_yy", grain_field_map, "volume")
+        es_dict_yy = {f"g{k}_elastic_yy": v for k, v in es_dict_yy.items()}
+        as_dict_zz = map_average_field(sim_dict_list, "cauchy_stress_zz", grain_field_map, "volume")
+        as_dict_zz = {f"g{k}_stress_zz": v for k, v in as_dict_zz.items()}
+        es_dict_zz = map_average_field(sim_dict_list, "elastic_strain_zz", grain_field_map, "volume")
+        es_dict_zz = {f"g{k}_elastic_zz": v for k, v in es_dict_zz.items()}
 
         # Calculate total volume of each grain
         volume_dict = map_total_field(sim_dict_list, "volume", grain_field_map)
@@ -521,7 +637,8 @@ class Simulation(__Simulation__):
                 phi_dict[field] = [euler[i] for euler in euler_list]
 
         # Combine all summaries and convert grain IDs if defined
-        summary_dict = {**average_dict, **as_dict, **es_dict, **volume_dict, **phi_dict}
+        summary_dict = {**average_dict, **as_dict_xx, **es_dict_xx, **as_dict_yy, **es_dict_yy,
+                        **as_dict_zz, **es_dict_zz, **volume_dict, **phi_dict}
         if grain_map_path != None:
             
             # Initialise conversion
