@@ -129,10 +129,10 @@ def process_data_dict(data_dict:dict) -> dict:
     
     # Prepare old and new strain values
     strain_list = data_dict["average_strain"]
-    # strain_inc = 0.001
     # num_inc = round(strain_list[-1]//strain_inc+1)
+    # strain_inc = 0.001
     # new_strain_list = [i*strain_inc for i in range(1,num_inc)]
-    new_strain_list = list(np.linspace(0,data_dict["average_strain"][-1],51)[1:])
+    new_strain_list = list(np.linspace(0,data_dict["average_strain"][-1],32+1)[1:])
     
     # Prepare fields
     grain_ids = [int(key.replace("g","").replace("_phi_1","")) for key in data_dict.keys() if "_phi_1" in key]

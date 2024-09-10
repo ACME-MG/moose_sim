@@ -28,15 +28,16 @@ vp_param_dict = {
 
 # Get CP parameter combinations
 bounds_dict = {
-    "cp_lh_0":    (1000, 16000),
-    "cp_lh_1":    (1000, 16000),
-    "cp_tau_0":   (50, 800),
+    "cp_lh_0":    (0, 200),
+    "cp_lh_1":    (0, 200),
+    "cp_tau_0":   (0, 200),
     "cp_n":       (1, 16),
     "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
 }
 param_dict_list = get_lhs(bounds_dict, 32)
-# for param_dict in param_dict_list:
-#     print(param_dict)
+for param_dict in param_dict_list:
+    print(param_dict)
+exit()
 
 # Section CP parameter list for script
 sim_id     = int(sys.argv[1])

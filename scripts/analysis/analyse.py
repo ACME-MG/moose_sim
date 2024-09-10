@@ -12,11 +12,12 @@ from deer_sim.analyse.plotter import Plotter, save_plot, define_legend
 from deer_sim.analyse.pole_figure import PF, IPF, get_lattice, get_colour_map
 from deer_sim.maths.familiser import get_grain_family
 from deer_sim.helper.general import transpose, remove_consecutive_duplicates
-from deer_sim.helper.io import csv_to_dict
+from deer_sim.helper.io import csv_to_dict, safe_mkdir
 
 # Constants
 EXP_PATH = "../data/617_s3/617_s3_exp.csv"
 MAP_PATH = "../data/617_s3/grain_map.csv"
+# SIM_PATH = "./data/summary_617_s3.csv"
 SIM_PATH = "./data/summary.csv"
 EVP_PATH = "./data/evp_data.csv"
 
@@ -82,7 +83,8 @@ def save_plot_results(file_path:str, dir_path:str="results") -> None:
     * `file_path`: The path to the file
     * `dir_path`:  The path to the directory
     """
-    save_plot(f"../{dir_path}/{file_path}")
+    safe_mkdir(dir_path)
+    save_plot(f"./{dir_path}/{file_path}")
 
 # Define specific grain IDs
 grain_id_dict = get_grain_ids(EXP_PATH, MAP_PATH)
@@ -168,8 +170,8 @@ define_legend(["darkgray", "green"], ["Experimental", "CP (FEM)"], ["line", "lin
 save_plot_results("plot_ipf_trajectories.png")
 
 # Initialise elastic strain / stress plotting
-crystal_directions = [[2,2,0], [1,1,1], [3,1,1], [2,0,0]]
-colour_list = ["green", "black", "blue", "red"]
+crystal_directions = [[2,2,0], [1,1,1], [3,1,1], [2,0,0], [3,3,1], [5,3,1]]
+colour_list = ["green", "black", "blue", "red", "purple", "orange"]
 plotter_es = Plotter("Elastic Strain", "Applied Stress", "mm/mm", "MPa")
 plotter_es.prep_plot()
 sim_elastics = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_elastic" in key]
@@ -182,6 +184,8 @@ for crystal_direction, colour in zip(crystal_directions, colour_list):
     family_volumes = transpose([sim_volumes[i] for i in family_indices])
     average_elastics = [np.average(family_elastic, weights=family_volume) if sum(family_volume) > 0 else np.average(family_elastic)
                         for family_elastic, family_volume in zip(family_elastics, family_volumes)]
+    if len(average_elastics) == 0:
+        continue
     average_dict = {"Elastic Strain": average_elastics, "Applied Stress": sim_dict["average_grain_stress"]}
     crystal_str = "{" + "".join([str(cd) for cd in crystal_direction]) + "}"
     plotter_es.scat_plot(average_dict, colour=colour, name=crystal_str)

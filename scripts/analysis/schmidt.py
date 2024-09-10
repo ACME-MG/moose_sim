@@ -20,7 +20,6 @@ from neml.cp import crystallography
 SUMMARY_PATH = "data/sim_data.csv"
 KEYWORD      = "_stress"
 
-
 def get_lattice(structure:str="fcc"):
     """
     Gets the lattice object

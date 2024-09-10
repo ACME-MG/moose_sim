@@ -16,13 +16,16 @@ itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "cvp_ae_lh",
+    # material_name   = "cvp_ae_lh",
+    material_name   = "cvp_ae",
     material_params = {
 
         # Crystal Plasticity Parameters
+        "cp_tau_s":   1e6,
+        "cp_b":       2,
         "cp_tau_0":   107,
-        "cp_lh_0":    2000, # latent hardening (off diagonal)
-        "cp_lh_1":    4000, # self-hardening (main diagonal)
+        # "cp_lh_0":    500, # latent hardening (off diagonal)
+        # "cp_lh_1":    1000, # self-hardening (main diagonal)
         "cp_gamma_0": round_sf(1e-4/3, 5),
         "cp_n":       4.5,
 
