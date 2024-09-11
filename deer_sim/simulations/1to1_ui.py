@@ -348,7 +348,7 @@ SIMULATION_FORMAT = """
   
   # Transient (time-dependent) and multi-physics problem
   type = Transient
-  automatic_scaling = true
+  automatic_scaling = false
 
   # Solver
   solve_type = NEWTON # Use Newton-Raphson, not PJFNK
@@ -356,19 +356,20 @@ SIMULATION_FORMAT = """
   
   # Options for PETSc (to solve linear equations)
   petsc_options       = '-snes_converged_reason -ksp_converged_reason' 
-  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
-  petsc_options_value = 'lu superlu_dist'
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
+  petsc_options_value = 'lu superlu_dist gmres'
   reuse_preconditioner = true
+  reuse_preconditioner_max_linear_its = 10
   
   # Solver tolerances
-  l_max_its                = 500 
-  l_tol                    = 1e-6
-  nl_max_its               = 16
-  nl_rel_tol               = 1e-6
-  nl_abs_tol               = 1e-6
-  nl_forced_its            = 1
+  l_max_its     = 500 
+  l_tol         = 1e-6
+  nl_max_its    = 16
+  nl_rel_tol    = 1e-6
+  nl_abs_tol    = 1e-6
+  nl_forced_its = 1
   # n_max_nonlinear_pingpong = 1
-  line_search              = 'none'
+  line_search   = 'none' # bt
 
   # Time variables
   start_time = {start_time}
