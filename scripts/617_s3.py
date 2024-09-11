@@ -46,17 +46,12 @@ itf.define_material(
     poissons = 0.30,
 )
 
-# Read experimental data
-exp_dict = csv_to_dict(f"data/{FOLDER}/617_s3_exp.csv")
-# time_intervals = exp_dict["time_intervals"]
-time_intervals = sorted(list(exp_dict["time_intervals"] + [2**i for i in range(10)]))
-end_strain = exp_dict["strain_intervals"][-1] * 2200 * 5/3
-
 # Defines the simulation parameters
+exp_dict = csv_to_dict(f"data/{FOLDER}/617_s3_exp.csv")
 itf.define_simulation(
     simulation_name = "1to1_ui",
-    time_intervals  = time_intervals,
-    end_strain      = end_strain,
+    end_time        = exp_dict["time_intervals"][-1],
+    end_strain      = exp_dict["strain_intervals"][-1] * 2200 * 5/3
 )
 
 # Runs the model and saves results
