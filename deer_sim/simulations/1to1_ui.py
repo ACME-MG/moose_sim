@@ -348,7 +348,7 @@ SIMULATION_FORMAT = """
   
   # Transient (time-dependent) and multi-physics problem
   type = Transient
-  automatic_scaling = false
+  automatic_scaling = true
 
   # Solver
   solve_type = NEWTON # Use Newton-Raphson, not PJFNK
@@ -359,7 +359,7 @@ SIMULATION_FORMAT = """
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
   petsc_options_value = 'lu superlu_dist gmres'
   reuse_preconditioner = true
-  reuse_preconditioner_max_linear_its = 10
+  reuse_preconditioner_max_linear_its = 20
   
   # Solver tolerances
   l_max_its     = 500 
