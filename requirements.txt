@@ -1,4 +1,3 @@
-itertools
 matplotlib
 pandas
 pyDOE2
