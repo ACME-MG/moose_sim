@@ -369,7 +369,7 @@ SIMULATION_FORMAT = """
   nl_abs_tol    = 1e-6
   nl_forced_its = 1
   # n_max_nonlinear_pingpong = 1
-  line_search   = 'none' # 'none'
+  line_search   = 'bt' # 'none'
 
   # Time variables
   start_time = {start_time}
