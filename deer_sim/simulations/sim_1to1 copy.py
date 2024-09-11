@@ -1,5 +1,5 @@
 """
- Title:         Simulator for a 1:1 mesh with unspecified intervals
+ Title:         Crystal Plasticity Model
  Description:   For creating the CP simulation file
  Author:        Janzen Choi
 
@@ -348,7 +348,7 @@ SIMULATION_FORMAT = """
   
   # Transient (time-dependent) and multi-physics problem
   type = Transient
-  automatic_scaling = true
+  automatic_scaling = false
 
   # Solver
   solve_type = NEWTON # Use Newton-Raphson, not PJFNK
@@ -356,16 +356,17 @@ SIMULATION_FORMAT = """
   
   # Options for PETSc (to solve linear equations)
   petsc_options       = '-snes_converged_reason -ksp_converged_reason' 
-  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
-  petsc_options_value = 'lu superlu_dist'
-  reuse_preconditioner = true
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_gmres_restart 
+                         -pc_hypre_boomeramg_strong_threshold -pc_hypre_boomeramg_interp_type -pc_hypre_boomeramg_coarsen_type 
+                         -pc_hypre_boomeramg_agg_nl -pc_hypre_boomeramg_agg_num_paths -pc_hypre_boomeramg_truncfactor'
+  petsc_options_value = 'hypre boomeramg 200 0.7 ext+i PMIS 4 2 0.4'
   
   # Solver tolerances
   l_max_its                = 500 
-  l_tol                    = 1e-6
+  l_tol                    = 1e-4 # 1e-6
   nl_max_its               = 16
-  nl_rel_tol               = 1e-6
-  nl_abs_tol               = 1e-6
+  nl_rel_tol               = 1e-5 # 1e-6
+  nl_abs_tol               = 1e-5 # 1e-6
   nl_forced_its            = 1
   # n_max_nonlinear_pingpong = 1
   line_search              = 'none'
@@ -411,7 +412,9 @@ SIMULATION_FORMAT = """
     file_base   = '{csv_file}'
     time_data   = true
     delimiter   = ','
-    execute_on  = 'timestep_end'
+    execute_on  = 'initial timestep_end'
+    sync_only   = true
+    sync_times  = '{times}'
   [../]
 []
 """
@@ -419,14 +422,14 @@ SIMULATION_FORMAT = """
 # CP Model Class
 class Simulation(__Simulation__):
     
-    def get_simulation(self, end_time:float, end_strain:float) -> str:
+    def get_simulation(self, time_intervals:list, end_strain:float) -> str:
         """
         Gets the content for the simulation file;
         must be overridden
 
         Parameters:
-        * `end_time`:   The final time
-        * `end_strain`: The final strain
+        * `time_intervals`: The time intervals to save the results
+        * `end_strain`:     The final strain
         """
 
         # Get orientation data
@@ -455,11 +458,12 @@ class Simulation(__Simulation__):
             grip_ids   = " ".join([str(id) for id in grip_ids]),
 
             # Temporal parameters
-            start_time = 0,
-            end_time   = end_time,
+            start_time = min(time_intervals),
+            end_time   = max(time_intervals),
             dt_start   = 1e0,
             dt_min     = 1e-2,
-            dt_max     = end_time,
+            dt_max     = max(time_intervals),
+            times      = " ".join([str(ti) for ti in time_intervals]),
 
             # Other parameters
             end_strain = end_strain,
