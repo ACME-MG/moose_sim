@@ -26,11 +26,11 @@ itf.define_material(
         # "cp_tau_s":   825,
         # "cp_b":       2,#0.3,
         # "cp_tau_0":   112,
-        "cp_lh_0":    100,
-        "cp_lh_1":    100,
-        "cp_tau_0":   120,
+        "cp_lh_0":    60,
+        "cp_lh_1":    180,
+        "cp_tau_0":   60,
         "cp_gamma_0": round_sf(1e-4/3, 5),
-        "cp_n":       15,
+        "cp_n":       5,
 
         # Viscoplastic Parameters
         "vp_s0":      93.655,
