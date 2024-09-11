@@ -380,6 +380,7 @@ SIMULATION_FORMAT = """
   [./Predictor]
     type  = SimplePredictor
     scale = 1.0
+    skip_on_solve_fail = true
   [../]
 
   # Timestep growth
