@@ -27,7 +27,7 @@ vp_param_dict = {
 
 # Get CP parameter combinations
 bounds_dict = {
-    "cp_tau_s":   (0, 800), # 1600
+    "cp_tau_s":   (0, 1600),
     "cp_b":       (0, 8),
     "cp_tau_0":   (0, 800),
     "cp_n":       (1, 16),
