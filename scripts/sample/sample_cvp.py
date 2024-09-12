@@ -29,7 +29,7 @@ vp_param_dict = {
 bounds_dict = {
     "cp_tau_s":   (0, 1600),
     "cp_b":       (0, 8),
-    "cp_tau_0":   (0, 800),
+    "cp_tau_0":   (0, 200), # 800
     "cp_n":       (1, 16),
     "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
 }
