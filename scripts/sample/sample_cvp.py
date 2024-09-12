@@ -8,7 +8,7 @@
 # Libraries
 import sys; sys.path += ["../.."]
 from deer_sim.interface import Interface
-from deer_sim.helper.sampler import get_ccd
+from deer_sim.helper.sampler import get_lhs
 from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict
 
@@ -27,31 +27,16 @@ vp_param_dict = {
 
 # Get CP parameter combinations
 bounds_dict = {
-    "cp_tau_s": (2, 4), # 2**Nx50
-    "cp_b":     (1, 3), # 2**Nx0.5
-    "cp_tau_0": (2, 4), # 2**Nx25
-    "cp_n":     (2, 4), # 0.5*2**N
+    "cp_tau_s":   (0, 1600),
+    "cp_b":       (0, 8),
+    "cp_tau_0":   (0, 800),
+    "cp_n":       (1, 16),
+    "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
 }
-param_dict_list = get_ccd(bounds_dict)
-
-# Transform CP parameters
-for param_dict in param_dict_list:
-    param_dict["cp_tau_s"]   = 50*2**param_dict["cp_tau_s"]
-    param_dict["cp_b"]       = 0.5*2**param_dict["cp_b"]
-    param_dict["cp_tau_0"]   = 25*2**param_dict["cp_tau_0"]
-    param_dict["cp_n"]       = 0.5*2**param_dict["cp_n"]
-    param_dict["cp_gamma_0"] = round_sf(1e-4/3, 4)
-
-# # Print out domains of parameters
-# from deer_sim.helper.sampler import get_domains
-# print(get_domains(param_dict_list))
-# {
-#    'cp_tau_s':   [100.0, 200.0, 400.0, 800.0, 1600.0],
-#    'cp_b':       [0.5, 1.0, 2.0, 4.0, 8.0],
-#    'cp_tau_0':   [50.0, 100.0, 200.0, 400.0, 800.0],
-#    'cp_n':       [1.0, 2.0, 4.0, 8.0, 16.0],
-#    'cp_gamma_0': [3.333e-05]
-# }
+param_dict_list = get_lhs(bounds_dict, 32)
+# for param_dict in param_dict_list:
+#     print(param_dict)
+# exit()
 
 # Section CP parameter list for script
 sim_id     = int(sys.argv[1])
@@ -66,7 +51,7 @@ for i, param_dict in enumerate(param_dict_list):
     index_str = str(i+1).zfill(2)
     itf = Interface(
         title       = f"{sim_id}_{index_str}",
-        input_path  = "../data/617_s3",
+        input_path  = "../data/617_s3_10u",
         output_path = "../results/",
     )
 
@@ -85,7 +70,7 @@ for i, param_dict in enumerate(param_dict_list):
     )
 
     # Defines the simulation parameters
-    exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")
+    exp_dict = csv_to_dict("../data/617_s3_10u/617_s3_exp.csv")
     itf.define_simulation(
         simulation_name = "1to1_ui",
         end_time        = exp_dict["time_intervals"][-1],

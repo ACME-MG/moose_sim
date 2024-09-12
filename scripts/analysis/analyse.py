@@ -8,6 +8,7 @@
 # Libraries
 import sys; sys.path += ["../.."]
 import numpy as np
+import matplotlib.pyplot as plt
 from deer_sim.analyse.plotter import Plotter, save_plot, define_legend
 from deer_sim.analyse.pole_figure import PF, IPF, get_lattice, get_colour_map
 from deer_sim.maths.familiser import get_grain_family
@@ -172,7 +173,7 @@ save_plot_results("plot_ipf_trajectories.png")
 # Initialise elastic strain / stress plotting
 crystal_directions = [[2,2,0], [1,1,1], [3,1,1], [2,0,0], [3,3,1], [5,3,1]]
 colour_list = ["green", "black", "blue", "red", "purple", "orange"]
-plotter_es = Plotter("Elastic Strain", "Applied Stress", "mm/mm", "MPa")
+plotter_es = Plotter("Elastic Strain", "Applied Stress", "µmm/mm", "MPa")
 plotter_es.prep_plot()
 sim_elastics = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_elastic" in key]
 sim_volumes = [sim_dict[key] for key in sim_dict.keys() if key.startswith("g") and "_volume" in key]
@@ -186,6 +187,7 @@ for crystal_direction, colour in zip(crystal_directions, colour_list):
                         for family_elastic, family_volume in zip(family_elastics, family_volumes)]
     if len(average_elastics) == 0:
         continue
+    average_elastics = [ae*1e6 for ae in average_elastics]
     average_dict = {"Elastic Strain": average_elastics, "Applied Stress": sim_dict["average_grain_stress"]}
     crystal_str = "{" + "".join([str(cd) for cd in crystal_direction]) + "}"
     plotter_es.scat_plot(average_dict, colour=colour, name=crystal_str)
