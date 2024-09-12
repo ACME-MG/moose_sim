@@ -79,7 +79,7 @@ for i, param_dict in enumerate(param_dict_list):
 
     # Runs the model and saves results
     itf.export_params()
-    itf.simulate("~/moose/deer/deer-opt", NUM_PROCESSORS, 100000)
+    itf.simulate("~/moose/deer/deer-opt", NUM_PROCESSORS, 200000)
 
     # Conduct post processing
     itf.compress_csv(sf=5, exclude=["x", "y", "z"])
