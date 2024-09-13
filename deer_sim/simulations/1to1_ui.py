@@ -357,14 +357,14 @@ SIMULATION_FORMAT = """
   # Options for PETSc (to solve linear equations)
   petsc_options       = '-snes_converged_reason -ksp_converged_reason' 
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
-  petsc_options_value = 'lu superlu_dist gmres'
+  petsc_options_value = 'lu superlu_dist gmres' # lu better for few elements
   reuse_preconditioner = true
   reuse_preconditioner_max_linear_its = 20
   
   # Solver tolerances
   l_max_its     = 500 
   l_tol         = 1e-6
-  nl_max_its    = 12
+  nl_max_its    = 16
   nl_rel_tol    = 1e-6
   nl_abs_tol    = 1e-6
   nl_forced_its = 1
@@ -387,7 +387,7 @@ SIMULATION_FORMAT = """
   # Timestep growth
   [./TimeStepper]
     type                   = IterationAdaptiveDT
-    growth_factor          = 2
+    growth_factor          = 4
     cutback_factor         = 0.5
     linear_iteration_ratio = 100000000000
     optimal_iterations     = 8
