@@ -387,8 +387,10 @@ SIMULATION_FORMAT = """
   # Timestep growth
   [./TimeStepper]
     type                   = IterationAdaptiveDT
-    growth_factor          = 1.5
-    cutback_factor         = 0.67
+    # growth_factor          = 1.5
+    # cutback_factor         = 0.67
+    growth_factor          = 3.0
+    cutback_factor         = 0.33
     linear_iteration_ratio = 100000000000
     optimal_iterations     = 8
     iteration_window       = 1
