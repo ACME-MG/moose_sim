@@ -17,15 +17,15 @@ dimensions = itf.get_dimensions()
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "cvp_ae",
-    # material_name   = "cvp_ae_lh",
+    # material_name   = "cvp_ae",
+    material_name   = "cvp_ae_lh",
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   825,
-        "cp_b":       2,
-        # "cp_lh_0":    100, # latent hardening (off diagonal)
-        # "cp_lh_1":    300, # self-hardening (main diagonal)
+        # "cp_tau_s":   825,
+        # "cp_b":       2,
+        "cp_lh_0":    100, # latent hardening (off diagonal)
+        "cp_lh_1":    300, # self-hardening (main diagonal)
         "cp_tau_0":   107,
         "cp_gamma_0": round_sf(1e-4/3, 5),
         "cp_n":       4.5,
