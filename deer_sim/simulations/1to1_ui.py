@@ -388,7 +388,7 @@ SIMULATION_FORMAT = """
   [./TimeStepper]
     type                   = IterationAdaptiveDT
     growth_factor          = 1.5
-    cutback_factor         = 0.5
+    cutback_factor         = 0.75
     linear_iteration_ratio = 100000000000
     optimal_iterations     = 8
     iteration_window       = 1
