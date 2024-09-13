@@ -359,7 +359,7 @@ SIMULATION_FORMAT = """
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
   petsc_options_value = 'lu superlu_dist gmres' # lu better for few elements
   reuse_preconditioner = true
-  reuse_preconditioner_max_linear_its = 30
+  reuse_preconditioner_max_linear_its = 10
   
   # Solver tolerances
   l_max_its     = 500 
