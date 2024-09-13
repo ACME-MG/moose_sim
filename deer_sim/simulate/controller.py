@@ -9,6 +9,7 @@
 import os, subprocess, shutil, numpy as np
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
 from deer_sim.helper.general import transpose, round_sf
+from deer_sim.maths.exodus import get_exodus_length
 from deer_sim.maths.orientation import rad_to_deg, deg_to_rad
 from deer_sim.maths.neml import reorient_euler
 from deer_sim.materials.__material__ import get_material
@@ -98,6 +99,19 @@ class Controller():
 
         # Copy the mesh to the results folder
         shutil.copy(mesh_path, self.get_output(mesh_file))
+
+    def get_dimensions(self) -> dict:
+        """
+        Gets the dimensions of the defined mesh;
+        {"x": x_length, "y": y_length, "z": z_length}
+        """
+        mesh_path = self.get_input(self.mesh_file)
+        dimensions = {
+            "x": get_exodus_length(mesh_path, "x"),
+            "y": get_exodus_length(mesh_path, "y"),
+            "z": get_exodus_length(mesh_path, "z"),
+        }
+        return dimensions
 
     def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
         """

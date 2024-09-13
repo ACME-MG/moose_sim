@@ -11,21 +11,22 @@ from deer_sim.interface import Interface
 from deer_sim.helper.general import round_sf
 
 # Define the mesh and orientations
-itf = Interface(input_path="data/minimal_sachs")
+itf = Interface(input_path="data/minimal")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
+dimensions = itf.get_dimensions()
 
 # Defines the material parameters
 itf.define_material(
-    # material_name   = "cvp_ae_lh",
-    material_name   = "cvp_ae",
+    material_name   = "cvp_ae_lh",
+    # material_name   = "cvp_ae",
     material_params = {
 
         # Crystal Plasticity Parameters
-        "cp_tau_s":   1e6,
-        "cp_b":       2,
+        # "cp_tau_s":   1e6,
+        # "cp_b":       2,
+        "cp_lh_0":    100, # latent hardening (off diagonal)
+        "cp_lh_1":    300, # self-hardening (main diagonal)
         "cp_tau_0":   107,
-        # "cp_lh_0":    500, # latent hardening (off diagonal)
-        # "cp_lh_1":    1000, # self-hardening (main diagonal)
         "cp_gamma_0": round_sf(1e-4/3, 5),
         "cp_n":       4.5,
 
@@ -45,10 +46,9 @@ itf.define_material(
 
 # Defines the simulation parameters
 itf.define_simulation(
-    simulation_name = "1to1",
-    time_intervals  = [0] + [2**i for i in range(5)],
-    # end_strain      = (1+1)*0.5,
-    end_strain      = (4+1)*0.1,
+    simulation_name = "1to1_ui",
+    end_time   = 10000,
+    end_strain = dimensions["x"]*0.5,
 )
 
 # Runs the model and saves results

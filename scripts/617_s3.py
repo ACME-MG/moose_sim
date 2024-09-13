@@ -13,9 +13,10 @@ from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
-FOLDER = "617_s3_lr"
+FOLDER = "617_s3_10u"
 itf = Interface(input_path=f"data/{FOLDER}")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
+dimensions = itf.get_dimensions()
 
 # Defines the material parameters
 itf.define_material(
@@ -51,7 +52,7 @@ exp_dict = csv_to_dict(f"data/{FOLDER}/617_s3_exp.csv")
 itf.define_simulation(
     simulation_name = "1to1_ui",
     end_time        = exp_dict["time_intervals"][-1],
-    end_strain      = exp_dict["strain_intervals"][-1] * 2200 * 5/3
+    end_strain      = exp_dict["strain_intervals"][-1] * dimensions["x"]
 )
 
 # Runs the model and saves results

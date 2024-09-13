@@ -58,6 +58,7 @@ for i, cp_param_dict in enumerate(param_dict_list):
 
     # Define the mesh
     itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
+    dimensions = itf.get_dimensions()
 
     # Defines the material parameters
     itf.define_material(
@@ -75,7 +76,7 @@ for i, cp_param_dict in enumerate(param_dict_list):
     itf.define_simulation(
         simulation_name = "1to1_ui",
         end_time        = exp_dict["time_intervals"][-1],
-        end_strain      = exp_dict["strain_intervals"][-1] * 2200 * 5/3
+        end_strain      = exp_dict["strain_intervals"][-1] * dimensions["x"]
     )
 
     # Runs the model and saves results

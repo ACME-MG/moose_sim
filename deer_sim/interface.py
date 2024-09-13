@@ -67,7 +67,18 @@ class Interface:
         type_str = "deg" if degrees else "rad"
         self.__print__(f"Defining the mesh at '{mesh_file}' with orientations ({type_str}) at '{orientation_file}'")
         self.__controller__.define_mesh(mesh_file, orientation_file, degrees, active)
-        
+
+    def get_dimensions(self) -> dict:
+        """
+        Gets the dimensions of the defined mesh;
+        {"x": x_length, "y": y_length, "z": z_length}
+        """
+        self.__print__("Getting the dimensions of the defined mesh")
+        if self.__controller__.mesh_file == "":
+            raise ValueError("The mesh has not been defined!")
+        dimensions = self.__controller__.get_dimensions()
+        return dimensions
+
     def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
         """
         Defines the material
