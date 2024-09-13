@@ -226,13 +226,13 @@ SIMULATION_FORMAT = """
 # Dampers
 # ==================================================
 
-[Dampers]
-  [./damper]
-    type = ReferenceElementJacobianDamper
-    max_increment = 0.005 # 0.002
-    displacements = 'disp_x disp_y disp_z'
-  [../]
-[]
+# [Dampers]
+#   [./damper]
+#     type = ReferenceElementJacobianDamper
+#     max_increment = 0.005 # 0.002
+#     displacements = 'disp_x disp_y disp_z'
+#   [../]
+# []
 
 # ==================================================
 # Define Material
@@ -351,7 +351,7 @@ SIMULATION_FORMAT = """
   automatic_scaling = true
 
   # Solver
-  solve_type = FD # NEWTON (Newton-Raphson), PJFNK
+  solve_type = NEWTON # NEWTON (Newton-Raphson), PJFNK, FD
   residual_and_jacobian_together = true
   
   # Options for PETSc (to solve linear equations)
