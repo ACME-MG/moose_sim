@@ -359,7 +359,7 @@ SIMULATION_FORMAT = """
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
   petsc_options_value = 'lu superlu_dist gmres' # lu better for few elements
   reuse_preconditioner = true
-  reuse_preconditioner_max_linear_its = 20
+  reuse_preconditioner_max_linear_its = 30
   
   # Solver tolerances
   l_max_its     = 500 
@@ -387,10 +387,8 @@ SIMULATION_FORMAT = """
   # Timestep growth
   [./TimeStepper]
     type                   = IterationAdaptiveDT
-    # growth_factor          = 1.5
-    # cutback_factor         = 0.67
-    growth_factor          = 3.0
-    cutback_factor         = 0.33
+    growth_factor          = 1.5
+    cutback_factor         = 0.67
     linear_iteration_ratio = 100000000000
     optimal_iterations     = 8
     iteration_window       = 1
