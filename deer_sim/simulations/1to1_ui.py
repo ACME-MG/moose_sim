@@ -351,7 +351,7 @@ SIMULATION_FORMAT = """
   automatic_scaling = true
 
   # Solver
-  solve_type = NEWTON # Use Newton-Raphson, not PJFNK
+  solve_type = FD # NEWTON (Newton-Raphson), PJFNK
   residual_and_jacobian_together = true
   
   # Options for PETSc (to solve linear equations)
