@@ -461,9 +461,9 @@ class Simulation(__Simulation__):
             # Temporal parameters
             start_time = 0,
             end_time   = end_time,
-            dt_start   = 1e-2,
+            dt_start   = 1e0,
             dt_min     = 1e-2,
-            dt_max     = end_time,
+            dt_max     = 128,
 
             # Other parameters
             end_strain = end_strain,
