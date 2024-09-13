@@ -355,12 +355,17 @@ SIMULATION_FORMAT = """
   residual_and_jacobian_together = true
   
   # Options for PETSc (to solve linear equations)
+  # petsc_options       = '-snes_converged_reason -ksp_converged_reason' 
+  # petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
+  # petsc_options_value = 'lu superlu_dist gmres' # lu better for few elements
+  # reuse_preconditioner = true
+  # reuse_preconditioner_max_linear_its = 20
   petsc_options       = '-snes_converged_reason -ksp_converged_reason' 
-  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_type'
-  petsc_options_value = 'lu superlu_dist gmres' # lu better for few elements
-  reuse_preconditioner = true
-  reuse_preconditioner_max_linear_its = 25
-  
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_gmres_restart 
+                         -pc_hypre_boomeramg_strong_threshold -pc_hypre_boomeramg_interp_type -pc_hypre_boomeramg_coarsen_type 
+                         -pc_hypre_boomeramg_agg_nl -pc_hypre_boomeramg_agg_num_paths -pc_hypre_boomeramg_truncfactor'
+  petsc_options_value = 'hypre boomeramg 200 0.7 ext+i PMIS 4 2 0.4'
+
   # Solver tolerances
   l_max_its     = 500 
   l_tol         = 1e-6
