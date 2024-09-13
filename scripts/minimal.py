@@ -47,8 +47,8 @@ itf.define_material(
 # Defines the simulation parameters
 itf.define_simulation(
     simulation_name = "1to1_ui",
-    end_time   = 10000,
-    end_strain = dimensions["x"]*0.5,
+    end_time   = 2000,
+    end_strain = dimensions["x"]*0.1,
 )
 
 # Runs the model and saves results
