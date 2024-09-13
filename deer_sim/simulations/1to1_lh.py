@@ -226,13 +226,13 @@ SIMULATION_FORMAT = """
 # Dampers
 # ==================================================
 
-[Dampers]
-  [./damper]
-    type = ReferenceElementJacobianDamper
-    max_increment = 0.005 # 0.002
-    displacements = 'disp_x disp_y disp_z'
-  [../]
-[]
+# [Dampers]
+#   [./damper]
+#     type = ReferenceElementJacobianDamper
+#     max_increment = 0.005 # 0.002
+#     displacements = 'disp_x disp_y disp_z'
+#   [../]
+# []
 
 # ==================================================
 # Define Material
@@ -369,7 +369,7 @@ SIMULATION_FORMAT = """
   nl_abs_tol    = 1e-6
   nl_forced_its = 1
   # n_max_nonlinear_pingpong = 1
-  line_search   = 'bt' # 'none'
+  line_search   = 'none' # 'bt'
 
   # Time variables
   start_time = {start_time}
