@@ -13,7 +13,6 @@ from deer_sim.helper.sampler import get_lhs
 from deer_sim.helper.io import csv_to_dict
 
 # Constants
-DATA_PATH      = "../data/617_s3_z1"
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
 
@@ -52,7 +51,7 @@ for i, cp_param_dict in enumerate(param_dict_list):
     index_str = str(i+1).zfill(2)
     itf = Interface(
         title       = f"{sim_id}_{index_str}",
-        input_path  = DATA_PATH,
+        input_path  = "../data/617_s3/10u",
         output_path = "../results/",
     )
 
@@ -72,7 +71,7 @@ for i, cp_param_dict in enumerate(param_dict_list):
     )
 
     # Defines the simulation parameters
-    exp_dict = csv_to_dict(f"{DATA_PATH}/617_s3_exp.csv")
+    exp_dict = csv_to_dict(f"../data/617_s3/617_s3_exp.csv")
     itf.define_simulation(
         simulation_name = "1to1_ui",
         end_time        = exp_dict["time_intervals"][-1],
