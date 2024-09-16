@@ -51,7 +51,7 @@ for i, param_dict in enumerate(param_dict_list):
     index_str = str(i+1).zfill(2)
     itf = Interface(
         title       = f"{sim_id}_{index_str}",
-        input_path  = "../data/617_s3/10u",
+        input_path  = "../data/617_s3/30um",
         output_path = "../results/",
     )
 
