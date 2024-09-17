@@ -33,7 +33,7 @@ bounds_dict = {
     "cp_n":       (1, 16),
     "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
 }
-param_dict_list = get_lhs(bounds_dict, 32)
+param_dict_list = get_lhs(bounds_dict, 4)
 # for param_dict in param_dict_list:
 #     print(param_dict)
 # exit()
@@ -51,7 +51,7 @@ for i, param_dict in enumerate(param_dict_list):
     index_str = str(i+1).zfill(2)
     itf = Interface(
         title       = f"{sim_id}_{index_str}",
-        input_path  = "../data/617_s3/30um",
+        input_path  = "../data/617_s3/5um",
         output_path = "../results/",
     )
 
@@ -80,7 +80,7 @@ for i, param_dict in enumerate(param_dict_list):
 
     # Runs the model and saves results
     itf.export_params()
-    itf.simulate("~/moose/deer/deer-opt", NUM_PROCESSORS, 200000)
+    itf.simulate("~/moose/deer/deer-opt", NUM_PROCESSORS, 300000)
 
     # Conduct post processing
     itf.compress_csv(sf=5, exclude=["x", "y", "z"])
