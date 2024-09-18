@@ -195,7 +195,12 @@ class Controller():
             new_dict = {}
             for key in data_dict.keys():
                 if exclude == None or not key in exclude:
-                    new_dict[key] = [round_sf(d, sf) for d in data_dict[key]]
+                    try:
+                        new_dict[key] = [round_sf(d, sf) for d in data_dict[key]]
+                    except:
+                        print(key)
+                        print(csv_path)
+                        print(data_dict)
             dict_to_csv(new_dict, csv_path)
 
     def post_process(self, sim_path:str, **kwargs) -> None:

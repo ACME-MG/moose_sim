@@ -13,24 +13,29 @@ from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
-itf = Interface(input_path=f"data/617_s3/40u")
+itf = Interface(input_path=f"data/617_s3/5um")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "cvp_ae_lh",
+    material_name   = "cvp_ae",
     material_params = {
 
         # Crystal Plasticity Parameters
         # "cp_tau_s":   825,
         # "cp_b":       2,#0.3,
         # "cp_tau_0":   112,
-        "cp_lh_0":    60,
-        "cp_lh_1":    180,
-        "cp_tau_0":   60,
+        # "cp_lh_0":    60,
+        # "cp_lh_1":    180,
+        # "cp_tau_0":   60,
+        # "cp_gamma_0": round_sf(1e-4/3, 5),
+        # "cp_n":       5,
+        "cp_tau_s":   948.0298568641758,
+        "cp_b":       0.6274959923170352,#0.3,
+        "cp_tau_0":   399.55761134682626,
         "cp_gamma_0": round_sf(1e-4/3, 5),
-        "cp_n":       5,
+        "cp_n":       9.048580126297246,
 
         # Viscoplastic Parameters
         "vp_s0":      93.655,
