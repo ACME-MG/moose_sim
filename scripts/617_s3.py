@@ -9,7 +9,6 @@
 # Libraries
 import sys; sys.path += [".."]
 from deer_sim.interface import Interface
-from deer_sim.helper.general import round_sf
 from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
@@ -17,38 +16,30 @@ itf = Interface(input_path=f"data/617_s3/5um")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 
+# Define viscoplastic parameters
+vp_params = {
+    "vp_s0":  93.655,
+    "vp_R":   3957.3,
+    "vp_d":   0.5651,
+    "vp_n":   7.3648,
+    "vp_eta": 721.59,
+}
+
+# Define crystal plasticity parameters
+cp_params = {"cp_tau_s": 1418.4, "cp_b": 7.9848, "cp_tau_0": 235.7481267674679, "cp_n": 2.2160, "cp_gamma_0": 3.333e-05}
+# cp_params = {"cp_tau_s": 875.29, "cp_b": 4.8956, "cp_tau_0": 340.67, "cp_n": 4.8973, "cp_gamma_0": 3.333e-05}
+# cp_params = {"cp_tau_s": 792.57, "cp_b": 1.7664, "cp_tau_0": 86.088, "cp_n": 13.686, "cp_gamma_0": 3.333e-05}
+# cp_params = {"cp_tau_s": 447.05, "cp_b": 3.0622, "cp_tau_0": 145.20, "cp_n": 11.825, "cp_gamma_0": 3.333e-05}
+
 # Defines the material parameters
 itf.define_material(
     material_name   = "cvp_ae",
-    material_params = {
-
-        # Crystal Plasticity Parameters
-        # "cp_tau_s":   825,
-        # "cp_b":       2,#0.3,
-        # "cp_tau_0":   112,
-        # "cp_lh_0":    60,
-        # "cp_lh_1":    180,
-        # "cp_tau_0":   60,
-        # "cp_gamma_0": round_sf(1e-4/3, 5),
-        # "cp_n":       5,
-        "cp_tau_s":   948.0298568641758,
-        "cp_b":       0.6274959923170352,#0.3,
-        "cp_tau_0":   399.55761134682626,
-        "cp_gamma_0": round_sf(1e-4/3, 5),
-        "cp_n":       9.048580126297246,
-
-        # Viscoplastic Parameters
-        "vp_s0":      93.655,
-        "vp_R":       3957.3,
-        "vp_d":       0.5651,
-        "vp_n":       7.3648,
-        "vp_eta":     721.59,
-    },
-    c_11     = 250000,
-    c_12     = 151000,
-    c_44     = 123000,
-    youngs   = 211000.0,
-    poissons = 0.30,
+    material_params = {**cp_params, **vp_params},
+    c_11            = 250000,
+    c_12            = 151000,
+    c_44            = 123000,
+    youngs          = 211000.0,
+    poissons        = 0.30,
 )
 
 # Defines the simulation parameters
