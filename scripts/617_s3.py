@@ -12,7 +12,7 @@ from deer_sim.interface import Interface
 from deer_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
-itf = Interface(input_path=f"data/617_s3/5um")
+itf = Interface(input_path=f"data/617_s3_z1/5um")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 
