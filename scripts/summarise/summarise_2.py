@@ -11,7 +11,6 @@ import numpy as np, os, re
 from scipy.interpolate import splev, splrep, splder
 from deer_sim.helper.general import transpose, round_sf, get_thinned_list
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
-from deer_sim.analyse.plotter import Plotter, save_plot
 
 # Constants
 SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-08-25 (617_s3_sm)"

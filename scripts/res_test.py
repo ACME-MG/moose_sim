@@ -33,13 +33,13 @@ cp_params_list = [
 ]
 
 # Iterate through resolutions and crystal plasticity params
-for resolution in ["5um", "10um", "15um", "20um", "30um", "40um"]:
+for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"]:
     for i, cp_params in enumerate(cp_params_list):
         
         # Define the mesh and orientations
         itf = Interface(
-            title      = f"{resolution}_{i}",
-            input_path = f"data/617_s3/{resolution}"
+            title      = f"{resolution}_p{i}",
+            input_path = f"data/617_s3_z1/{resolution}"
         )
         itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
         dimensions = itf.get_dimensions()
@@ -56,7 +56,7 @@ for resolution in ["5um", "10um", "15um", "20um", "30um", "40um"]:
         )
 
         # Defines the simulation parameters
-        exp_dict = csv_to_dict(f"data/617_s3/617_s3_exp.csv")
+        exp_dict = csv_to_dict(f"data/617_s3_z1/617_s3_exp.csv")
         itf.define_simulation(
             simulation_name = "1to1_ui",
             end_time        = exp_dict["time_intervals"][-1],
