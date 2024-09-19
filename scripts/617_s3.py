@@ -43,7 +43,7 @@ itf.define_material(
 )
 
 # Defines the simulation parameters
-exp_dict = csv_to_dict(f"data/617_s3/617_s3_exp.csv")
+exp_dict = csv_to_dict(f"data/617_s3_z1/617_s3_exp.csv")
 itf.define_simulation(
     simulation_name = "1to1_ui",
     end_time        = exp_dict["time_intervals"][-1],
