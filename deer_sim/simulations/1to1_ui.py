@@ -348,7 +348,8 @@ SIMULATION_FORMAT = """
   
   # Transient (time-dependent) and multi-physics problem
   type = Transient
-  automatic_scaling = true
+  automatic_scaling = true # false
+  compute_scaling_once = true
 
   # Solver
   solve_type = NEWTON # NEWTON (Newton-Raphson), PJFNK, FD
@@ -368,10 +369,10 @@ SIMULATION_FORMAT = """
 
   # Solver tolerances
   l_max_its     = 500 
-  l_tol         = 1e-6
+  l_tol         = 1e-4 # 1e-6
   nl_max_its    = 16
-  nl_rel_tol    = 1e-6
-  nl_abs_tol    = 1e-6
+  nl_rel_tol    = 1e-5 # 1e-6
+  nl_abs_tol    = 1e-5 # 1e-6
   nl_forced_its = 1
   # n_max_nonlinear_pingpong = 1
   line_search   = 'none' # 'bt'
@@ -386,7 +387,7 @@ SIMULATION_FORMAT = """
   [./Predictor]
     type  = SimplePredictor
     scale = 1.0
-    skip_after_failed_timestep = true
+    skip_after_failed_timestep = true # false
   [../]
 
   # Timestep growth

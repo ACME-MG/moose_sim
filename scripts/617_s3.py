@@ -26,7 +26,7 @@ vp_params = {
 }
 
 # Define crystal plasticity parameters
-cp_params = {"cp_tau_s": 1418.4, "cp_b": 7.9848, "cp_tau_0": 235.7481267674679, "cp_n": 2.2160, "cp_gamma_0": 3.333e-05}
+cp_params = {"cp_tau_s": 1418.4, "cp_b": 7.9848, "cp_tau_0": 235.75, "cp_n": 2.2160, "cp_gamma_0": 3.333e-05}
 # cp_params = {"cp_tau_s": 875.29, "cp_b": 4.8956, "cp_tau_0": 340.67, "cp_n": 4.8973, "cp_gamma_0": 3.333e-05}
 # cp_params = {"cp_tau_s": 792.57, "cp_b": 1.7664, "cp_tau_0": 86.088, "cp_n": 13.686, "cp_gamma_0": 3.333e-05}
 # cp_params = {"cp_tau_s": 447.05, "cp_b": 3.0622, "cp_tau_0": 145.20, "cp_n": 11.825, "cp_gamma_0": 3.333e-05}
