@@ -15,6 +15,7 @@ from deer_sim.helper.io import csv_to_dict
 # Constants
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
+TARGET_DIR     = "../data/617_s3_z1/5um"
 
 # Define VP material parameters
 vp_param_dict = {
@@ -51,7 +52,7 @@ for i, param_dict in enumerate(param_dict_list):
     index_str = str(i+1).zfill(2)
     itf = Interface(
         title       = f"{sim_id}_{index_str}",
-        input_path  = "../data/617_s3/5um",
+        input_path  = TARGET_DIR,
         output_path = "../results/",
     )
 
@@ -71,7 +72,7 @@ for i, param_dict in enumerate(param_dict_list):
     )
 
     # Defines the simulation parameters
-    exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")
+    exp_dict = csv_to_dict("../data/617_s3_z1/617_s3_exp.csv")
     itf.define_simulation(
         simulation_name = "1to1_ui",
         end_time        = exp_dict["time_intervals"][-1],
@@ -84,5 +85,5 @@ for i, param_dict in enumerate(param_dict_list):
 
     # Conduct post processing
     itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-    itf.post_process()
+    itf.post_process(grain_map_path=f"{TARGET_DIR}/grain_map.csv")
     itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"])

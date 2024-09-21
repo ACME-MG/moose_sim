@@ -36,10 +36,13 @@ cp_params_list = [
 for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"]:
     for i, cp_params in enumerate(cp_params_list):
         
+        # Define input path
+        input_path = f"data/617_s3_z1/{resolution}"
+        
         # Define the mesh and orientations
         itf = Interface(
             title      = f"{resolution}_p{i}",
-            input_path = f"data/617_s3_z1/{resolution}"
+            input_path = input_path
         )
         itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
         dimensions = itf.get_dimensions()
@@ -69,5 +72,5 @@ for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"
 
         # Conduct post processing
         itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-        itf.post_process(grain_map_path="data/617_s3/grain_map.csv")
+        itf.post_process(grain_map_path=f"{input_path}/grain_map.csv")
         itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"])

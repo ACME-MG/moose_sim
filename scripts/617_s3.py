@@ -57,5 +57,5 @@ itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-itf.post_process(grain_map_path="data/617_s3/grain_map.csv")
+itf.post_process(grain_map_path="data/617_s3_z1/grain_map.csv")
 itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"])
