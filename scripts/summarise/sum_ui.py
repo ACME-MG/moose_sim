@@ -7,7 +7,7 @@
 
 # Libraries
 import sys; sys.path += ["../.."]
-import numpy as np, os, re
+import math, numpy as np, os, re
 from scipy.interpolate import splev, splrep, splder
 from deer_sim.helper.general import transpose, round_sf, get_thinned_list
 from deer_sim.helper.io import csv_to_dict, dict_to_csv
@@ -117,6 +117,25 @@ def convert_grain_ids(data_dict:dict, grain_map_path:str) -> dict:
     # Return
     return new_data_dict
 
+def fix_angle(angle:float, l_bound:float=0.0, u_bound:float=2*math.pi) -> float:
+    """
+    Fixes an angle between two bounds
+    
+    Parameters:
+    * `angle`: The angle (rads)
+
+    Returns the fixed angle
+    """
+    if abs(angle-l_bound) < 1e-4 or abs(angle-u_bound) < 1e-4:
+        return angle
+    range = u_bound - l_bound
+    if l_bound < angle and angle < u_bound:
+        return angle
+    elif angle < l_bound:
+        return fix_angle(angle+range, l_bound, u_bound)
+    else:
+        return fix_angle(angle-range, l_bound, u_bound)
+
 def process_data_dict(data_dict:dict) -> dict:
     """
     Processes the data in the data dictionary;
@@ -143,11 +162,17 @@ def process_data_dict(data_dict:dict) -> dict:
         field_itp = Interpolator(strain_list, data_dict[field], len(strain_list))
         new_list = field_itp.evaluate(new_strain_list)
         processed_dict[field] = new_list
+    
+    # Fix the domain of the euler-bunge angles
+    # for field in euler_fields:
+    #     processed_dict[field] = [fix_angle(phi) for phi in processed_dict[field]]
+    
+    # Return processed dictionary
     return processed_dict
 
 # Read all summary files
 dir_path_list = [f"{SIM_PATH}/{dir_path}" for dir_path in os.listdir(SIM_PATH)
-            if os.path.exists(f"{SIM_PATH}/{dir_path}/summary.csv")]
+                 if os.path.exists(f"{SIM_PATH}/{dir_path}/summary.csv")]
 summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
 summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_list]
 param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]

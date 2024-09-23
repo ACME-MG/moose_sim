@@ -82,4 +82,5 @@ for summary_dict, param_dict in zip(summary_dict_list, param_dict_list):
         super_summary_dict[key] += round_sf(summary_dict[key][1:], 5)
 
 # Save the super summary dictionary
+super_summary_dict = convert_grain_ids(super_summary_dict, "../data/617_s3_z1/10um/grain_map.csv")
 dict_to_csv(super_summary_dict, "617_s3_sampled.csv")
