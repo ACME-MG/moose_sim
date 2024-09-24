@@ -2,29 +2,29 @@
 
 For running material simulations using DEER. The following README file was last updated on the 24th of July, 2024.
 
-# Importing `deer_sim`
+# Importing `moose_sim`
 
-The user can add the `deer_sim` package to the system path so that they can import the code anywhere on their machine. This involves simply adding the following line to the `~/.bashrc` file, as follows. Note that `<path_to_deer_sim>` refers to the absolute path to the `deer_sim` directory.
+The user can add the `moose_sim` package to the system path so that they can import the code anywhere on their machine. This involves simply adding the following line to the `~/.bashrc` file, as follows. Note that `<path_to_moose_sim>` refers to the absolute path to the `moose_sim` directory.
 ```
-export PYTHONPATH=$PYTHONPATH:<path_to_deer_sim>
+export PYTHONPATH=$PYTHONPATH:<path_to_moose_sim>
 ```
 
-Alternatively, the user can import `deer_sim` dynamically depending on the relative path between the main `deer_sim` directory and their script. For instance, if the user wants to run a script in the `deer_sim/scripts/` directory, they can use the following.
+Alternatively, the user can import `moose_sim` dynamically depending on the relative path between the main `moose_sim` directory and their script. For instance, if the user wants to run a script in the `moose_sim/scripts/` directory, they can use the following.
 ```
 import sys; sys.path += [".."]
-import deer_sim
+import moose_sim
 ```
 
-# Interacting with `deer_sim`
+# Interacting with `moose_sim`
 
-The following section provides a tutorial on using the `deer_sim` code.
+The following section provides a tutorial on using the `moose_sim` code.
 
 ## Interface Class
 
-The `Interface` class allows the user to interact with the `deer_sim` code. To access the `Interface` class, the user must first import the `deer_sim` package and initialise an `Interface` object. The following is an example of doing so from the `deer_sim/scripts/` directory.
+The `Interface` class allows the user to interact with the `moose_sim` code. To access the `Interface` class, the user must first import the `moose_sim` package and initialise an `Interface` object. The following is an example of doing so from the `moose_sim/scripts/` directory.
 ```py
 import sys; sys.path += [".."]
-from deer_sim import Interface
+from moose_sim import Interface
 itf = Interface()
 ```
 
@@ -35,7 +35,7 @@ The `Interface` class contains several optional arguments. These include:
 * `verbose`: This optional argument tells the script whether to display any information about the actions of the `Interface` class in the terminal. The default value for this argument is `True`, meaning that the information will be displayed in the terminal.
 * `output_here`: This optional argument tells the script whether to just place the output files in the same directory as the script. The default value for this is `False`. Note that when the user sets the argument to `True`, the `title` and `output_path` values will not have any effect.
 
-The implementation of the `Interface` class can be accessed via `deer_sim/deer_sim/interface.py`. The next sections provide descriptions of the available functions, their available arguments, and how to use them. Note that additional descriptions of the `Interface` functions can also be accessed by hovering your cursor over the functions. However, this functionality is only supported by some IDEs (e.g., Visual Studio Code).
+The implementation of the `Interface` class can be accessed via `moose_sim/moose_sim/interface.py`. The next sections provide descriptions of the available functions, their available arguments, and how to use them. Note that additional descriptions of the `Interface` functions can also be accessed by hovering your cursor over the functions. However, this functionality is only supported by some IDEs (e.g., Visual Studio Code).
 
 ## Defining the mesh (`define_mesh`)
 
@@ -72,7 +72,7 @@ The user can additionally enter custom arguments to pass through custom material
 The `simulate` function runs the simulation.
 
 Parameters:
-* `deer_path`:      Path to the deer executable.
+* `opt_path`:       Path to the *-opt executable.
 * `num_processors`: The number of processors.
 * `timeout`:        The maximum amount of time (in seconds) to run the simulation.
 

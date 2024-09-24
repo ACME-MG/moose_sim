@@ -7,9 +7,9 @@
 
 # Libraries
 import sys; sys.path += ["../.."]
-from deer_sim.helper.io import csv_to_dict
-from deer_sim.analyse.plotter import save_plot, Plotter
-from deer_sim.analyse.pole_figure import IPF, get_lattice
+from moose_sim.helper.io import csv_to_dict
+from moose_sim.analyse.plotter import save_plot, Plotter
+from moose_sim.analyse.pole_figure import IPF, get_lattice
 
 # Constants
 SAMPLE_PATH = "617_s3_sampled.csv"

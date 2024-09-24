@@ -7,8 +7,8 @@
 
 # Libraries
 import sys; sys.path += [".."]
-from deer_sim.interface import Interface
-from deer_sim.helper.general import round_sf
+from moose_sim.interface import Interface
+from moose_sim.helper.general import round_sf
 
 # Define the mesh and orientations
 itf = Interface(input_path="data/minimal")

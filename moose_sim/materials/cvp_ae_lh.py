@@ -1,12 +1,13 @@
 """
- Title:         Crystal/Visco Plasticity model with anisotropic hardening
+ Title:         Crystal/Visco Plasticity model with anisotropic hardening and latent hardening
  Description:   For creating the material file
  Author:        Janzen Choi
 
 """
 
 # Libraries
-from deer_sim.materials.__material__ import __Material__
+from moose_sim.materials.__material__ import __Material__
+from moose_sim.helper.general import flatten
 
 # Format for defining materials
 MATERIAL_FORMAT = """
@@ -21,10 +22,14 @@ MATERIAL_FORMAT = """
       </emodel>
       <imodel type="AsaroInelasticity">
         <rule type="PowerLawSlipRule">
-          <resistance type="VoceSlipHardening">
-            <tau_sat>{cp_tau_s}</tau_sat>
-            <b>{cp_b}</b>
+          <resistance type="GeneralLinearHardening">
+            <M type="SquareMatrix">
+              <m>12</m>
+              <type>dense</type>
+              <data>{glh_dense}</data>
+            </M>
             <tau_0>{cp_tau_0}</tau_0>
+            <absval>true</absval>
           </resistance>
           <gamma0>{cp_gamma_0}</gamma0>
           <n>{cp_n}</n>
@@ -110,6 +115,23 @@ class Material(__Material__):
         * `youngs`:   The elastic modulus
         * `poissons`: The poisson ratio
         """
+        
+        # Define information about the material
+        slip_systems = 12
+        
+        # Define hardening matrix
+        cp_lh_0 = self.get_param("cp_lh_0")
+        cp_lh_1 = self.get_param("cp_lh_1")
+        sm_data = [[cp_lh_0]*slip_systems for _ in range(slip_systems)]
+        for i in range(slip_systems):
+            sm_data[i][i] = cp_lh_1
+        glh_dense = " ".join([str(sm) for sm in flatten(sm_data)])
+            
+        # Define tau_0 values
+        cp_tau_0 = self.get_param("cp_tau_0")
+        cp_tau_0 = " ".join([str(cp_tau_0)]*slip_systems)
+        
+        # Define material content
         material_content = MATERIAL_FORMAT.format(
             material   = self.get_name(),
             c_11       = c_11,
@@ -117,9 +139,8 @@ class Material(__Material__):
             c_44       = c_44,
             youngs     = youngs,
             poissons   = poissons,
-            cp_tau_s   = self.get_param("cp_tau_s"),
-            cp_b       = self.get_param("cp_b"),
-            cp_tau_0   = self.get_param("cp_tau_0"),
+            glh_dense  = glh_dense,
+            cp_tau_0   = cp_tau_0,
             cp_gamma_0 = self.get_param("cp_gamma_0"),
             cp_n       = self.get_param("cp_n"),
             vp_s0      = self.get_param("vp_s0"),

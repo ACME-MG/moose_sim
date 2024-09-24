@@ -8,8 +8,8 @@
 
 # Libraries
 import sys; sys.path += [".."]
-from deer_sim.interface import Interface
-from deer_sim.helper.io import csv_to_dict
+from moose_sim.interface import Interface
+from moose_sim.helper.io import csv_to_dict
 
 # Define the mesh and orientations
 itf = Interface(input_path=f"data/617_s3_z1/40um")

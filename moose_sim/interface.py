@@ -1,13 +1,13 @@
 """
  Title:         Simulation Interface
- Description:   Interface for running deer simulations
+ Description:   Interface for running MOOSE simulations
  Author:        Janzen Choi
 
 """
 
 # Libraries
 import inspect, os, re, time
-from deer_sim.simulate.controller import Controller
+from moose_sim.simulate.controller import Controller
 
 # Interface Class
 class Interface:
@@ -101,18 +101,18 @@ class Interface:
         self.__print__(f"Defining the simulation ({simulation_name})")
         self.__controller__.define_simulation(simulation_name, simulation_params, **kwargs)
 
-    def simulate(self, deer_path:str, num_processors:int, timeout:float=1e10) -> None:
+    def simulate(self, opt_path:str, num_processors:int, timeout:float=1e10) -> None:
         """
         Runs the simulation
 
         Parameters:
-        * `deer_path`:      Path to the deer executable
+        * `opt_path`:       Path to the *-opt executable
         * `num_processors`: The number of processors
         * `timeout`:        The maximum amount of time (in seconds) to run the simulation
         """
         self.__print__("Running the simulation")
         self.__check_files__()
-        self.__controller__.run_simulation(deer_path, num_processors, self.__output_path__, timeout)
+        self.__controller__.run_simulation(opt_path, num_processors, self.__output_path__, timeout)
 
     def export_params(self, params_file:str="params.txt") -> None:
         """

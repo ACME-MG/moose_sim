@@ -8,9 +8,9 @@
 
 # Libraries
 import sys; sys.path += [".."]
-from deer_sim.interface import Interface
-from deer_sim.helper.io import csv_to_dict
-from deer_sim.helper.interpolator import intervaluate
+from moose_sim.interface import Interface
+from moose_sim.helper.io import csv_to_dict
+from moose_sim.helper.interpolator import intervaluate
 
 # Constants
 NUM_PROCESSORS = 190
@@ -35,7 +35,8 @@ cp_params_list = [
 ]
 
 # Iterate through resolutions and crystal plasticity params
-for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"]:
+# for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"]:
+for resolution in ["45um", "50um"]:
     for i, cp_params in enumerate(cp_params_list):
         
         # Define input path

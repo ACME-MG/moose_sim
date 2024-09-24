@@ -10,7 +10,7 @@
 import math, numpy as np
 from neml.math import rotations, tensors
 from neml.cp import crystallography
-from deer_sim.maths.orientation import deg_to_rad, fix_angle
+from moose_sim.maths.orientation import deg_to_rad, fix_angle
 
 def get_magnitude(vector:list) -> float:
     """

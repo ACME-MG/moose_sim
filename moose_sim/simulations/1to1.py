@@ -1,5 +1,5 @@
 """
- Title:         Crystal Plasticity Model
+ Title:         Simulator for a 1:1 mesh
  Description:   For creating the CP simulation file
  Author:        Janzen Choi
 
@@ -7,11 +7,11 @@
 
 # Libraries
 import numpy as np, re
-from deer_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
-from deer_sim.analyse.summarise import get_average_euler, map_average_field, map_total_field
-from deer_sim.helper.general import transpose
-from deer_sim.helper.io import csv_to_dict, dict_to_csv
-from deer_sim.simulations.__simulation__ import __Simulation__
+from moose_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
+from moose_sim.analyse.summarise import get_average_euler, map_average_field, map_total_field
+from moose_sim.helper.general import transpose
+from moose_sim.helper.io import csv_to_dict, dict_to_csv
+from moose_sim.simulations.__simulation__ import __Simulation__
 
 # Format for defining simulations
 SIMULATION_FORMAT = """

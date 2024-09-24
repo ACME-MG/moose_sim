@@ -7,7 +7,7 @@
 
 # Libraries
 import math
-from deer_sim.maths.orientation import fix_angle
+from moose_sim.maths.orientation import fix_angle
 from neml.math import rotations
 from neml.cp import crystallography
 
@@ -29,9 +29,9 @@ def get_cubic_misorientation(euler_1:list, euler_2:list):
     _, mori_angle = mori.to_axis_angle()
     return mori_angle
 
-def deer_quat_to_euler(quat:list, reorient:bool=False, offset:bool=False) -> list:
+def moose_quat_to_euler(quat:list, reorient:bool=False, offset:bool=False) -> list:
     """
-    Converts the quaternion outputted by deer into euler-bunge angles
+    Converts the quaternion outputted by moose into euler-bunge angles
 
     Parameters:
     * `quat`:     The quaternion

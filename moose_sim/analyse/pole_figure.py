@@ -18,7 +18,7 @@ from matplotlib.colors import Normalize
 from matplotlib.colorbar import ColorbarBase
 from neml.math import rotations, tensors
 from neml.cp import crystallography
-from deer_sim.helper.general import flatten, round_sf
+from moose_sim.helper.general import flatten, round_sf
 
 # Pole figure class
 class PF:

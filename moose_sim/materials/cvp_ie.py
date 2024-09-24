@@ -1,35 +1,30 @@
 """
- Title:         Crystal/Visco Plasticity model with anisotropic hardening and latent hardening
+ Title:         Crystal/Visco Plasticity model with isotropic hardening
  Description:   For creating the material file
  Author:        Janzen Choi
 
 """
 
 # Libraries
-from deer_sim.materials.__material__ import __Material__
-from deer_sim.helper.general import flatten
+from moose_sim.materials.__material__ import __Material__
 
 # Format for defining materials
 MATERIAL_FORMAT = """
 <materials>
   <{material}_cp type="SingleCrystalModel">
     <kinematics type="StandardKinematicModel">
-      <emodel type="CubicLinearElasticModel">
-        <m1>{c_11}</m1>
-        <m2>{c_12}</m2>
-        <m3>{c_44}</m3>
-        <method>components</method>
+      <emodel type="IsotropicLinearElasticModel">
+        <m1_type>youngs</m1_type>
+        <m1>{youngs}</m1>
+        <m2_type>poissons</m2_type>
+        <m2>{poissons}</m2>
       </emodel>
       <imodel type="AsaroInelasticity">
         <rule type="PowerLawSlipRule">
-          <resistance type="GeneralLinearHardening">
-            <M type="SquareMatrix">
-              <m>12</m>
-              <type>dense</type>
-              <data>{glh_dense}</data>
-            </M>
+          <resistance type="VoceSlipHardening">
+            <tau_sat>{cp_tau_s}</tau_sat>
+            <b>{cp_b}</b>
             <tau_0>{cp_tau_0}</tau_0>
-            <absval>true</absval>
           </resistance>
           <gamma0>{cp_gamma_0}</gamma0>
           <n>{cp_n}</n>
@@ -102,45 +97,22 @@ MATERIAL_FORMAT = """
 # VSHAI Class
 class Material(__Material__):
     
-    def get_material(self, c_11:float, c_12:float, c_44:float, youngs:float,
-                     poissons:float) -> str:
+    def get_material(self, youngs:float, poissons:float) -> str:
         """
         Gets the content for the material file;
         must be overridden
 
         Parameters:
-        * `c_11`:     The component of the elastic tensor in (0,0)
-        * `c_12`:     The component of the elastic tensor in (0,1)
-        * `c_44`:     The component of the elastic tensor in (3,3)
         * `youngs`:   The elastic modulus
-        * `poissons`: The poisson ratio
+        * `poissons`: The poissons ratio
         """
-        
-        # Define information about the material
-        slip_systems = 12
-        
-        # Define hardening matrix
-        cp_lh_0 = self.get_param("cp_lh_0")
-        cp_lh_1 = self.get_param("cp_lh_1")
-        sm_data = [[cp_lh_0]*slip_systems for _ in range(slip_systems)]
-        for i in range(slip_systems):
-            sm_data[i][i] = cp_lh_1
-        glh_dense = " ".join([str(sm) for sm in flatten(sm_data)])
-            
-        # Define tau_0 values
-        cp_tau_0 = self.get_param("cp_tau_0")
-        cp_tau_0 = " ".join([str(cp_tau_0)]*slip_systems)
-        
-        # Define material content
         material_content = MATERIAL_FORMAT.format(
             material   = self.get_name(),
-            c_11       = c_11,
-            c_12       = c_12,
-            c_44       = c_44,
             youngs     = youngs,
             poissons   = poissons,
-            glh_dense  = glh_dense,
-            cp_tau_0   = cp_tau_0,
+            cp_tau_s   = self.get_param("cp_tau_s"),
+            cp_b       = self.get_param("cp_b"),
+            cp_tau_0   = self.get_param("cp_tau_0"),
             cp_gamma_0 = self.get_param("cp_gamma_0"),
             cp_n       = self.get_param("cp_n"),
             vp_s0      = self.get_param("vp_s0"),

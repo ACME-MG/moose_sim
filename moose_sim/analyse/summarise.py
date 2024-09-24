@@ -7,10 +7,10 @@
 
 # Libraries
 import os, numpy as np
-from deer_sim.helper.general import round_sf, flatten
-from deer_sim.helper.io import csv_to_dict
-from deer_sim.maths.orientation import get_average_quat
-from deer_sim.maths.neml import deer_quat_to_euler
+from moose_sim.helper.general import round_sf, flatten
+from moose_sim.helper.io import csv_to_dict
+from moose_sim.maths.orientation import get_average_quat
+from moose_sim.maths.neml import moose_quat_to_euler
 
 def get_csv_results(results_path:str, include:str=None, exclude:str=None) -> list:
     """
@@ -180,7 +180,8 @@ def map_total_field(data_dict_list:list, target_field:str, block_map:dict) -> di
     # Return
     return total_dict
 
-def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:dict, weight_field:str=None) -> dict:
+def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:dict,
+                      weight_field:str=None, offset:bool=True) -> dict:
     """
     Gets the average orientations from a block map
 
@@ -189,6 +190,7 @@ def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:di
     * `orientation_fields`: The list of fields for the orientations (quaternions)
     * `block_map`:          The dictionary mapping the block IDs to element IDs
     * `weight_field`:       The field to weight the orientations; doesn't weight if undefined
+    * `offset`:             Whether to offset the angle at the t=0
     
     Returns a dictionary mapping the block ID to a list of average orientations (euler-bunge, rads) 
     """
@@ -214,7 +216,7 @@ def get_average_euler(data_dict_list:list, orientation_fields:list, block_map:di
                 average_quat = get_average_quat(quat_list, weight_list)
             
             # Convert to euler-bunge angles and append
-            average_euler = deer_quat_to_euler(average_quat, reorient=True, offset=(i==0))
+            average_euler = moose_quat_to_euler(average_quat, reorient=True, offset=(i==0 and offset))
             average_euler = [round_sf(ae, 5) for ae in average_euler]
             average_dict[block_id].append(average_euler)
 

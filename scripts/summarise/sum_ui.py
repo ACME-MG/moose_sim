@@ -9,12 +9,12 @@
 import sys; sys.path += ["../.."]
 import math, numpy as np, os, re
 from scipy.interpolate import splev, splrep, splder
-from deer_sim.helper.general import transpose, round_sf, get_thinned_list
-from deer_sim.helper.io import csv_to_dict, dict_to_csv
-from deer_sim.analyse.plotter import Plotter, save_plot
+from moose_sim.helper.general import transpose, round_sf, get_thinned_list
+from moose_sim.helper.io import csv_to_dict, dict_to_csv
+from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Constants
-SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-09-17 (617_s3_10u_z1_sm)"
+SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/moose_sim/2024-09-17 (617_s3_10u_z1_sm)"
 PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
 NUM_STRAINS = 32
 

@@ -7,10 +7,10 @@
 
 # Libraries
 import sys; sys.path += ["../.."]
-from deer_sim.interface import Interface
-from deer_sim.helper.general import round_sf
-from deer_sim.helper.sampler import get_lhs
-from deer_sim.helper.io import csv_to_dict
+from moose_sim.interface import Interface
+from moose_sim.helper.general import round_sf
+from moose_sim.helper.sampler import get_lhs
+from moose_sim.helper.io import csv_to_dict
 
 # Constants
 NUM_PARALLEL   = 4

@@ -8,11 +8,11 @@
 # Libraries
 import sys; sys.path += ["../.."]
 import os, re
-from deer_sim.helper.general import round_sf
-from deer_sim.helper.io import csv_to_dict, dict_to_csv
+from moose_sim.helper.general import round_sf
+from moose_sim.helper.io import csv_to_dict, dict_to_csv
 
 # Constants
-SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/deer_sim/2024-08-25 (617_s3_sm)"
+SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/moose_sim/2024-08-25 (617_s3_sm)"
 PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
 
 def get_param_dict(params_path:str) -> dict:
