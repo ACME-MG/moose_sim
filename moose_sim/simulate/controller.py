@@ -32,22 +32,22 @@ class Controller():
         self.get_output        = get_output
         self.mesh_file         = ""
         self.orientation_file  = ""
+        self.material_file     = "material"
         self.material_name     = ""
-        self.simulation_name   = ""
         self.material_params   = {}
+        self.simulation_file   = "simulation"
+        self.simulation_name   = ""
         self.simulation_params = {}
         self.simulation        = None
         self.simulation_run    = False
-
-        # Initialise file names
-        self.material_file   = "material.xml"
-        self.simulation_file = "simulation.i"
+        self.material_ext      = ""
+        self.simulation_ext    = ""
+        
+        # Initialise file paths
+        self.material_path   = ""
+        self.simulation_path = ""
         self.csv_file        = "results"
         self.analysis_file   = "analysis_plot"
-
-        # Initialise file paths
-        self.material_path   = get_output(self.material_file)
-        self.simulation_path = get_output(self.simulation_file)
         self.csv_path        = get_output(f"{self.csv_file}.csv")
         self.analysis_path   = get_output(self.analysis_file)
 
@@ -113,40 +113,48 @@ class Controller():
         }
         return dimensions
 
-    def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
+    def define_material(self, material_name:str, material_params:dict,
+                        material_ext:str, **kwargs) -> None:
         """
         Defines the material
-        
+
         Parameters:
         * `material_name`:   The name of the material
         * `material_params`: Dictionary of parameter values
+        * `material_ext`:    Extension to use for the file
         """
 
         # Save material information
-        self.material_name = material_name
+        self.material_name   = material_name
         self.material_params = material_params
+        self.material_ext    = material_ext
+        self.material_path   = self.get_output(f"{self.material_file}.{self.material_ext}")
 
         # Write the material file
         material_content = get_material(material_name, material_params, **kwargs)
         with open(self.material_path, "w+") as fh:
             fh.write(material_content)
 
-    def define_simulation(self, simulation_name:str, simulation_params:dict, **kwargs) -> None:
+    def define_simulation(self, simulation_name:str, simulation_params:dict,
+                          simulation_ext:str, **kwargs) -> None:
         """
         Defines the simulation
 
         Parameters:
         * `simulation_name`:   The name of the simulation
         * `simulation_params`: Dictionary of parameter values
+        * `simulation_ext`:    Extension to use for the file
         """
 
         # Save simulation information
-        self.simulation_name = simulation_name
+        self.simulation_name   = simulation_name
         self.simulation_params = simulation_params
+        self.simulation_ext    = simulation_ext
+        self.simulation_path   = self.get_output(f"{self.simulation_file}.{self.simulation_ext}")
 
         # Write the simulation file
         self.simulation = get_simulation(simulation_name, simulation_params, self.get_input,
-                                         self.mesh_file, self.orientation_file, self.material_file,
+                                         self.mesh_file, self.orientation_file, f"{self.material_file}.{self.material_ext}", 
                                          self.material_name, self.csv_file)
         simulation_content = self.simulation.get_simulation(**kwargs)
         with open(self.simulation_path, "w+") as fh:
@@ -172,11 +180,12 @@ class Controller():
         # Run the simulation
         current_dir = os.getcwd()
         os.chdir("{}/{}".format(os.getcwd(), output_path))
-        command = f"timeout {timeout}s mpiexec -np {num_processors} {opt_path} -i {self.simulation_file}"
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except:
-            pass
+        command = f"timeout {timeout}s mpiexec -np {num_processors} {opt_path} -i {self.simulation_file}.{self.simulation_ext}"
+        subprocess.run([command], shell=True, check=False)
+        # try:
+        #     subprocess.run([command], shell=True, check=False)
+        # except:
+        #     pass
         os.chdir(current_dir)
         self.simulation_run = True
 

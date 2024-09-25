@@ -11,7 +11,7 @@ from moose_sim.interface import Interface
 from moose_sim.helper.general import round_sf
 
 # Define the mesh and orientations
-itf = Interface(input_path="data/tiny")
+itf = Interface(input_path="data/test/tiny")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 
@@ -51,9 +51,10 @@ itf.define_simulation(
 # Runs the model and saves results
 num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
-itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
+itf.simulate("~/moose/moose/modules/solid_mechanics/solid_mechanics-opt", num_processors, 100000)
+# itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 
-# Conduct post processing
-itf.compress_csv(sf=5, exclude=["x", "y", "z"])
-itf.post_process(grain_map_path="data/tiny/grain_map.csv")
-itf.remove_files(["mesh.e", "element_stats.csv", "results"])
+# # Conduct post processing
+# itf.compress_csv(sf=5, exclude=["x", "y", "z"])
+# itf.post_process(grain_map_path="data/tiny/grain_map.csv")
+# itf.remove_files(["mesh.e", "element_stats.csv", "results"])

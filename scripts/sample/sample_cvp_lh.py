@@ -36,6 +36,8 @@ bounds_dict = {
 }
 param_dict_list = get_lhs(bounds_dict, 32)
 # for param_dict in param_dict_list:
+#     for param in param_dict.keys():
+#         param_dict[param] = round_sf(param_dict[param], 4)
 #     print(param_dict)
 # exit()
 

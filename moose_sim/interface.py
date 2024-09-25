@@ -79,27 +79,31 @@ class Interface:
         dimensions = self.__controller__.get_dimensions()
         return dimensions
 
-    def define_material(self, material_name:str, material_params:dict, **kwargs) -> None:
+    def define_material(self, material_name:str, material_params:dict={},
+                        material_ext:str="xml", **kwargs) -> None:
         """
         Defines the material
 
         Parameters:
         * `material_name`:   The name of the material
         * `material_params`: Dictionary of parameter values
+        * `material_ext`:    Extension to use for the file
         """
         self.__print__(f"Defining the material ({material_name})")
-        self.__controller__.define_material(material_name, material_params, **kwargs)
+        self.__controller__.define_material(material_name, material_params, material_ext, **kwargs)
     
-    def define_simulation(self, simulation_name:str, simulation_params:dict={}, **kwargs) -> None:
+    def define_simulation(self, simulation_name:str, simulation_params:dict={},
+                          simulation_ext:str="i", **kwargs) -> None:
         """
         Defines the simulation
 
         Parameters:
         * `simulation_name`:   The name of the simulation
         * `simulation_params`: Dictionary of parameter values
+        * `simulation_ext`:    Extension to use for the file
         """
         self.__print__(f"Defining the simulation ({simulation_name})")
-        self.__controller__.define_simulation(simulation_name, simulation_params, **kwargs)
+        self.__controller__.define_simulation(simulation_name, simulation_params, simulation_ext, **kwargs)
 
     def simulate(self, opt_path:str, num_processors:int, timeout:float=1e10) -> None:
         """
