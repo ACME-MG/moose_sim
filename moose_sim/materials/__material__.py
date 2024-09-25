@@ -43,27 +43,32 @@ class __Material__:
         """
         raise NotImplementedError
 
-def get_material(material_name:str, params:dict, **kwargs) -> str:
+def get_material(material_path:str, params:dict, **kwargs) -> str:
     """
     Gets the material file's content
     
     Parameters:
-    * `material_name`: The name of the material
+    * `material_path`: The path to the the material
     * `params`:        The parameter values
     """
 
-    # Get available materials in current folder
+    # Separate material file and path
+    material_file = material_path.split("/")[-1]
+    material_path = "/".join(material_path.split("/")[:-1])
     materials_dir = pathlib.Path(__file__).parent.resolve()
+    materials_dir = f"{materials_dir}/{material_path}"
+
+    # Get available materials in current folder
     files = os.listdir(materials_dir)
     files = [file.replace(".py", "") for file in files]
     files = [file for file in files if not file in ["__material__", "__pycache__"]]
     
     # Raise error if material name not in available materials
-    if not material_name in files:
-        raise NotImplementedError(f"The material '{material_name}' has not been implemented")
+    if not material_file in files:
+        raise NotImplementedError(f"The material '{material_file}' has not been implemented")
 
     # Import and prepare material
-    module_path = f"{materials_dir}/{material_name}.py"
+    module_path = f"{materials_dir}/{material_file}.py"
     spec = importlib.util.spec_from_file_location("material_file", module_path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -71,6 +76,6 @@ def get_material(material_name:str, params:dict, **kwargs) -> str:
     
     # Initialise and return the material
     from material_file import Material
-    material = Material(material_name, params)
+    material = Material(material_file, params)
     material_content = material.get_material(**kwargs)
     return material_content

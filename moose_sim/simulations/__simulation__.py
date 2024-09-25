@@ -85,7 +85,7 @@ class __Simulation__:
 
     def set_material_name(self, material_name:str) -> None:
         """
-        Sets the material name
+        Sets the material name (including/excluding path)
 
         Parameters:
         * `material_name`: The material name
@@ -140,13 +140,13 @@ class __Simulation__:
         """
         pass
 
-def get_simulation(simulation_name:str, params:dict, get_input_function, mesh_file:str, orientation_file:str,
+def get_simulation(simulation_path:str, params:dict, get_input_function, mesh_file:str, orientation_file:str,
                    material_file:str, material_name:str, csv_file:str) -> __Simulation__:
     """
     Gets the simulation file's content
     
     Parameters:
-    * `simulation_name`:    The name of the simulation
+    * `simulation_path`:    The path to the simulation
     * `params`:             The parameter values
     * `get_input_function`: The input function
     * `mesh_file`:          The name of the mesh file
@@ -156,18 +156,23 @@ def get_simulation(simulation_name:str, params:dict, get_input_function, mesh_fi
     * `csv_file`:           The name of the CSV file
     """
 
-    # Get available simulations in current folder
+    # Separate simulation file and path
+    simulation_file = simulation_path.split("/")[-1]
+    simulation_path = "/".join(simulation_path.split("/")[:-1])
     simulations_dir = pathlib.Path(__file__).parent.resolve()
+    simulations_dir = f"{simulations_dir}/{simulation_path}"
+
+    # Get available simulations in current folder
     files = os.listdir(simulations_dir)
     files = [file.replace(".py", "") for file in files]
     files = [file for file in files if not file in ["__simulation__", "__pycache__"]]
     
     # Raise error if simulation name not in available simulations
-    if not simulation_name in files:
-        raise NotImplementedError(f"The simulation '{simulation_name}' has not been implemented")
+    if not simulation_file in files:
+        raise NotImplementedError(f"The simulation '{simulation_file}' has not been implemented")
 
     # Import and prepare simulation
-    module_file = f"{simulations_dir}/{simulation_name}.py"
+    module_file = f"{simulations_dir}/{simulation_file}.py"
     spec = importlib.util.spec_from_file_location("simulation_file", module_file)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -175,7 +180,7 @@ def get_simulation(simulation_name:str, params:dict, get_input_function, mesh_fi
     
     # Initialise and return the simulation
     from simulation_file import Simulation
-    simulation = Simulation(simulation_name, params, get_input_function)
+    simulation = Simulation(simulation_file, params, get_input_function)
     simulation.set_mesh_file(mesh_file)
     simulation.set_orientation_file(orientation_file)
     simulation.set_material_file(material_file)

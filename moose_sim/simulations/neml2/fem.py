@@ -26,8 +26,8 @@ SIMULATION_FORMAT = """
 []
 
 [NEML2]
-  input = '{material_name}'
-  model = 'model'
+  input = '{material_file}'
+  model = '{material_name}'
   temperature = 'T'
   verbose = true
   mode = ELEMENT
@@ -109,6 +109,7 @@ class Simulation(__Simulation__):
         """
         simulation_content = SIMULATION_FORMAT.format(
             N             = 2,
-            material_name = self.get_material_file(),
+            material_file = self.get_material_file(),
+            material_name = self.get_material_name(),
         )
         return simulation_content

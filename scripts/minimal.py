@@ -17,8 +17,8 @@ dimensions = itf.get_dimensions()
 
 # Defines the material parameters
 itf.define_material(
-    # material_name   = "cvp_ae",
-    material_name   = "cvp_ae_lh",
+    # material_name   = "deer/cvp_ae",
+    material_name   = "deer/cvp_ae_lh",
     material_params = {
 
         # Crystal Plasticity Parameters
@@ -46,7 +46,7 @@ itf.define_material(
 
 # Defines the simulation parameters
 itf.define_simulation(
-    simulation_name = "1to1_ui",
+    simulation_name = "deer/1to1_ui",
     end_time   = 2000,
     end_strain = dimensions["x"]*0.1,
 )

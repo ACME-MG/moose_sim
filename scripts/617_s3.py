@@ -33,7 +33,7 @@ cp_params = {"cp_tau_s": 1418.4, "cp_b": 7.9848, "cp_tau_0": 235.75, "cp_n": 2.2
 
 # Defines the material parameters
 itf.define_material(
-    material_name   = "cvp_ae",
+    material_name   = "deer/cvp_ae",
     material_params = {**cp_params, **vp_params},
     c_11            = 250000,
     c_12            = 151000,
@@ -45,7 +45,7 @@ itf.define_material(
 # Defines the simulation parameters
 exp_dict = csv_to_dict(f"data/617_s3_z1/617_s3_exp.csv")
 itf.define_simulation(
-    simulation_name = "1to1_ui",
+    simulation_name = "deer/1to1_ui",
     end_time        = exp_dict["time_intervals"][-1],
     end_strain      = exp_dict["strain_intervals"][-1] * dimensions["x"]
 )

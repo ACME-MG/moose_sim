@@ -1,6 +1,7 @@
 """
- Title:         Crystal/Visco Plasticity model with isotropic hardening
- Description:   For creating the material file
+ Title:         Crystal Plasticity model with isotropic elasticity
+ Description:   For creating the material file;
+                Based on neml2/tests/regression/solid_mechanics/crystal_plasticity/single_crystal_coupled/model.i
  Author:        Janzen Choi
 
 """

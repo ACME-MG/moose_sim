@@ -113,47 +113,47 @@ class Controller():
         }
         return dimensions
 
-    def define_material(self, material_name:str, material_params:dict,
+    def define_material(self, material_path:str, material_params:dict,
                         material_ext:str, **kwargs) -> None:
         """
         Defines the material
 
         Parameters:
-        * `material_name`:   The name of the material
+        * `material_path`:   The path to the material
         * `material_params`: Dictionary of parameter values
         * `material_ext`:    Extension to use for the file
         """
 
         # Save material information
-        self.material_name   = material_name
+        self.material_name   = material_path.split("/")[-1]
         self.material_params = material_params
         self.material_ext    = material_ext
         self.material_path   = self.get_output(f"{self.material_file}.{self.material_ext}")
 
         # Write the material file
-        material_content = get_material(material_name, material_params, **kwargs)
+        material_content = get_material(material_path, material_params, **kwargs)
         with open(self.material_path, "w+") as fh:
             fh.write(material_content)
 
-    def define_simulation(self, simulation_name:str, simulation_params:dict,
+    def define_simulation(self, simulation_path:str, simulation_params:dict,
                           simulation_ext:str, **kwargs) -> None:
         """
         Defines the simulation
 
         Parameters:
-        * `simulation_name`:   The name of the simulation
+        * `simulation_path`:   The path to the simulation
         * `simulation_params`: Dictionary of parameter values
         * `simulation_ext`:    Extension to use for the file
         """
 
         # Save simulation information
-        self.simulation_name   = simulation_name
+        self.simulation_name   = simulation_path.split("/")[-1]
         self.simulation_params = simulation_params
         self.simulation_ext    = simulation_ext
         self.simulation_path   = self.get_output(f"{self.simulation_file}.{self.simulation_ext}")
 
         # Write the simulation file
-        self.simulation = get_simulation(simulation_name, simulation_params, self.get_input,
+        self.simulation = get_simulation(simulation_path, simulation_params, self.get_input,
                                          self.mesh_file, self.orientation_file, f"{self.material_file}.{self.material_ext}", 
                                          self.material_name, self.csv_file)
         simulation_content = self.simulation.get_simulation(**kwargs)
@@ -181,6 +181,7 @@ class Controller():
         current_dir = os.getcwd()
         os.chdir("{}/{}".format(os.getcwd(), output_path))
         command = f"timeout {timeout}s mpiexec -np {num_processors} {opt_path} -i {self.simulation_file}.{self.simulation_ext}"
+        print(f"\n  Running '{command}'\n")
         subprocess.run([command], shell=True, check=False)
         # try:
         #     subprocess.run([command], shell=True, check=False)
