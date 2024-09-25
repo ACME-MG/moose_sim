@@ -55,7 +55,7 @@ for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"
 
         # Defines the material parameters
         itf.define_material(
-            material_name   = "deer/cvp_ae",
+            material_path   = "deer/cvp_ae",
             material_params = {**cp_params, **vp_params},
             c_11            = 250000,
             c_12            = 151000,
@@ -71,7 +71,7 @@ for resolution in ["5um", "10um", "15um", "20um", "25um", "30um", "35um", "40um"
         
         # Defines the simulation parameters
         itf.define_simulation(
-            simulation_name = "deer/1to1_ui",
+            simulation_path = "deer/1to1_ui",
             end_time        = end_time,
             end_strain      = end_strain
         )

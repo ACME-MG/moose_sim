@@ -64,7 +64,7 @@ for i, param_dict in enumerate(param_dict_list):
     
     # Defines the material parameters
     itf.define_material(
-        material_name   = "deer/cvp_ae",
+        material_path   = "deer/cvp_ae",
         material_params = {**param_dict, **vp_param_dict},
         c_11            = 250000,
         c_12            = 151000,
@@ -76,7 +76,7 @@ for i, param_dict in enumerate(param_dict_list):
     # Defines the simulation parameters
     exp_dict = csv_to_dict("../data/617_s3_z1/617_s3_exp.csv")
     itf.define_simulation(
-        simulation_name = "deer/1to1_ui",
+        simulation_path = "deer/1to1_ui",
         end_time        = exp_dict["time_intervals"][-1],
         end_strain      = exp_dict["strain_intervals"][-1] * dimensions["x"]
     )
