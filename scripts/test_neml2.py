@@ -15,7 +15,7 @@ itf = Interface(input_path=f"data/test/minimal")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 itf.define_material(
-    material_path   = "neml2/ie",
+    material_path   = "neml2/cp",
     # material_params = {
     #     "cp_tau_0":   50,
     #     "cp_tau_sat": 50,
@@ -28,7 +28,7 @@ itf.define_material(
     poissons        = 0.30
 )
 itf.define_simulation(
-    simulation_path = "neml2/1to1",
+    simulation_path = "neml2/1to1_cp",
     simulation_ext  = "i",
     end_time        = 100,
     end_strain      = dimensions["x"]*0.1,

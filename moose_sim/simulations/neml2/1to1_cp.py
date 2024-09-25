@@ -58,7 +58,7 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 # ==================================================
-# Define Materials
+# Define Material File
 # ==================================================
 
 [NEML2]
@@ -69,28 +69,36 @@ SIMULATION_FORMAT = """
   device = 'cpu'
 []
 
+# ==================================================
+# Define information flow from MOOSE to NEML2
+# ==================================================
+
 [UserObjects]
-  active = 'model input_strain'
-  [input_strain]
+  [./input_strain]
     type = MOOSERankTwoTensorMaterialPropertyToNEML2
     moose_material_property = mechanical_strain
-    neml2_variable = forces/E
-  []
-  [model]
+    neml2_variable = 'state/elastic_strain'
+  [../]
+  [./model]
     type = ExecuteNEML2Model
     model = '{material_name}'
     gather_uos = 'input_strain'
-  []
+  [../]
 []
 
+# ==================================================
+# Define information flow from NEML2 to MOOSE
+# ==================================================
+
 [Materials]
-  active = 'output_stress_jacobian'
-  [output_stress_jacobian]
+
+  # Define stress/jacobian (default?)
+  [./output_stress]
     type = NEML2StressToMOOSE
     execute_neml2_model_uo = model
-    neml2_stress_output = state/S
-    neml2_strain_input = forces/E
-  []
+    neml2_strain_input  = state/elastic_strain
+    neml2_stress_output = state/internal/cauchy_stress
+  [../]
 []
 
 # ==================================================
@@ -98,17 +106,17 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 [Physics]
-  [SolidMechanics]
-    [QuasiStatic]
-      [all]
+  [./SolidMechanics]
+    [./QuasiStatic]
+      [./all]
         strain = SMALL
         new_system = true
         add_variables = true
         formulation = TOTAL
         volumetric_locking_correction = true
-      []
-    []
-  []
+      [../]
+    [../]
+  [../]
 []
 
 # ==================================================
@@ -164,6 +172,63 @@ SIMULATION_FORMAT = """
     type = ReferenceElementJacobianDamper
     max_increment = 0.005 # 0.002
     displacements = 'disp_x disp_y disp_z'
+  [../]
+[]
+
+# ==================================================
+# Define Auxiliary Variables
+# ==================================================
+
+[AuxVariables]
+  # [./block_id]
+  #   family = MONOMIAL
+  #   order  = CONSTANT
+  # [../]
+  [./volume]
+    order  = CONSTANT
+    family = MONOMIAL
+  [../]
+[]
+
+# ==================================================
+# Define Kernels
+# ==================================================
+
+[AuxKernels]
+  # [./block_id]
+  #   type     = ElementUserObject
+  #   variable = block_id
+  # [../]
+  [./volume]
+    type = VolumeAux
+    variable = volume
+  [../]
+[]
+
+
+# ==================================================
+# Define Preconditioning
+# ==================================================
+
+[Preconditioning]
+  [./SMP]
+    type = SMP
+    full = true
+  [../]
+[]
+
+# ==================================================
+# Define Postprocessing (History)
+# ==================================================
+
+[VectorPostprocessors]
+  [./element]
+    type       = ElementValueSampler
+    variable   = 'volume'
+    contains_complete_history = false
+    execute_on = 'INITIAL TIMESTEP_END'
+    sort_by    = id
+    block      = '{block_ids}'
   [../]
 []
 
@@ -264,16 +329,15 @@ class Simulation(__Simulation__):
         * `end_strain`: The final strain
         """
         
-        
         # Get orientation data
         orientation_file = self.get_orientation_file()
         orientation_info = np.loadtxt(self.get_input(orientation_file), delimiter=",")
         orientation_info = transpose(orientation_info)
 
-        # # Get IDs
-        # block_ids = list(set([int(block_id) for block_id in orientation_info[4]]))
-        # grain_ids = block_ids[:-2]
-        # grip_ids  = block_ids[-2:]
+        # Get IDs
+        block_ids = list(set([int(block_id) for block_id in orientation_info[4]]))
+        grain_ids = block_ids[:-2]
+        grip_ids  = block_ids[-2:]
         
         # Define simulation file
         simulation_content = SIMULATION_FORMAT.format(
@@ -283,6 +347,11 @@ class Simulation(__Simulation__):
             material_name = self.get_material_name(),
             material_file = self.get_material_file(),
             csv_file      = self.get_csv_file(),
+            
+            # Block IDs
+            block_ids  = " ".join([str(id) for id in block_ids]),
+            grain_ids  = " ".join([str(id) for id in grain_ids]),
+            grip_ids   = " ".join([str(id) for id in grip_ids]),
             
             # Temporal parameters
             start_time = 0,
