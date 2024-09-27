@@ -41,8 +41,7 @@ SIMULATION_FORMAT = """
     normals      = '-1 0 0 1 0 0'
   [../]
   [./add_subdomain_ids]
-    type         = SubdomainPerElementGenerator
-    # type         = SubdomainExtraElementIDGenerator
+    type         = SubdomainExtraElementIDGenerator
     input        = add_side_sets
     subdomains   = '{block_ids}'
     extra_element_id_names = 'block_id'

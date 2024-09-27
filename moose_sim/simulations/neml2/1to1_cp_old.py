@@ -77,7 +77,7 @@ SIMULATION_FORMAT = """
         new_system                    = true
         add_variables                 = true
         volumetric_locking_correction = true
-        generate_output = 'strain_xx elastic_strain_xx cauchy_stress_xx mechanical_strain_xx'
+        generate_output = 'strain_xx cauchy_stress_xx mechanical_strain_xx'
       [../]
     [../]
   [../]
@@ -105,16 +105,6 @@ SIMULATION_FORMAT = """
     moose_material_property = mechanical_strain
     neml2_variable          = 'state/elastic_strain'
   [../]
-  # [./input_deformation_rate]
-  #   type                    = MOOSERankTwoTensorMaterialPropertyToNEML2
-  #   moose_material_property = mechanical_strain
-  #   neml2_variable          = 'forces/deformation_rate'
-  # [../]
-  # [./xxx]
-  #   type                    = MOOSEOldSymmetricRankTwoTensorMaterialPropertyToNEML2
-  #   moose_material_property = whatever1
-  #   neml2_variable          = 'old_state/elastic_strain'
-  # [../]
   [./model]
     type       = ExecuteNEML2Model
     model      = '{material_name}'
@@ -135,18 +125,14 @@ SIMULATION_FORMAT = """
     neml2_strain_input     = state/elastic_strain
     neml2_stress_output    = state/internal/cauchy_stress
   [../]
-  [el]
-    type = NEML2ToSymmetricRankTwoTensorMOOSEMaterialProperty
-    execute_neml2_model_uo = model
-    neml2_variable = state/elastic_strain_out
-    moose_material_property = elastic_strain
-  []
-  # [foo]
-  #   type = NEML2ToMOOSESymmetricRankTwoTensorMaterialProperty
-  #   execute_neml2_model_uo = model
-  #   neml2_variable = 'state/elastic_strain'
-  #   moose_material_property = 'whatever1'
-  # []
+
+  # Define elastic strain
+  # [./elastic_strain]
+  #   type                    = NEML2ToSymmetricRankTwoTensorMOOSEMaterialProperty
+  #   execute_neml2_model_uo  = model
+  #   moose_material_property = elastic_strain
+  #   neml2_variable          = state/elastic_strain
+  # [../]
 []
 
 # ==================================================
@@ -229,6 +215,21 @@ SIMULATION_FORMAT = """
       type = VolumeAux
     [../]
   [../]
+  
+  # [./elastic_strain_xx]
+  #   order = CONSTANT
+  #   family = MONOMIAL
+  #   [./AuxKernel]
+  #     type = RankTwoAux
+  #     rank_two_tensor = elastic_strain
+  #     index_i = 0
+  #     index_j = 0
+  #   [../]
+  # [../]
+[]
+
+[Debug]
+  show_material_props = true
 []
 
 # ==================================================

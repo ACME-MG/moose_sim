@@ -12,12 +12,22 @@ from moose_sim.materials.__material__ import __Material__
 # Format for defining materials
 MATERIAL_FORMAT = """
 [Models]
-  [{material_name}]
+  [./elasticity]
     type = LinearIsotropicElasticity
     youngs_modulus = {youngs}
     poisson_ratio = {poissons}
-    strain = 'forces/E'
+    strain = "state/elastic_strain"
+    stress = "state/internal/cauchy_stress"
+  [../]
+  [output_elastic_strain]
+    type = CopySR2
+    from = 'state/elastic_strain'
+    to = 'state/elastic_strain_out'
   []
+  [./{material_name}]
+    type = ComposedModel
+    models = 'elasticity output_elastic_strain'
+  [../]
 []
 """
 

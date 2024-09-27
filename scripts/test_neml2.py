@@ -15,14 +15,14 @@ itf = Interface(input_path=f"data/test/minimal")
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 itf.define_material(
-    material_path   = "neml2/cp",
-    # material_params = {
-    #     "cp_tau_0":   50,
-    #     "cp_tau_sat": 50,
-    #     "cp_n":       8,
-    #     "cp_gamma_0": 0.20,
-    #     "cp_slope":   500,
-    # },
+    material_path   = "neml2/ie",
+    material_params = {
+        "cp_tau_0":   50,
+        "cp_b":       2,
+        "cp_tau_sat": 50,
+        "cp_n":       8,
+        "cp_gamma_0": 0.20,
+    },
     material_ext    = "i",
     youngs          = 211000,
     poissons        = 0.30
@@ -33,4 +33,5 @@ itf.define_simulation(
     end_time        = 100,
     end_strain      = dimensions["x"]*0.1,
 )
-itf.simulate("~/moose/moose/modules/solid_mechanics/solid_mechanics-opt", 4, 100)
+# itf.simulate("~/moose/moose/modules/solid_mechanics/solid_mechanics-opt", 4, 100)
+itf.simulate("~/moose/deer/deer-opt", 4, 100)

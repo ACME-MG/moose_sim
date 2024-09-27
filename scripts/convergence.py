@@ -15,7 +15,7 @@ from moose_sim.helper.interpolator import intervaluate
 # Constants
 NUM_PROCESSORS = 190
 MAX_DURATION   = 200000
-MAX_STRAIN     = 0.05
+MAX_STRAIN     = 0.10
 
 # Define viscoplastic parameters
 vp_params = {

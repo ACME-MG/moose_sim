@@ -239,6 +239,7 @@ class Material(__Material__):
         * `youngs`:   The elastic modulus
         * `poissons`: The poisson ratio
         """
+        cp_slope = self.get_param("cp_b") * self.get_param("cp_tau_0") # initial macroscale work hardening slope
         material_content = MATERIAL_FORMAT.format(
             youngs     = youngs,
             poissons   = poissons,
@@ -246,7 +247,7 @@ class Material(__Material__):
             cp_gamma_0 = self.get_param("cp_gamma_0"),
             cp_tau_0   = self.get_param("cp_tau_0"),
             cp_tau_sat = self.get_param("cp_tau_sat"),
-            cp_slope   = self.get_param("cp_slope"),
+            cp_slope   = cp_slope,
         )
         return material_content
     

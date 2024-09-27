@@ -170,6 +170,7 @@ class IPF:
         self.y_direction = [int(y) for y in y_direction]
         self.colour_limits = colour_limits
         self.size_limits = size_limits
+        self.axis, self.patch = self.initialise_ipf()
 
     def project_ipf(self, quaternion:np.array, direction:list) -> None:
         """
@@ -299,7 +300,6 @@ class IPF:
         # Initialise
         rgb_colours = get_colours(euler_list, colour_list, self.colour_limits)
         norm_size_list = get_sizes(euler_list, size_list, self.size_limits)
-        axis, patch = self.initialise_ipf()
 
         # Iterate and plot the orientations
         for i, euler in enumerate(euler_list):
@@ -310,8 +310,8 @@ class IPF:
             colour = rgb_colours[i] if colour_list != None else None
             
             # Plot and clip
-            pc = plot_points(axis, points, size, colour)
-            pc.set_clip_path(patch)
+            pc = plot_points(self.axis, points, size, colour)
+            pc.set_clip_path(self.patch)
         
         # Add final outline
         self.plot_outline()
@@ -328,9 +328,6 @@ class IPF:
         
         Plots the IPF of the reorientation trajectories
         """
-
-        # Initialise the IPF
-        axis, patch = self.initialise_ipf()
         
         # Add zorder in settings if not defined
         if not "zorder" in settings.keys():
@@ -346,16 +343,16 @@ class IPF:
             
             # Plot the points
             if function == "arrow": # experimental
-                pc = axis.arrow(points[-3,0], points[-3,1], points[-1,0]-points[-3,0], points[-1,1]-points[-3,1], **settings)
+                pc = self.axis.arrow(points[-3,0], points[-3,1], points[-1,0]-points[-3,0], points[-1,1]-points[-3,1], **settings)
             elif function == "text":
-                pc = axis.text(points[0,0], points[0,1], **settings)
+                pc = self.axis.text(points[0,0], points[0,1], **settings)
             elif function == "plot":
                 pc = plt.plot(points[:,0], points[:,1], **settings)[0]
             elif function == "scatter":
                 pc = plt.scatter(points[:,0], points[:,1], **settings)
 
             # Clip the points
-            pc.set_clip_path(patch)
+            pc.set_clip_path(self.patch)
             
         # Add final outline
         self.plot_outline()
