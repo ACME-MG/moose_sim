@@ -77,7 +77,7 @@ for i, cp_param_dict in enumerate(param_dict_list):
     )
 
     # Define end time and strain
-    exp_dict = csv_to_dict(f"data/617_s3/617_s3_exp.csv")
+    exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")
     end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], MAX_STRAIN)
     end_strain = MAX_STRAIN*dimensions["x"]
     
