@@ -15,7 +15,7 @@ from moose_sim.helper.io import csv_to_dict
 # Constants
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
-TARGET_DIR     = "../data/617_s3_z1/10um"
+TARGET_DIR     = "../data/617_s3/40um"
 
 # Define VP material parameters
 vp_param_dict = {
