@@ -14,8 +14,10 @@ from moose_sim.helper.io import csv_to_dict, dict_to_csv
 from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Constants
-SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/moose_sim/2024-09-17 (617_s3_10u_z1_sm)"
+SIM_PATH = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim/2024-09-17 (617_s3_10u_z1_sm)"
+# SIM_PATH = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim/2024-10-08 (617_s3_lh_40um_sm)"
 PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
+# PARAMS = ["cp_lh_0", "cp_lh_1", "cp_tau_0", "cp_n", "cp_gamma_0"]
 NUM_STRAINS = 32
 
 # The Interpolator Class
@@ -164,8 +166,8 @@ def process_data_dict(data_dict:dict) -> dict:
         processed_dict[field] = new_list
     
     # Fix the domain of the euler-bunge angles
-    # for field in euler_fields:
-    #     processed_dict[field] = [fix_angle(phi) for phi in processed_dict[field]]
+    for field in euler_fields:
+        processed_dict[field] = [fix_angle(phi) for phi in processed_dict[field]]
     
     # Return processed dictionary
     return processed_dict
@@ -206,4 +208,4 @@ for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed
 # Save the plot and super summary dictionary
 save_plot("plot_ss.png")
 super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3_z1/10um/grain_map.csv")
-dict_to_csv(super_processed_dict, "617_s3_sampled_2.csv")
+dict_to_csv(super_processed_dict, "617_s3_sampled.csv")
