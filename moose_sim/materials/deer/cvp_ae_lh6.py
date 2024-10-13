@@ -153,7 +153,8 @@ class Material(__Material__):
         
         # Define hardening matrix
         params = (cp_lh_0, cp_lh_1, cp_lh_2, cp_lh_3, cp_lh_4, cp_lh_5)
-        glh_dense = get_big_lh_matrix(params)
+        sm_data = get_big_lh_matrix(params)
+        glh_dense = " ".join([str(sm) for sm in flatten(sm_data)])
             
         # Define tau_0 values
         cp_tau_0 = self.get_param("cp_tau_0")
