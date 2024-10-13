@@ -35,7 +35,7 @@ param_dict_list = [dict(zip(params_dict.keys(), values)) for values in zip(*para
 # Section CP parameter list for script
 sim_id     = int(sys.argv[1])
 num_sims   = int(len(param_dict_list)/NUM_PARALLEL)
-index_list = list(range(32))[sim_id*num_sims:(sim_id+1)*num_sims]
+index_list = list(range(len(param_dict_list)))[sim_id*num_sims:(sim_id+1)*num_sims]
 param_dict_list = [param_dict_list[i] for i in index_list]
 
 # Iterate through CP parameter list
