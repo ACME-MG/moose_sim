@@ -8,8 +8,6 @@
 # Libraries
 import sys; sys.path += ["../.."]
 from moose_sim.interface import Interface
-from moose_sim.helper.sampler import get_lhs
-from moose_sim.helper.general import round_sf
 from moose_sim.helper.io import csv_to_dict
 from moose_sim.helper.interpolator import intervaluate
 
@@ -19,6 +17,7 @@ NUM_PROCESSORS = 48
 MAX_DURATION   = 200000
 MAX_STRAIN     = 0.10
 TARGET_DIR     = "../data/617_s3_z1/5um"
+PARAMS_PATH    = "params.csv"
 
 # Define VP material parameters
 vp_param_dict = {
@@ -29,20 +28,9 @@ vp_param_dict = {
     "vp_eta": 721.59,
 }
 
-# Get CP parameter combinations
-bounds_dict = {
-    "cp_tau_s":   (100, 1600),
-    "cp_b":       (0.5, 8),
-    "cp_tau_0":   (50, 400), # 800
-    "cp_n":       (1, 16),
-    "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
-}
-param_dict_list = get_lhs(bounds_dict, 4)
-# for param_dict in param_dict_list:
-#     for param in param_dict.keys():
-#         param_dict[param] = round_sf(param_dict[param], 4)
-#     print(param_dict)
-# exit()
+# Get CP parameters
+params_dict = csv_to_dict(PARAMS_PATH)
+param_dict_list = [dict(zip(params_dict.keys(), values)) for values in zip(*params_dict.values())]
 
 # Section CP parameter list for script
 sim_id     = int(sys.argv[1])
