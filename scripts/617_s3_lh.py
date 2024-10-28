@@ -30,11 +30,14 @@ vp_params = {
 }
 
 # Define crystal plasticity parameters
-cp_params = {"cp_lh_0": 129.25, "cp_lh_1": 147.54, "cp_tau_0": 84.481, "cp_n": 9.6705, "cp_gamma_0": 3.333e-05}
+PARAM_NAMES  = [f"cp_lh_{i}" for i in range(6)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
+PARAM_VALUES = [267.79, 122.95, 181.97, 328.73, 295.15, 238.77, 88.089, 7.65]
+cp_params = dict(zip(PARAM_NAMES, PARAM_VALUES))
+# cp_params = {"cp_lh_0": 129.25, "cp_lh_1": 147.54, "cp_tau_0": 84.481, "cp_n": 9.6705, "cp_gamma_0": 3.333e-05}
 
 # Defines the material parameters
 itf.define_material(
-    material_path   = "deer/cvp_ae_lh",
+    material_path   = "deer/cvp_ae_lh6",
     material_params = {**cp_params, **vp_params},
     c_11            = 250000,
     c_12            = 151000,

@@ -14,10 +14,10 @@ from moose_sim.helper.io import csv_to_dict, dict_to_csv
 from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Constants
-SIM_PATH = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim/2024-09-17 (617_s3_10u_z1_sm)"
+SIM_PATH = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim/2024-10-23 (617_s3_lh6_40um_sm)"
 # SIM_PATH = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim/2024-10-08 (617_s3_lh_40um_sm)"
-PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
-# PARAMS = ["cp_lh_0", "cp_lh_1", "cp_tau_0", "cp_n", "cp_gamma_0"]
+# PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
+PARAMS = [f"cp_lh_{i}" for i in range(6)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
 NUM_STRAINS = 32
 
 # The Interpolator Class
@@ -201,11 +201,11 @@ for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed
     # Save to super dictionary 
     num_values = len(list(processed_dict.values())[0])
     for key in param_dict:
-        super_processed_dict[key] += [param_dict[key]]*num_values
+        super_processed_dict[key] += [round_sf(param_dict[key], 5)]*num_values
     for key in processed_dict:
         super_processed_dict[key] += round_sf(processed_dict[key], 5)
 
 # Save the plot and super summary dictionary
 save_plot("plot_ss.png")
-super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3_z1/10um/grain_map.csv")
+# super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3_z1/10um/grain_map.csv")
 dict_to_csv(super_processed_dict, "617_s3_sampled.csv")

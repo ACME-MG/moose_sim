@@ -14,11 +14,11 @@ from moose_sim.analyse.pole_figure import IPF, get_lattice
 
 # Constants
 SAMPLE_PATH = "617_s3_sampled.csv"
-EXP_PATH    = "../data/617_s3/617_s3_exp.csv"
-# EXP_PATH    = "../data/617_s3_20um_exp.csv"
+# EXP_PATH    = "../data/617_s3/617_s3_exp.csv"
+EXP_PATH    = "../data/617_s3_20um_exp.csv"
 # GRAIN_IDS = [164, 173, 265, 213, 207]
-# GRAIN_IDS = [1, 21, 24, 28, 31] # 20um
-GRAIN_IDS = [5, 34, 37, 50, 47]
+GRAIN_IDS = [1, 21, 24, 28, 31] # 20um
+# GRAIN_IDS = [5, 34, 37, 50, 47]
 NUM_DATA = 32 # per simulation
 
 # Read sampled data
