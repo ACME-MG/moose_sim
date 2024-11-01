@@ -434,7 +434,7 @@ class Simulation(__Simulation__):
 
         Parameters:
         * `end_time`:   The final time
-        * `end_strain`: The final strain
+        * `end_strain`: The final (engineering) strain
         """
 
         # Get orientation data
