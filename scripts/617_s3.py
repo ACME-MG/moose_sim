@@ -8,6 +8,7 @@
 
 # Libraries
 import sys; sys.path += [".."]
+import math
 from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
@@ -44,10 +45,11 @@ itf.define_material(
 
 # Defines the simulation parameters
 exp_dict = csv_to_dict(f"data/617_s3_z1/617_s3_exp.csv")
+eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
     simulation_path = "deer/1to1_ui",
     end_time        = exp_dict["time_intervals"][-1],
-    end_strain      = exp_dict["strain_intervals"][-1] * dimensions["x"]
+    end_strain      = eng_strain*dimensions["x"]
 )
 
 # Runs the model and saves results

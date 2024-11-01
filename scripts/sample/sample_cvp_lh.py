@@ -7,6 +7,7 @@
 
 # Libraries
 import sys; sys.path += ["../.."]
+import math
 from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 from moose_sim.helper.interpolator import intervaluate
@@ -15,7 +16,7 @@ from moose_sim.helper.interpolator import intervaluate
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
 MAX_DURATION   = 200000
-MAX_STRAIN     = 0.10
+MAX_STRAIN     = math.exp(0.10)-1
 TARGET_DIR     = "../data/617_s3/40um"
 PARAMS_PATH    = "params.csv"
 

@@ -1,6 +1,6 @@
 """
- Title:         Summarise
- Description:   Summarises the results of the sampled simulations
+ Title:         Interpolator
+ Description:   Interpolates data
  Author:        Janzen Choi
 
 """
