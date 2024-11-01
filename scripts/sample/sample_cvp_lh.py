@@ -56,7 +56,7 @@ for i, cp_param_dict in enumerate(param_dict_list):
 
     # Defines the material parameters
     itf.define_material(
-        material_path   = "deer/cvp_ae_lh2",
+        material_path   = "deer/cvp_ae_lh",
         material_params = {**cp_param_dict, **vp_param_dict},
         c_11            = 250000,
         c_12            = 151000,
