@@ -38,7 +38,7 @@ cp_params = dict(zip(PARAM_NAMES, PARAM_VALUES))
 
 # Defines the material parameters
 itf.define_material(
-    material_path   = "deer/cvp_ae_lh2",
+    material_path   = "deer/cvp_ae_lh",
     material_params = {**cp_params, **vp_params},
     c_11            = 250000,
     c_12            = 151000,
