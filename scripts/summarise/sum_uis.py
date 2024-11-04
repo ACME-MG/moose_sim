@@ -172,40 +172,40 @@ def process_data_dict(data_dict:dict, num_strains:int=NUM_STRAINS) -> dict:
     # Return processed dictionary
     return processed_dict
 
-# Read all summary files
-dir_path_list = [f"{SIM_PATH}/{dir_path}" for dir_path in os.listdir(SIM_PATH)
-                 if os.path.exists(f"{SIM_PATH}/{dir_path}/summary.csv")]
-summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
-summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_list]
-param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
-print(len(param_dict_list))
+for num_strain in [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48]:
 
-# Process the dictionaries
-processed_dict_list = [process_data_dict(summary_dict) for summary_dict in summary_dict_list]
-key_list = list(param_dict_list[0].keys()) + list(processed_dict_list[0].keys())
-super_processed_dict = dict(zip(key_list, [[] for _ in range(len(key_list))]))
-first_key = [list(processed_dict_list[0].keys())][0][0]
+    # Read all summary files
+    dir_path_list = [f"{SIM_PATH}/{dir_path}" for dir_path in os.listdir(SIM_PATH)
+                    if os.path.exists(f"{SIM_PATH}/{dir_path}/summary.csv")]
+    summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
+    summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_list]
+    param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
 
-# Initialise plotter
-plotter = Plotter("average_strain", "average_stress", "mm/mm", "MPa")
-plotter.prep_plot()
+    # Process the dictionaries
+    processed_dict_list = [process_data_dict(summary_dict, num_strain) for summary_dict in summary_dict_list]
+    key_list = list(param_dict_list[0].keys()) + list(processed_dict_list[0].keys())
+    super_processed_dict = dict(zip(key_list, [[] for _ in range(len(key_list))]))
+    first_key = [list(processed_dict_list[0].keys())][0][0]
 
-# Iterate through the results
-super_summary_dict = {}
-for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed_dict_list, param_dict_list):
-    
-    # Plot unprocessed and processed data
-    plotter.scat_plot(summary_dict, colour="silver")
-    plotter.line_plot(processed_dict, colour="red")
-    
-    # Save to super dictionary 
-    num_values = len(list(processed_dict.values())[0])
-    for key in param_dict:
-        super_processed_dict[key] += [round_sf(param_dict[key], 5)]*num_values
-    for key in processed_dict:
-        super_processed_dict[key] += round_sf(processed_dict[key], 5)
+    # Initialise plotter
+    plotter = Plotter("average_strain", "average_stress", "mm/mm", "MPa")
+    plotter.prep_plot()
 
-# Save the plot and super summary dictionary
-save_plot("plot_ss.png")
-# super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3_z1/10um/grain_map.csv")
-dict_to_csv(super_processed_dict, "617_s3_sampled.csv")
+    # Iterate through the results
+    super_summary_dict = {}
+    for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed_dict_list, param_dict_list):
+        
+        # Plot unprocessed and processed data
+        plotter.scat_plot(summary_dict, colour="silver")
+        plotter.line_plot(processed_dict, colour="red")
+        
+        # Save to super dictionary 
+        num_values = len(list(processed_dict.values())[0])
+        for key in param_dict:
+            super_processed_dict[key] += [round_sf(param_dict[key], 5)]*num_values
+        for key in processed_dict:
+            super_processed_dict[key] += round_sf(processed_dict[key], 5)
+
+    # Save the plot and super summary dictionary
+    dict_to_csv(super_processed_dict, f"617_s3_lh2_40um_sampled_{num_strain}i.csv")
+    print(num_strain)
