@@ -8,54 +8,66 @@
 # Libraries
 import sys; sys.path += ["../.."]
 import math, numpy as np, os, re
-from scipy.interpolate import splev, splrep, splder
-from moose_sim.helper.general import transpose, round_sf, get_thinned_list
+from moose_sim.helper.interpolator import Interpolator
+from moose_sim.helper.general import transpose, round_sf
 from moose_sim.helper.io import csv_to_dict, dict_to_csv
 from moose_sim.analyse.plotter import Plotter, save_plot
 
+# Simulation paths
+RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
+SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-04 (617_lh2_40um_sm)"
+SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
+    "2024-11-05 (617_lh2_40um_opt)",
+]]
+SUMMARY_FILE = "617_s3_40um_lh1_sampled.csv"
+
 # Constants
-SIM_PATH = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim/2024-11-04 (617_lh2_40um_sm)"
-# PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
 PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
-NUM_STRAINS = 24
+NUM_STRAINS = 32
+MAX_STRAIN = 0.10
 
-# The Interpolator Class
-class Interpolator:
-
-    def __init__(self, x_list:list, y_list:list, resolution:int=50, smooth:bool=False):
-        """
-        Class for interpolating two lists of values
-
-        Parameters:
-        * `x_list`:     List of x values
-        * `y_list`:     List of y values
-        * `resolution`: The resolution used for the interpolation
-        * `smooth`:     Whether to smooth the interpolation
-        """
-        x_list, indices = np.unique(np.array(x_list), return_index=True)
-        y_list = np.array(y_list)[indices]
-        if len(x_list) > resolution:
-            x_list = get_thinned_list(list(x_list), resolution)
-            y_list = get_thinned_list(list(y_list), resolution)
-        smooth_amount = resolution if smooth else 0
-        self.spl = splrep(x_list, y_list, s=smooth_amount)
+def main():
+    """
+    Main function
+    """
     
-    def differentiate(self) -> None:
-        """
-        Differentiate the interpolator
-        """
-        self.spl = splder(self.spl)
+    # Identify paths to simulations
+    dir_path_list = [f"{SAMPLED_PATH}/{dir_path}" for dir_path in os.listdir(SAMPLED_PATH)
+                    if os.path.exists(f"{SAMPLED_PATH}/{dir_path}/summary.csv")]
+    print(f"Summarising {len(dir_path_list)}+{len(SIM_PATHS)} simulations ...")
+    dir_path_list += SIM_PATHS
 
-    def evaluate(self, x_list:list) -> list:
-        """
-        Run the interpolator for specific values
+    # Read all summary files
+    summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
+    summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_list]
+    param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
 
-        Parameters
-        * `x_list`: The list of x values
+    # Process the dictionaries
+    processed_dict_list = [process_data_dict(summary_dict) for summary_dict in summary_dict_list]
+    key_list = list(param_dict_list[0].keys()) + list(processed_dict_list[0].keys())
+    super_processed_dict = dict(zip(key_list, [[] for _ in range(len(key_list))]))
 
-        Returns the evaluated values
-        """
-        return list(splev(x_list, self.spl))
+    # Initialise plotter
+    plotter = Plotter("average_strain", "average_stress", "mm/mm", "MPa")
+    plotter.prep_plot()
+
+    # Iterate through the results
+    for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed_dict_list, param_dict_list):
+        
+        # Plot unprocessed and processed data
+        plotter.scat_plot(summary_dict, colour="silver")
+        plotter.line_plot(processed_dict, colour="red")
+        
+        # Save to super dictionary 
+        num_values = len(list(processed_dict.values())[0])
+        for key in param_dict:
+            super_processed_dict[key] += [round_sf(param_dict[key], 5)]*num_values
+        for key in processed_dict:
+            super_processed_dict[key] += round_sf(processed_dict[key], 5)
+
+    # Save the plot and super summary dictionary
+    save_plot("plot_ss.png")
+    dict_to_csv(super_processed_dict, SUMMARY_FILE)
 
 def get_param_dict(params_path:str) -> dict:
     """
@@ -151,7 +163,8 @@ def process_data_dict(data_dict:dict, num_strains:int=NUM_STRAINS) -> dict:
     
     # Prepare old and new strain values
     strain_list = data_dict["average_strain"]
-    new_strain_list = list(np.linspace(0,data_dict["average_strain"][-1],num_strains+1)[1:])
+    max_strain = max([s for s in data_dict["average_strain"] if s < MAX_STRAIN])
+    new_strain_list = list(np.linspace(0, max_strain, num_strains+1)[1:])
     
     # Prepare fields
     grain_ids = [int(key.replace("g","").replace("_phi_1","")) for key in data_dict.keys() if "_phi_1" in key]
@@ -172,40 +185,6 @@ def process_data_dict(data_dict:dict, num_strains:int=NUM_STRAINS) -> dict:
     # Return processed dictionary
     return processed_dict
 
-# Read all summary files
-dir_path_list = [f"{SIM_PATH}/{dir_path}" for dir_path in os.listdir(SIM_PATH)
-                 if os.path.exists(f"{SIM_PATH}/{dir_path}/summary.csv")]
-summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
-summary_dict_list = [csv_to_dict(summary_path) for summary_path in summary_path_list]
-param_dict_list = [get_param_dict(f"{dir_path}/params.txt") for dir_path in dir_path_list]
-print(len(param_dict_list))
-
-# Process the dictionaries
-processed_dict_list = [process_data_dict(summary_dict) for summary_dict in summary_dict_list]
-key_list = list(param_dict_list[0].keys()) + list(processed_dict_list[0].keys())
-super_processed_dict = dict(zip(key_list, [[] for _ in range(len(key_list))]))
-first_key = [list(processed_dict_list[0].keys())][0][0]
-
-# Initialise plotter
-plotter = Plotter("average_strain", "average_stress", "mm/mm", "MPa")
-plotter.prep_plot()
-
-# Iterate through the results
-super_summary_dict = {}
-for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed_dict_list, param_dict_list):
-    
-    # Plot unprocessed and processed data
-    plotter.scat_plot(summary_dict, colour="silver")
-    plotter.line_plot(processed_dict, colour="red")
-    
-    # Save to super dictionary 
-    num_values = len(list(processed_dict.values())[0])
-    for key in param_dict:
-        super_processed_dict[key] += [round_sf(param_dict[key], 5)]*num_values
-    for key in processed_dict:
-        super_processed_dict[key] += round_sf(processed_dict[key], 5)
-
-# Save the plot and super summary dictionary
-save_plot("plot_ss.png")
-# super_processed_dict = convert_grain_ids(super_processed_dict, "../data/617_s3_z1/10um/grain_map.csv")
-dict_to_csv(super_processed_dict, "617_s3_sampled.csv")
+# Main function
+if __name__ == "__main__":
+    main()
