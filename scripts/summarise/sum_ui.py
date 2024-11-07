@@ -17,9 +17,9 @@ from moose_sim.analyse.plotter import Plotter, save_plot
 RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
 SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-04 (617_lh2_40um_sm)"
 SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
-    "2024-11-05 (617_lh2_40um_opt)",
+    # "2024-11-06 (617_lh2_40um_opt)",
 ]]
-SUMMARY_FILE = "617_s3_40um_lh1_sampled.csv"
+SUMMARY_FILE = "617_s3_40um_lh2_sampled.csv"
 
 # Constants
 PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
