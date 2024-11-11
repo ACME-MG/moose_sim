@@ -15,8 +15,8 @@ from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Simulation paths
 RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
-SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-04 (617_s3_40um_lh2_sm32)"
-# SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-10 (617_s3_40um_lh2_sm8)"
+# SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-04 (617_s3_40um_lh2_sm32)"
+SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-10 (617_s3_40um_lh2_sm8)"
 SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
     # "2024-11-05 (617_s3_40um_lh2_opt)",
     # "2024-11-06 (617_s3_40um_lh2_opt)",
