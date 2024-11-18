@@ -32,7 +32,8 @@ vp_params = {
 
 # Define crystal plasticity parameters
 PARAM_NAMES  = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
-PARAM_VALUES = [285.06, 248.36, 103.81, 4.0593] + [3.333e-05]
+# PARAM_VALUES = [285.06, 248.36, 103.81, 4.0593] + [3.333e-05]
+PARAM_VALUES = [192.34, 223.94, 114.91, 2.6902] + [3.333e-05]
 cp_params = dict(zip(PARAM_NAMES, PARAM_VALUES))
 # cp_params = {"cp_lh_0": 129.25, "cp_lh_1": 147.54, "cp_tau_0": 84.481, "cp_n": 9.6705, "cp_gamma_0": 3.333e-05}
 
