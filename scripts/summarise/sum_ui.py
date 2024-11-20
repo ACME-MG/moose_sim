@@ -20,6 +20,7 @@ SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-04 (617_s3_40um_lh2_sm32)"
 SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
     "2024-11-19 (617_s3_40um_lh2_opt_i0)",
     "2024-11-19 (617_s3_40um_lh2_opt_i1)",
+    "2024-11-19 (617_s3_40um_lh2_opt_i2)",
 ]]
 SUMMARY_FILE = "617_s3_40um_lh2_sampled.csv"
 
