@@ -67,8 +67,10 @@ for i, cp_param_dict in enumerate(param_dict_list):
 
     # Define end time and strain
     exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")
-    end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], MAX_STRAIN)
-    end_strain = (math.exp(MAX_STRAIN)-1)*dimensions["x"]
+    end_time = exp_dict["time_intervals"][-1]
+    end_strain = (math.exp(exp_dict["strain_intervals"][-1])-1)*dimensions["x"]
+    # end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], MAX_STRAIN)
+    # end_strain = (math.exp(MAX_STRAIN)-1)*dimensions["x"]
     
     # Defines the simulation parameters
     itf.define_simulation(
