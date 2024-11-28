@@ -15,18 +15,17 @@ from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Simulation paths
 RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
-SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-04 (617_s3_40um_lh2_sm32)"
-# SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-17 (617_s3_40um_lh2_sm40)"
+SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-28 (617_s3_40um_lh2_sm32_full)"
 SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
-    "2024-11-19 (617_s3_40um_lh2_opt_i0)",
-    "2024-11-19 (617_s3_40um_lh2_opt_i1)",
-    "2024-11-19 (617_s3_40um_lh2_opt_i2)",
-    "2024-11-20 (617_s3_40um_lh2_opt_i3)",
 ]]
 SUMMARY_FILE = "617_s3_40um_lh2_sampled.csv"
 
 # Constants
 PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
+STRAIN_FIELD = "average_grain_strain"
+STRESS_FIELD = "average_grain_stress"
+# STRAIN_FIELD = "average_strain"
+# STRESS_FIELD = "average_stress"
 NUM_STRAINS = 32
 MAX_STRAIN = 0.10
 
@@ -52,7 +51,7 @@ def main():
     super_processed_dict = dict(zip(key_list, [[] for _ in range(len(key_list))]))
 
     # Initialise plotter
-    plotter = Plotter("average_strain", "average_stress", "mm/mm", "MPa")
+    plotter = Plotter(STRAIN_FIELD, STRESS_FIELD, "mm/mm", "MPa")
     plotter.prep_plot()
 
     # Iterate through the results
@@ -166,17 +165,17 @@ def process_data_dict(data_dict:dict, num_strains:int=NUM_STRAINS) -> dict:
     """
     
     # Prepare old and new strain values
-    strain_list = data_dict["average_strain"]
-    max_strain = max([s for s in data_dict["average_strain"] if s < MAX_STRAIN])
+    strain_list = data_dict[STRAIN_FIELD]
+    max_strain = max([s for s in data_dict[STRAIN_FIELD] if s < MAX_STRAIN])
     new_strain_list = list(np.linspace(0, max_strain, num_strains+1)[1:])
     
     # Prepare fields
     grain_ids = [int(key.replace("g","").replace("_phi_1","")) for key in data_dict.keys() if "_phi_1" in key]
     euler_fields = [f"g{grain_id}_{field}" for grain_id in grain_ids for field in ["phi_1", "Phi", "phi_2"]]
-    field_list = ["average_stress"] + euler_fields
+    field_list = [STRESS_FIELD] + euler_fields
     
     # Interpolate for each field and return
-    processed_dict = {"average_strain": new_strain_list}
+    processed_dict = {STRAIN_FIELD: new_strain_list}
     for field in field_list:
         field_itp = Interpolator(strain_list, data_dict[field], len(strain_list))
         new_list = field_itp.evaluate(new_strain_list)
