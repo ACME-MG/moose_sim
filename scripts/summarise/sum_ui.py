@@ -18,6 +18,7 @@ RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
 SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-28 (617_s3_40um_lh2_sm32_full)"
 SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
     "2024-11-28 (617_s3_40um_lh2_i1)",
+    "2024-11-30 (617_s3_40um_lh2_i2)",
 ]]
 SUMMARY_FILE = "617_s3_40um_lh2_sampled.csv"
 
