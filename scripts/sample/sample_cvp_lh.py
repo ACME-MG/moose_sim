@@ -16,7 +16,6 @@ from moose_sim.helper.interpolator import intervaluate
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
 MAX_DURATION   = 200000
-MAX_STRAIN     = 0.10
 TARGET_DIR     = "../data/617_s3/40um"
 PARAMS_PATH    = "params.csv"
 
@@ -67,10 +66,11 @@ for i, cp_param_dict in enumerate(param_dict_list):
 
     # Define end time and strain
     exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")
-    end_time = exp_dict["time_intervals"][-1]
-    end_strain = (math.exp(exp_dict["strain_intervals"][-1])-1)*dimensions["x"]
-    # end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], MAX_STRAIN)
-    # end_strain = (math.exp(MAX_STRAIN)-1)*dimensions["x"]
+    # end_time = exp_dict["time_intervals"][-1]
+    # end_strain = (math.exp(exp_dict["strain_intervals"][-1])-1)*dimensions["x"]
+    max_strain = 0.10
+    end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], max_strain)
+    end_strain = (math.exp(max_strain)-1)*dimensions["x"]
     
     # Defines the simulation parameters
     itf.define_simulation(
