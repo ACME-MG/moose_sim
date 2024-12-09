@@ -14,29 +14,29 @@ from moose_sim.helper.io import dict_to_csv
 # Constants
 OUTPUT_PATH = "params.csv"
 
-# Get parameters for LH6
-bounds_dict = {
-    "cp_lh_0":    (0, 400),
-    "cp_lh_1":    (0, 400),
-    # "cp_lh_2":    (0, 400),
-    # "cp_lh_3":    (0, 400),
-    # "cp_lh_4":    (0, 400),
-    # "cp_lh_5":    (0, 400),
-    "cp_tau_0":   (0, 200),
-    "cp_n":       (1, 16),
-    "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
-}
-param_dict_list = get_lhs(bounds_dict, 48)
-
 # # Get parameters for LH6
 # bounds_dict = {
-#     "cp_lh_0":    (0, 800),
-#     "cp_lh_1":    (0, 800),
-#     "cp_tau_0":   (0, 400),
+#     "cp_lh_0":    (0, 400),
+#     "cp_lh_1":    (0, 400),
+#     # "cp_lh_2":    (0, 400),
+#     # "cp_lh_3":    (0, 400),
+#     # "cp_lh_4":    (0, 400),
+#     # "cp_lh_5":    (0, 400),
+#     "cp_tau_0":   (0, 200),
 #     "cp_n":       (1, 16),
 #     "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
 # }
 # param_dict_list = get_lhs(bounds_dict, 32)
+
+# Get parameters for LH2
+bounds_dict = {
+    "cp_lh_0":    (0, 800),
+    "cp_lh_1":    (0, 800),
+    "cp_tau_0":   (0, 400),
+    "cp_n":       (1, 16),
+    "cp_gamma_0": (0, 1e-4),
+}
+param_dict_list = get_lhs(bounds_dict, 32)
 
 # # Get parameters for non-LH
 # bounds_dict = {
