@@ -62,8 +62,7 @@ MATERIAL_FORMAT = """
 # VSHAI Class
 class Material(__Material__):
     
-    def get_material(self, c_11:float, c_12:float, c_44:float, youngs:float,
-                     poissons:float) -> str:
+    def get_material(self, c_11:float, c_12:float, c_44:float) -> str:
         """
         Gets the content for the material file;
         must be overridden
@@ -72,8 +71,6 @@ class Material(__Material__):
         * `c_11`:     The component of the elastic tensor in (0,0)
         * `c_12`:     The component of the elastic tensor in (0,1)
         * `c_44`:     The component of the elastic tensor in (3,3)
-        * `youngs`:   The elastic modulus
-        * `poissons`: The poisson ratio
         """
         
         # Define information about the material
@@ -97,8 +94,6 @@ class Material(__Material__):
             c_11       = c_11,
             c_12       = c_12,
             c_44       = c_44,
-            youngs     = youngs,
-            poissons   = poissons,
             glh_dense  = glh_dense,
             cp_tau_0   = cp_tau_0,
             cp_gamma_0 = self.get_param("cp_gamma_0"),
