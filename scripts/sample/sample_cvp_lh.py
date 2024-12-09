@@ -16,17 +16,8 @@ from moose_sim.helper.interpolator import intervaluate
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
 MAX_DURATION   = 100000
-TARGET_DIR     = "../data/617_s3/40um"
+TARGET_DIR     = "../data/617_s3/40um_micro"
 PARAMS_PATH    = "params.csv"
-
-# Define VP material parameters
-vp_param_dict = {
-    "vp_s0":  93.655,
-    "vp_R":   3957.3,
-    "vp_d":   0.5651,
-    "vp_n":   7.3648,
-    "vp_eta": 721.59,
-}
 
 # Get CP parameters
 params_dict = csv_to_dict(PARAMS_PATH)
@@ -55,26 +46,24 @@ for i, cp_param_dict in enumerate(param_dict_list):
 
     # Defines the material parameters
     itf.define_material(
-        material_path   = "deer/cvp_ae_lh",
-        material_params = {**cp_param_dict, **vp_param_dict},
+        material_path   = "deer/cplh_ae",
+        material_params = cp_param_dict,
         c_11            = 250000,
         c_12            = 151000,
         c_44            = 123000,
-        youngs          = 211000.0,
-        poissons        = 0.30,
     )
 
     # Define end time and strain
     exp_dict = csv_to_dict("../data/617_s3/617_s3_exp.csv")
-    # end_time = exp_dict["time_intervals"][-1]
-    # end_strain = (math.exp(exp_dict["strain_intervals"][-1])-1)*dimensions["x"]
-    max_strain = 0.10
-    end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], max_strain)
-    end_strain = (math.exp(max_strain)-1)*dimensions["x"]
+    end_time = exp_dict["time_intervals"][-1]
+    end_strain = (math.exp(exp_dict["strain_intervals"][-1])-1)*dimensions["x"]
+    # max_strain = 0.10
+    # end_time = intervaluate(exp_dict["strain_intervals"], exp_dict["time_intervals"], max_strain)
+    # end_strain = (math.exp(max_strain)-1)*dimensions["x"]
     
     # Defines the simulation parameters
     itf.define_simulation(
-        simulation_path = "deer/1to1_ui",
+        simulation_path = "deer/1to1_ui_cp",
         end_time        = end_time,
         end_strain      = end_strain
     )
