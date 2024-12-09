@@ -13,7 +13,7 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
-MESH_PATH = "data/617_s3/40um"
+MESH_PATH = "data/617_s3/40um_micro"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
 
 # Define the mesh and orientations
