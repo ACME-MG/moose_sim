@@ -15,7 +15,7 @@ from moose_sim.helper.interpolator import intervaluate
 # Constants
 NUM_PARALLEL   = 4
 NUM_PROCESSORS = 48
-MAX_DURATION   = 200000
+MAX_DURATION   = 100000
 TARGET_DIR     = "../data/617_s3/40um"
 PARAMS_PATH    = "params.csv"
 
