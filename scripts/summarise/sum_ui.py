@@ -31,7 +31,7 @@ PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
 STRAIN_FIELD = "average_strain"
 STRESS_FIELD = "average_stress"
 NUM_STRAINS = 32
-MAX_STRAIN = 0.10
+MAX_STRAIN = 0.1
 
 def main():
     """
@@ -59,13 +59,10 @@ def main():
     plotter.prep_plot()
 
     # Iterate through the results
-    for summary_dict, processed_dict, param_dict in zip(summary_dict_list, processed_dict_list, param_dict_list):
-        
-        # Plot unprocessed and processed data
+    for summary_dict in summary_dict_list:
         plotter.scat_plot(summary_dict, colour="silver")
+    for processed_dict, param_dict in zip(processed_dict_list, param_dict_list):
         plotter.line_plot(processed_dict, colour="red")
-        
-        # Save to super dictionary 
         num_values = len(list(processed_dict.values())[0])
         for key in param_dict:
             super_processed_dict[key] += [round_sf(param_dict[key], 5)]*num_values
