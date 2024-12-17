@@ -31,7 +31,8 @@ PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
 STRAIN_FIELD = "average_strain"
 STRESS_FIELD = "average_stress"
 NUM_STRAINS = 32
-MAX_STRAIN = 0.1
+# MAX_STRAIN = 0.1
+MAX_STRAIN = 1.0
 
 def main():
     """

@@ -419,7 +419,7 @@ class Simulation(__Simulation__):
             start_time = 0,
             end_time   = end_time,
             dt_start   = 1e0,
-            dt_min     = 1e-2,
+            dt_min     = 1e-1,
             dt_max     = end_time,
 
             # Other parameters
