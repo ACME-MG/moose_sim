@@ -13,7 +13,7 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
-MESH_PATH = "data/617_s3/40um"
+MESH_PATH = "data/617_s3/10um_micro"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
 
 # Define the mesh and orientations
@@ -21,39 +21,25 @@ itf = Interface(input_path=MESH_PATH)
 itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 
-# Define viscoplastic parameters
-vp_params = {
-    "vp_s0":  93.655,
-    "vp_R":   3957.3,
-    "vp_d":   0.5651,
-    "vp_n":   7.3648,
-    "vp_eta": 721.59,
-}
-
 # Define crystal plasticity parameters
-PARAM_NAMES  = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
-# PARAM_VALUES = [246.13, 14.655, 97.417, 4.0386] + [3.333e-05]
-# PARAM_VALUES = [390.45, 33.537, 79.105, 3.7274] + [3.333e-05]
-PARAM_VALUES = [46.337, 117.84, 94.677, 3.7383] + [3.333e-05]
-cp_params = dict(zip(PARAM_NAMES, PARAM_VALUES))
-# cp_params = {"cp_lh_0": 129.25, "cp_lh_1": 147.54, "cp_tau_0": 84.481, "cp_n": 9.6705, "cp_gamma_0": 3.333e-05}
+param_names  = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
+param_values = [191.9, 506.57, 61.692, 10.739, 3.25E-05]
+cp_params = dict(zip(param_names, param_values))
 
 # Defines the material parameters
 itf.define_material(
-    material_path   = "deer/cvp_ae_lh",
-    material_params = {**cp_params, **vp_params},
+    material_path   = "deer/cplh_ae",
+    material_params = cp_params,
     c_11            = 250000,
     c_12            = 151000,
     c_44            = 123000,
-    youngs          = 211000.0,
-    poissons        = 0.30,
 )
 
 # Defines the simulation parameters
 exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
-    simulation_path = "deer/1to1_ui",
+    simulation_path = "deer/1to1_ui_cp",
     end_time        = exp_dict["time_intervals"][-1],
     end_strain      = eng_strain*dimensions["x"]
 )

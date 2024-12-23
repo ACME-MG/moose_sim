@@ -28,25 +28,25 @@ OUTPUT_PATH = "params.csv"
 # }
 # param_dict_list = get_lhs(bounds_dict, 32)
 
-# Get parameters for LH2
+# # Get parameters for LH2
+# bounds_dict = {
+#     "cp_lh_0":    (0, 800),
+#     "cp_lh_1":    (0, 800),
+#     "cp_tau_0":   (0, 400),
+#     "cp_n":       (1, 16),
+#     "cp_gamma_0": (0, 1e-4),
+# }
+# param_dict_list = get_lhs(bounds_dict, 32)
+
+# Get parameters for VH
 bounds_dict = {
-    "cp_lh_0":    (0, 800),
-    "cp_lh_1":    (0, 800),
+    "cp_tau_s":   (0, 1600),
+    "cp_b":       (0.5, 8),
     "cp_tau_0":   (0, 400),
     "cp_n":       (1, 16),
     "cp_gamma_0": (0, 1e-4),
 }
 param_dict_list = get_lhs(bounds_dict, 32)
-
-# # Get parameters for non-LH
-# bounds_dict = {
-#     "cp_tau_s":   (100, 1600),
-#     "cp_b":       (0.5, 8),
-#     "cp_tau_0":   (50, 400), # 800
-#     "cp_n":       (1, 16),
-#     "cp_gamma_0": (round_sf(1e-4/3, 4), round_sf(1e-4/3, 4)),
-# }
-# param_dict_list = get_lhs(bounds_dict, 4)
 
 # Format parameters, save, and print progress
 params_dict = {k: [d[k] for d in param_dict_list] for k in param_dict_list[0]}
