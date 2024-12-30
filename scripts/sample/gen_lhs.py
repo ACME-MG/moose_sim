@@ -40,7 +40,7 @@ OUTPUT_PATH = "params.csv"
 
 # Get parameters for VH
 bounds_dict = {
-    "cp_tau_s":   (0, 1600),
+    "cp_tau_s":   (0, 800),
     "cp_b":       (0.5, 8),
     "cp_tau_0":   (0, 400),
     "cp_n":       (1, 16),
