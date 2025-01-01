@@ -44,7 +44,7 @@ bounds_dict = {
     "cp_b":       (0.5, 8),
     "cp_tau_0":   (0, 400),
     "cp_n":       (1, 16),
-    "cp_gamma_0": (0, 1e-4),
+    "cp_gamma_0": (1e-5, 1e-4),
 }
 param_dict_list = get_lhs(bounds_dict, 32)
 
