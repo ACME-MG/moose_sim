@@ -22,7 +22,7 @@ itf.define_mesh("mesh.e", "element_stats.csv", degrees=False, active=False)
 dimensions = itf.get_dimensions()
 
 # Define crystal plasticity parameters
-param_names  = ["cp_tau_s", "b", "cp_tau_0", "cp_n", "cp_gamma_0"]
+param_names  = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
 param_values = [468.31, 0.50973, 101.2, 15.953, 2.76E-06]
 cp_params = dict(zip(param_names, param_values))
 
