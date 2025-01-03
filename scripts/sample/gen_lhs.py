@@ -30,21 +30,21 @@ OUTPUT_PATH = "params.csv"
 
 # # Get parameters for LH2
 # bounds_dict = {
-#     "cp_lh_0":    (0, 800),
-#     "cp_lh_1":    (0, 800),
-#     "cp_tau_0":   (0, 400),
-#     "cp_n":       (1, 16),
-#     "cp_gamma_0": (0, 1e-4),
+#     "cp_lh_0":    (0, 1000),
+#     "cp_lh_1":    (0, 1000),
+#     "cp_tau_0":   (0, 500),
+#     "cp_n":       (1, 20),
+#     "cp_gamma_0": (3.25e-5, 3.25e-5),
 # }
 # param_dict_list = get_lhs(bounds_dict, 32)
 
 # Get parameters for VH
 bounds_dict = {
-    "cp_tau_s":   (0, 800),
-    "cp_b":       (0.5, 8),
-    "cp_tau_0":   (0, 400),
-    "cp_n":       (1, 16),
-    "cp_gamma_0": (1e-5, 1e-4),
+    "cp_tau_s":   (0, 2000),
+    "cp_b":       (0, 20),
+    "cp_tau_0":   (0, 500),
+    "cp_n":       (1, 20),
+    "cp_gamma_0": (3.25e-5, 3.25e-5),
 }
 param_dict_list = get_lhs(bounds_dict, 32)
 
