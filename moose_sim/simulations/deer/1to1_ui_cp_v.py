@@ -188,7 +188,7 @@ SIMULATION_FORMAT = """
     execute_on = 'initial timestep_end'
     block      = '{grain_ids}'
   [../]
-  [RBG_x]
+  [RGB_x]
     type       = IPFColoring
     variable   = RGB_x
     q1         = orientation_q1
@@ -201,9 +201,9 @@ SIMULATION_FORMAT = """
     execute_on = 'initial timestep_end'
     block = '{grain_ids}'
   [../]
-  [RBG_y]
+  [RGB_y]
     type       = IPFColoring
-    variable   = RBG_y
+    variable   = RGB_y
     q1         = orientation_q1
     q2         = orientation_q2
     q3         = orientation_q3
@@ -214,9 +214,9 @@ SIMULATION_FORMAT = """
     execute_on = 'initial timestep_end'
     block = '{grain_ids}'
   [../]
-  [RBG_z]
+  [RGB_z]
     type       = IPFColoring
-    variable   = RBG_z
+    variable   = RGB_z
     q1         = orientation_q1
     q2         = orientation_q2
     q3         = orientation_q3
