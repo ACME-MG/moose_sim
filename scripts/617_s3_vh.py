@@ -13,7 +13,8 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
-MESH_PATH = "data/617_s3/10um_micro"
+MESH_PATH = "data/617_s3/40um_micro"
+# MESH_PATH = "data/617_s3/10um_micro"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
 
 # Define the mesh and orientations
@@ -23,7 +24,7 @@ dimensions = itf.get_dimensions()
 
 # Define crystal plasticity parameters
 param_names  = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
-param_values = [468.31, 0.50973, 101.2, 15.953, 2.76E-06]
+param_values = [1410.7, 0.16661, 124.69, 19.415, 3.25e-05]
 cp_params = dict(zip(param_names, param_values))
 
 # Defines the material parameters
@@ -39,7 +40,7 @@ itf.define_material(
 exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
-    simulation_path = "deer/1to1_ui_cp",
+    simulation_path = "deer/1to1_ui_cp_v",
     end_time        = exp_dict["time_intervals"][-1],
     end_strain      = eng_strain*dimensions["x"]
 )
@@ -47,7 +48,7 @@ itf.define_simulation(
 # Runs the model and saves results
 num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
-itf.simulate("~/moose/deer/deer-opt", num_processors, 1000000)
+itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
 
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
