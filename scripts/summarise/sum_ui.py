@@ -15,18 +15,11 @@ from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Simulation paths
 RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
-SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-07 (617_s3_40um_lh_sm32)"
-# SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-03 (617_s3_40um_vh_sm32)"
-SIM_PATHS = [f"{RESULTS_DIR}/{sim_dir}" for sim_dir in [
-    # "2024-11-28 (617_s3_40um_lh2_i1)",
-    # "2024-11-30 (617_s3_40um_lh2_i2)",
-    # "2024-12-01 (617_s3_40um_lh2_i3)",
-]]
-# SUMMARY_FILE = "617_s3_40um_lh2_sampled.csv"
-SUMMARY_FILE = "617_s3_40um_vh_sampled.csv"
+SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-15 (617_s3_40um_lh6_sm72)"
+SUMMARY_FILE = "617_s3_40um_lh6_sampled.csv"
 
 # Constants
-PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
+PARAMS = [f"cp_lh_{i}" for i in range(6)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
 # PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
 # STRAIN_FIELD = "average_grain_strain"
 # STRESS_FIELD = "average_grain_stress"
@@ -43,8 +36,7 @@ def main():
     # Identify paths to simulations
     dir_path_list = [f"{SAMPLED_PATH}/{dir_path}" for dir_path in os.listdir(SAMPLED_PATH)
                     if os.path.exists(f"{SAMPLED_PATH}/{dir_path}/summary.csv")]
-    print(f"Summarising {len(dir_path_list)}+{len(SIM_PATHS)} simulations ...")
-    dir_path_list += SIM_PATHS
+    print(f"Summarising {len(dir_path_list)} simulations ...")
 
     # Read all summary files
     summary_path_list = [f"{dir_path}/summary.csv" for dir_path in dir_path_list]
