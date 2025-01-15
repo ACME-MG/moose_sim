@@ -15,11 +15,12 @@ from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Simulation paths
 RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
-SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-15 (617_s3_40um_lh6_sm72)"
-SUMMARY_FILE = "617_s3_40um_lh6_sampled.csv"
+# SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-15 (617_s3_40um_lh6_sm72)"
+SAMPLED_PATH = f"{RESULTS_DIR}/2024-11-11 (617_s3_40um_lh2_sm16)"
+SUMMARY_FILE = "617_s3_40um_lh2_sampled.csv"
 
 # Constants
-PARAMS = [f"cp_lh_{i}" for i in range(6)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
+PARAMS = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
 # PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
 # STRAIN_FIELD = "average_grain_strain"
 # STRESS_FIELD = "average_grain_stress"
