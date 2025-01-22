@@ -8,7 +8,6 @@
 # Libraries
 import sys; sys.path += ["../.."]
 from moose_sim.helper.sampler import get_lhs
-from moose_sim.helper.general import round_sf
 from moose_sim.helper.io import dict_to_csv
 
 # Constants
@@ -46,7 +45,7 @@ bounds_dict = {
     "cp_n":       (1, 20),
     "cp_gamma_0": (3.25e-5, 3.25e-5),
 }
-param_dict_list = get_lhs(bounds_dict, 6)
+param_dict_list = get_lhs(bounds_dict, 8)
 
 # Format parameters, save, and print progress
 params_dict = {k: [d[k] for d in param_dict_list] for k in param_dict_list[0]}
