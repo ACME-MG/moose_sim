@@ -13,8 +13,8 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
-MESH_PATH = "data/617_s3/40um_micro"
-# MESH_PATH = "data/617_s3/10um_micro"
+# MESH_PATH = "data/617_s3/40um_micro"
+MESH_PATH = "data/617_s3/10um_micro"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
 
 # Define the mesh and orientations
@@ -24,7 +24,7 @@ dimensions = itf.get_dimensions()
 
 # Define crystal plasticity parameters
 param_names  = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
-param_values = [1410.7, 0.16661, 124.69, 19.415, 3.25e-05]
+param_values = [1491.4, 0.16728, 124.03, 8.4411, 3.25e-05]
 cp_params = dict(zip(param_names, param_values))
 
 # Defines the material parameters
