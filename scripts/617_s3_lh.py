@@ -1,6 +1,6 @@
 """
- Title:         617_s3
- Description:   Runs the CPFEM model once
+ Title:         617_s3 latent hardening
+ Description:   Runs the CPFEM model once with the latent hardening model
  References:    https://asmedigitalcollection.asme.org/pressurevesseltech/article/135/2/021502/378322/Synchrotron-Radiation-Study-on-Alloy-617-and-Alloy
  Author:        Janzen Choi
 
@@ -13,6 +13,7 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
+# MESH_PATH = "data/617_s3/40um_micro"
 MESH_PATH = "data/617_s3/10um_micro"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
 
@@ -23,7 +24,7 @@ dimensions = itf.get_dimensions()
 
 # Define crystal plasticity parameters
 param_names  = [f"cp_lh_{i}" for i in range(2)] + ["cp_tau_0", "cp_n", "cp_gamma_0"]
-param_values = [191.9, 506.57, 61.692, 10.739, 3.25E-05]
+param_values = [189.2, 492.44, 62.525, 11.29, 3.25e-05]
 cp_params = dict(zip(param_names, param_values))
 
 # Defines the material parameters

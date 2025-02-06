@@ -1,6 +1,6 @@
 """
- Title:         617_s3
- Description:   Runs the CPFEM model once
+ Title:         617_s3 Voce Hardening
+ Description:   Runs the CPFEM model once with the Voce hardening model
  References:    https://asmedigitalcollection.asme.org/pressurevesseltech/article/135/2/021502/378322/Synchrotron-Radiation-Study-on-Alloy-617-and-Alloy
  Author:        Janzen Choi
 
@@ -40,7 +40,7 @@ itf.define_material(
 exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
-    simulation_path = "deer/1to1_ui_cp_v",
+    simulation_path = "deer/1to1_ui_cp",
     end_time        = exp_dict["time_intervals"][-1],
     end_strain      = eng_strain*dimensions["x"]
 )
