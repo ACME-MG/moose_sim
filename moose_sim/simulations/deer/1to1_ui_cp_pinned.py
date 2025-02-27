@@ -37,7 +37,7 @@ SIMULATION_FORMAT = """
     input        = mesh_input
     type         = SideSetsFromNormalsGenerator
     fixed_normal = true
-    # new_boundary = 'x0 x1'
+    new_boundary = 'x0 x1'
     normals      = '-1 0 0 1 0 0'
   [../]
   [./add_subdomain_ids]
