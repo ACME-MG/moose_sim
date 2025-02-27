@@ -33,20 +33,20 @@ SIMULATION_FORMAT = """
     type         = FileMeshGenerator
     file         = '{mesh_file}'
   [../]
-  # [./add_side_sets]
-  #   input        = mesh_input
-  #   type         = SideSetsFromNormalsGenerator
-  #   fixed_normal = true
-  #   new_boundary = 'x0 x1'
-  #   normals      = '-1 0 0 1 0 0'
-  # [../]
-  # [./add_subdomain_ids]
-  #   type         = SubdomainExtraElementIDGenerator
-  #   input        = add_side_sets
-  #   subdomains   = '{grain_ids}'
-  #   extra_element_id_names = 'block_id'
-  #   extra_element_ids = '{grain_ids}'
-  # [../]
+  [./add_side_sets]
+    input        = mesh_input
+    type         = SideSetsFromNormalsGenerator
+    fixed_normal = true
+    # new_boundary = 'x0 x1'
+    normals      = '-1 0 0 1 0 0'
+  [../]
+  [./add_subdomain_ids]
+    type         = SubdomainExtraElementIDGenerator
+    input        = add_side_sets
+    subdomains   = '{grain_ids}'
+    extra_element_id_names = 'block_id'
+    extra_element_ids = '{grain_ids}'
+  [../]
   # [./add_z_hold_side_set]
   #   input        = add_subdomain_ids
   #   type         = SideSetsAroundSubdomainGenerator
