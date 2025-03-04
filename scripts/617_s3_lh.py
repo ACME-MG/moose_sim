@@ -13,8 +13,8 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
-# MESH_PATH = "data/617_s3/40um_micro"
-MESH_PATH = "data/617_s3/10um_micro"
+# MESH_PATH = "data/617_s3/40um_micro_pinned"
+MESH_PATH = "data/617_s3/10um_micro_pinned"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
 
 # Define the mesh and orientations
@@ -42,7 +42,7 @@ itf.define_material(
 exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
-    simulation_path = "deer/1to1_ui_cp",
+    simulation_path = "deer/1to1_ui_cp_pinned",
     end_time        = exp_dict["time_intervals"][-1],
     end_strain      = eng_strain*dimensions["x"]
 )
