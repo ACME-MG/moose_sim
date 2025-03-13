@@ -45,7 +45,7 @@ SIMULATION_FORMAT = """
     type         = SideSetsAroundSubdomainGenerator
     new_boundary = 'z0'
     fixed_normal = true
-    normal       = '0 0 -1'
+    normal       = '0 0 1'
     block        = '{grain_ids}'
   [../]
   [./add_subdomain_ids]
