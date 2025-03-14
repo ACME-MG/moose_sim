@@ -49,14 +49,6 @@ SIMULATION_FORMAT = """
     normal       = '0 -1 0'
     block        = '{grain_ids}'
   [../]
-  [./add_z_hold_side_set]
-    input        = add_y_hold_side_set
-    type         = SideSetsAroundSubdomainGenerator
-    new_boundary = 'z0'
-    fixed_normal = true
-    normal       = '0 0 1'
-    block        = '{grain_ids}'
-  [../]
 
   # [./add_z_hold_side_set]
   #   input        = add_x_hold_side_sets
@@ -220,12 +212,12 @@ SIMULATION_FORMAT = """
     function = applied_load
     preset   = false
   [../]
-  [./z0z]
-    type     = DirichletBC
-    boundary = 'z0'
-    variable = disp_z
-    value    = 0.0
-  [../]
+  # [./z0z]
+  #   type     = DirichletBC
+  #   boundary = 'z0'
+  #   variable = disp_z
+  #   value    = 0.0
+  # [../]
 
   [./y0y]
     type     = DirichletBC
