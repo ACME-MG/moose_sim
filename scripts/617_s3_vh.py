@@ -24,7 +24,7 @@ dimensions = itf.get_dimensions()
 
 # Define crystal plasticity parameters
 param_names  = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
-param_values = [1589.8, 0.1672, 127.47, 3.8933, 3.25e-05]
+param_values = [1727.9, 0.13542, 123.59, 17.142, 3.25e-05]
 cp_params = dict(zip(param_names, param_values))
 
 # Defines the material parameters
