@@ -40,14 +40,32 @@ SIMULATION_FORMAT = """
     new_boundary = 'x0 x1'
     normals      = '-1 0 0 1 0 0'
   [../]
-  [./add_z_hold_side_set]
+
+  [./add_y_hold_side_set]
     input        = add_x_hold_side_sets
+    type         = SideSetsAroundSubdomainGenerator
+    new_boundary = 'y0'
+    fixed_normal = true
+    normal       = '0 -1 0'
+    block        = '{grain_ids}'
+  [../]
+  [./add_z_hold_side_set]
+    input        = add_y_hold_side_sets
     type         = SideSetsAroundSubdomainGenerator
     new_boundary = 'z0'
     fixed_normal = true
     normal       = '0 0 1'
     block        = '{grain_ids}'
   [../]
+
+  # [./add_z_hold_side_set]
+  #   input        = add_x_hold_side_sets
+  #   type         = SideSetsAroundSubdomainGenerator
+  #   new_boundary = 'z0'
+  #   fixed_normal = true
+  #   normal       = '0 0 1'
+  #   block        = '{grain_ids}'
+  # [../]
   [./add_subdomain_ids]
     type         = SubdomainExtraElementIDGenerator
     input        = add_z_hold_side_set
@@ -202,13 +220,20 @@ SIMULATION_FORMAT = """
     function = applied_load
     preset   = false
   [../]
-  [./z0hold]
+  [./z0z]
     type     = DirichletBC
     boundary = 'z0'
     variable = disp_z
     value    = 0.0
   [../]
 
+  [./y0y]
+    type     = DirichletBC
+    boundary = 'y0'
+    variable = disp_y
+    value    = 0.0
+  [../]
+  
   # Node sets applied through Cubit Coreform
   [./pinXYZy]
     type     = DirichletBC
