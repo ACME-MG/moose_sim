@@ -50,7 +50,7 @@ SIMULATION_FORMAT = """
     block        = '{grain_ids}'
   [../]
   [./add_z_hold_side_set]
-    input        = add_y_hold_side_sets
+    input        = add_y_hold_side_set
     type         = SideSetsAroundSubdomainGenerator
     new_boundary = 'z0'
     fixed_normal = true
