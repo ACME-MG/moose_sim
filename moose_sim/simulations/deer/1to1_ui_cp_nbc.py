@@ -33,15 +33,39 @@ SIMULATION_FORMAT = """
     type         = FileMeshGenerator
     file         = '{mesh_file}'
   [../]
-  [./add_x_hold_side_sets]
+  [./sideset_x0_x1]
     input        = mesh_input
     type         = SideSetsFromNormalsGenerator
     fixed_normal = true
     new_boundary = 'x0 x1'
     normals      = '-1 0 0 1 0 0'
   [../]
-  [./add_z_hold_side_set]
-    input        = add_x_hold_side_sets
+  [./sideset_y0]
+    input        = sideset_x0_x1
+    type         = SideSetsAroundSubdomainGenerator
+    new_boundary = 'y0'
+    fixed_normal = true
+    normal       = '0 -1 0'
+    block        = '{grain_ids}'
+  [../]
+  [./sideset_y1]
+    input        = sideset_y0
+    type         = SideSetsAroundSubdomainGenerator
+    new_boundary = 'y0'
+    fixed_normal = true
+    normal       = '0 1 0'
+    block        = '{grain_ids}'
+  [../]
+  [./sideset_z0]
+    input        = sideset_y1
+    type         = SideSetsAroundSubdomainGenerator
+    new_boundary = 'z0'
+    fixed_normal = true
+    normal       = '0 0 -1'
+    block        = '{grain_ids}'
+  [../]
+  [./sideset_z1]
+    input        = sideset_z0
     type         = SideSetsAroundSubdomainGenerator
     new_boundary = 'z0'
     fixed_normal = true
@@ -50,7 +74,7 @@ SIMULATION_FORMAT = """
   [../]
   [./add_subdomain_ids]
     type         = SubdomainExtraElementIDGenerator
-    input        = add_z_hold_side_set
+    input        = sideset_z1
     subdomains   = '{grain_ids}'
     extra_element_id_names = 'block_id'
     extra_element_ids = '{grain_ids}'
@@ -202,12 +226,31 @@ SIMULATION_FORMAT = """
     function = applied_load
     preset   = false
   [../]
-  [./z0z]
+  [./y0y]
     type     = DirichletBC
+    boundary = 'y0'
+    variable = disp_y
+    value    = 0.0
+  [../]
+  [./y1y]
+    type     = DirichletBC
+    boundary = 'y1'
+    variable = disp_y
+    value    = 0.0
+  [../]
+  [./z0z]
+    type     = NeumannBC
     boundary = 'z0'
     variable = disp_z
     value    = 0.0
   [../]
+  [./z1z]
+    type     = NeumannBC
+    boundary = 'z1'
+    variable = disp_z
+    value    = 0.0
+  [../]
+  
   
   # Node sets applied through Cubit Coreform
   [./pinXYZy]
