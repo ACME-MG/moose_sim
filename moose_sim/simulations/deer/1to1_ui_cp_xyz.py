@@ -195,30 +195,51 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 [BCs]
-  [./z0hold]
-    type     = DirichletBC
-    boundary = 'z0'
-    variable = disp_z
-    value    = 0.0
-  [../]
-  [./y0hold]
-    type     = DirichletBC
-    boundary = 'y0'
-    variable = disp_y
-    value    = 0.0
-  [../]
-  [./x0hold]
+  # Sidesets applied through input file (above)
+  [./x0x]
     type     = DirichletBC
     boundary = 'x0'
     variable = disp_x
     value    = 0.0
   [../]
-  [./x1load]
+  [./x1x]
     type     = FunctionDirichletBC
     boundary = 'x1'
     variable = disp_x
     function = applied_load
     preset   = false
+  [../]
+  [./y0y]
+    type     = DirichletBC
+    boundary = 'y0'
+    variable = disp_y
+    value    = 0.0
+  [../]
+  [./z0z]
+    type     = DirichletBC
+    boundary = 'z0'
+    variable = disp_z
+    value    = 0.0
+  [../]
+  
+  # Node sets applied through Cubit Coreform
+  [./pinXYZy]
+    type     = DirichletBC
+    boundary = 'pinXYZ'
+    variable = disp_y
+    value    = 0.0
+  [../]
+  [./pinXYZz]
+    type     = DirichletBC
+    boundary = 'pinXYZ'
+    variable = disp_z
+    value    = 0.0
+  [../]
+  [./pinXZz]
+    type     = DirichletBC
+    boundary = 'pinXZ'
+    variable = disp_z
+    value    = 0.0
   [../]
 []
 
