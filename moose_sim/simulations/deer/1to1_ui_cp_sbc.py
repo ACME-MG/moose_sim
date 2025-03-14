@@ -60,7 +60,7 @@ SIMULATION_FORMAT = """
   # [../]
   [./add_subdomain_ids]
     type         = SubdomainExtraElementIDGenerator
-    input        = add_z_hold_side_set
+    input        = add_y_hold_side_set
     subdomains   = '{grain_ids}'
     extra_element_id_names = 'block_id'
     extra_element_ids = '{grain_ids}'
