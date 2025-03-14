@@ -227,13 +227,13 @@ SIMULATION_FORMAT = """
     preset   = false
   [../]
   [./y0y]
-    type     = DirichletBC
+    type     = NeumannBC
     boundary = 'y0'
     variable = disp_y
     value    = 0.0
   [../]
   [./y1y]
-    type     = DirichletBC
+    type     = NeumannBC
     boundary = 'y1'
     variable = disp_y
     value    = 0.0
