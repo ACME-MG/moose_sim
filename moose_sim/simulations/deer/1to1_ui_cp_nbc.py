@@ -51,7 +51,7 @@ SIMULATION_FORMAT = """
   [./sideset_y1]
     input        = sideset_y0
     type         = SideSetsAroundSubdomainGenerator
-    new_boundary = 'y0'
+    new_boundary = 'y1'
     fixed_normal = true
     normal       = '0 1 0'
     block        = '{grain_ids}'
@@ -67,7 +67,7 @@ SIMULATION_FORMAT = """
   [./sideset_z1]
     input        = sideset_z0
     type         = SideSetsAroundSubdomainGenerator
-    new_boundary = 'z0'
+    new_boundary = 'z1'
     fixed_normal = true
     normal       = '0 0 1'
     block        = '{grain_ids}'
