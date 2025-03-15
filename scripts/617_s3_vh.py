@@ -33,14 +33,14 @@ itf.define_material(
     material_params = cp_params,
     c_11            = 250000,
     c_12            = 151000,
-    c_44            = 123000/2,
+    c_44            = 123000*2,
 )
 
 # Defines the simulation parameters
 exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
-    simulation_path = "deer/1to1_ui_cp_pin",
+    simulation_path = "deer/1to1_ui_cp_x",
     end_time        = exp_dict["time_intervals"][-1],
     end_strain      = eng_strain*dimensions["x"]
 )
