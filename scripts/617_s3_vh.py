@@ -33,7 +33,7 @@ itf.define_material(
     material_params = cp_params,
     c_11            = 250000,
     c_12            = 151000,
-    c_44            = 123000*2,
+    c_44            = 123000,
 )
 
 # Defines the simulation parameters
