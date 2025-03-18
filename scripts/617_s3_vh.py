@@ -24,7 +24,7 @@ dimensions = itf.get_dimensions()
 
 # Define crystal plasticity parameters
 param_names  = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n", "cp_gamma_0"]
-param_values = [1727.9, 0.13542, 123.59, 17.142, 3.25e-05]
+param_values = [1938.4, 0.17367, 149.03, 6.1855, 3.25e-05]
 cp_params = dict(zip(param_names, param_values))
 
 # Defines the material parameters
@@ -48,7 +48,7 @@ itf.define_simulation(
 # Runs the model and saves results
 num_processors = int(sys.argv[1]) if len(sys.argv)>1 else 8
 itf.export_params()
-itf.simulate("~/moose/deer/deer-opt", num_processors, 100000)
+itf.simulate("~/moose/deer/deer-opt", num_processors, 200000)
 
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
