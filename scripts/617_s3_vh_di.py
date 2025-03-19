@@ -41,7 +41,7 @@ exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
     simulation_path = "deer/1to1_di_cp_x",
-    time            = exp_dict["time_intervals"],
+    time_intervals  = exp_dict["time_intervals"],
     end_strain      = eng_strain*dimensions["x"]
 )
 
