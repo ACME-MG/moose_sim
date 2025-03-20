@@ -448,6 +448,13 @@ class Simulation(__Simulation__):
                             does not post process exodus files if undefined
         """
 
+        # If the exodus files were outputed, rename them
+        if exodus_prefix != "":
+            exodus_paths = [f"{sim_path}/{file}" for file in os.listdir(sim_path) if os.path.isfile(f"{sim_path}/{file}") and exodus_prefix in file]
+            for exodus_path in exodus_paths:
+                new_exodus_path = rename_exodus(exodus_path, exodus_prefix)
+                os.rename(exodus_path, new_exodus_path)
+
         # Initialise summary
         results_dict  = csv_to_dict(f"{sim_path}/results.csv")
         sim_dict_list = get_csv_results(sim_path, "results_element", "time")
@@ -505,13 +512,6 @@ class Simulation(__Simulation__):
         
         # Save the summaries
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")
-
-        # If the exodus was outputed, rename them
-        if exodus_prefix != "":
-            exodus_paths = [f"{sim_path}/{file}" for file in os.listdir(sim_path) if os.path.isfile(f"{sim_path}/{file}") and exodus_prefix in file]
-            for exodus_path in exodus_paths:
-                new_exodus_path = rename_exodus(exodus_path, exodus_prefix)
-                os.rename(exodus_path, new_exodus_path)
 
 def rename_exodus(exodus_path:str, exodus_prefix:str) -> str:
     """
