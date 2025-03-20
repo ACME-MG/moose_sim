@@ -47,7 +47,7 @@ itf.define_simulation(
     simulation_path = "deer/1to1_di_cp_x",
     time_intervals  = exp_dict["time_intervals"],
     end_strain      = eng_strain*dimensions["x"],
-    exodus          = ADD_EXODUS
+    add_exodus      = ADD_EXODUS
 )
 
 # Runs the model and saves results
