@@ -354,8 +354,14 @@ SIMULATION_FORMAT = """
 # ==================================================
 
 [Outputs]
-  exodus = true
   print_linear_residuals = false
+  [./exodus]
+    type        = Exodus
+    sequence    = true
+    execute_on  = 'initial timestep_end'
+    sync_only   = true
+    sync_times  = '{times}'
+  [../]
   [./console]
     type        = Console
     output_linear = false
