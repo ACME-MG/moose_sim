@@ -405,6 +405,9 @@ class Simulation(__Simulation__):
         # Get IDs
         grain_ids = list(set([int(grain_id) for grain_id in orientation_info[4]]))
 
+        # Get times
+        times_str = " ".join([str(ti) for ti in time_intervals])
+
         # Define simulation file
         simulation_content = SIMULATION_FORMAT.format(
 
@@ -424,11 +427,11 @@ class Simulation(__Simulation__):
             dt_start   = 1e0,
             dt_min     = 1e-1,
             dt_max     = max(time_intervals),
-            times      = " ".join([str(ti) for ti in time_intervals]),
+            times      = times_str,
 
             # Other parameters
             end_strain = end_strain,
-            add_exodus = EXODUS_SCRIPT if add_exodus else "  exodus = False"
+            add_exodus = EXODUS_SCRIPT.format(times=times_str) if add_exodus else "  exodus = False"
         )
         return simulation_content
 
