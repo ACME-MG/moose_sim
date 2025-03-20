@@ -7,6 +7,7 @@
 
 # Libraries
 import numpy as np, re
+import os
 from moose_sim.analyse.summarise import get_csv_results, get_block_ids, map_field
 from moose_sim.analyse.summarise import get_average_euler, map_average_field, map_total_field
 from moose_sim.helper.general import transpose
@@ -355,13 +356,7 @@ SIMULATION_FORMAT = """
 
 [Outputs]
   print_linear_residuals = false
-  [./exodus]
-    type        = Exodus
-    sequence    = true
-    execute_on  = 'initial timestep_end'
-    sync_only   = true
-    sync_times  = '{times}'
-  [../]
+{add_exodus}
   [./console]
     type        = Console
     output_linear = false
@@ -378,11 +373,20 @@ SIMULATION_FORMAT = """
   [../]
 []
 """
+EXODUS_SCRIPT = """
+  [./exodus]
+    type        = Exodus
+    sequence    = true
+    execute_on  = 'initial timestep_end'
+    sync_only   = true
+    sync_times  = '{times}'
+  [../]
+"""
 
 # CP Model Class
 class Simulation(__Simulation__):
     
-    def get_simulation(self, time_intervals:float, end_strain:float) -> str:
+    def get_simulation(self, time_intervals:float, end_strain:float, add_exodus:bool=False) -> str:
         """
         Gets the content for the simulation file;
         must be overridden
@@ -390,6 +394,7 @@ class Simulation(__Simulation__):
         Parameters:
         * `time_intervals`: The time intervals to save the results
         * `end_strain`:     The final (engineering) strain
+        * `add_exodus`:     Whether to output the exodus files
         """
 
         # Get orientation data
@@ -423,10 +428,11 @@ class Simulation(__Simulation__):
 
             # Other parameters
             end_strain = end_strain,
+            add_exodus = EXODUS_SCRIPT if add_exodus else "  exodus = False"
         )
         return simulation_content
 
-    def post_process(self, sim_path:str, results_path:str, grain_map_path:str=None) -> None:
+    def post_process(self, sim_path:str, results_path:str, grain_map_path:str=None, exodus_prefix:str="") -> None:
         """
         Conducts post processing after the simulation has completed
 
@@ -435,6 +441,8 @@ class Simulation(__Simulation__):
                             uses current result path if undefined
         * `results_path`:   The path to current results
         * `grain_map_path`: The path to the grain map so that the grain IDs are consistent
+        * `exodus_prefix`:  The prefix for the exodus files;
+                            does not post process exodus files if undefined
         """
 
         # Initialise summary
@@ -494,3 +502,30 @@ class Simulation(__Simulation__):
         
         # Save the summaries
         dict_to_csv(summary_dict, f"{results_path}/summary.csv")
+
+        # If the exodus was outputed, rename them
+        if exodus_prefix != "":
+            exodus_paths = [f"{sim_path}/{file}" for file in os.listdir(sim_path) if os.path.isfile(f"{sim_path}/{file}") and exodus_prefix in file]
+            for exodus_path in exodus_paths:
+                new_exodus_path = rename_exodus(exodus_path, exodus_prefix)
+                os.rename(exodus_path, new_exodus_path)
+
+def rename_exodus(exodus_path:str, exodus_prefix:str) -> str:
+    """
+    Creates a new name for an exodus file
+    
+    Parameters:
+    * `exodus_path`:   Path to the exodus file
+    * `exodus_prefix`: Prefix for the exodus file
+
+    Returns the new name
+    """
+    match = re.match(rf"({exodus_prefix}\.e)(-s(\d+))?", exodus_path)
+    if match:
+        suffix = match.group(3)
+        if suffix:
+            new_exodus_path = f"{exodus_prefix}_ts{int(suffix)}.e"
+        else:
+            new_exodus_path = f"{exodus_prefix}_ts1.e"
+        return new_exodus_path
+    return exodus_path
