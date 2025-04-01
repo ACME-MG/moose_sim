@@ -14,7 +14,7 @@ from moose_sim.helper.io import csv_to_dict, dict_to_csv
 from moose_sim.analyse.plotter import Plotter, save_plot
 
 # Simulation paths
-RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/PhD/results/moose_sim"
+RESULTS_DIR = "/mnt/c/Users/janzen/OneDrive - UNSW/H0419460/results/moose_sim"
 # SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-15 (617_s3_40um_lh6_sm72)"
 SAMPLED_PATH = f"{RESULTS_DIR}/2025-01-22 (617_s3_40um_vh_sm6)"
 SUMMARY_FILE = "617_s3_40um_vh_sampled.csv"

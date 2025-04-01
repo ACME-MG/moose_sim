@@ -13,7 +13,7 @@ from moose_sim.helper.general import transpose, round_sf
 from moose_sim.helper.io import csv_to_dict, dict_to_csv
 
 # Constants
-SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/PhD/results/moose_sim/2024-08-01 (617_s3_sm)"
+SIM_PATH = "/mnt/c/Users/z5208868/OneDrive - UNSW/H0419460/results/moose_sim/2024-08-01 (617_s3_sm)"
 PARAMS = ["cp_tau_s", "cp_b", "cp_tau_0", "cp_n"]
 
 def get_param_dict(params_path:str) -> dict:
