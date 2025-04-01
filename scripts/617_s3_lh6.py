@@ -13,9 +13,13 @@ from moose_sim.interface import Interface
 from moose_sim.helper.io import csv_to_dict
 
 # Define paths
-# MESH_PATH = "data/617_s3/40um_micro_pinned"
-MESH_PATH = "data/617_s3/10um_micro_pinned"
+# MESH_PATH = "data/617_s3/40um"
+MESH_PATH = "data/617_s3/10um"
 EXP_PATH  = "data/617_s3/617_s3_exp.csv"
+
+# Simulation constants
+ADD_EXODUS = True
+EXODUS_PREFIX = "simulation_exodus"
 
 # Define the mesh and orientations
 itf = Interface(input_path=MESH_PATH)
@@ -40,9 +44,10 @@ itf.define_material(
 exp_dict = csv_to_dict(EXP_PATH)
 eng_strain = math.exp(exp_dict["strain_intervals"][-1])-1
 itf.define_simulation(
-    simulation_path = "deer/1to1_ui_cp_pinned",
-    end_time        = exp_dict["time_intervals"][-1],
-    end_strain      = eng_strain*dimensions["x"]
+    simulation_path = "deer/1to1_di_cp_x",
+    time_intervals  = exp_dict["time_intervals"],
+    end_strain      = eng_strain*dimensions["x"],
+    add_exodus      = ADD_EXODUS
 )
 
 # Runs the model and saves results
@@ -53,4 +58,4 @@ itf.simulate("~/moose/deer/deer-opt", num_processors, 1000000)
 # Conduct post processing
 itf.compress_csv(sf=5, exclude=["x", "y", "z"])
 itf.post_process(grain_map_path=f"{MESH_PATH}/grain_map.csv")
-itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"])
+itf.remove_files(["mesh.e", "element_stats.csv", "results", "simulation_out_cp"], exodus_prefix=EXODUS_PREFIX if ADD_EXODUS else "")
